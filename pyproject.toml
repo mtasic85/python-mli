@@ -2,9 +2,12 @@
 name = "mli"
 version = "0.1.0"
 description = "Python-based Machine Learning Interface"
+homepage = "https://github.com/mtasic85/python-mli"
+repository = "https://github.com/mtasic85/python-mli"
 authors = ["Marko Tasic <mtasic85@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+packages = [{include = "mli"}]
 
 [tool.poetry.dependencies]
 python = "3.11"
