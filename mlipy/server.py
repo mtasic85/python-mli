@@ -10,13 +10,22 @@ import json
 import shlex
 import argparse
 import traceback
-from uuid import uuid4
 from typing import AsyncIterator
 
 from aiohttp import web, WSMsgType
 
 
 class MLIServer:
+    host: str
+    port: int
+    timeout: float
+    candle_path: str
+    llama_cpp_path: str
+    gguf_models_path: str
+    app: web.Application
+    lock: asyncio.Lock
+
+
     def __init__(self,
                  host: str='0.0.0.0',
                  port=5000,
@@ -461,6 +470,7 @@ class MLIServer:
                         task = tg.create_task(coro)
                     elif msg.type == WSMsgType.ERROR:
                         print(f'[ERROR] websocket closed with exception: {ws.exception()}')
+                        break
         except ExceptionGroup as e:
             traceback.print_exc()
             print(f'[ERROR] websocket ExceptionGroup: {e}')
