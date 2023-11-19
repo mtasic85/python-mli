@@ -186,110 +186,111 @@ class Server:
 
         print(f'[DEBUG] _run_shell_cmd: {cmd}')
 
-        try:
-            async with asyncio.timeout(self.timeout):
-                # create new proc for model
-                proc = await asyncio.create_subprocess_shell(
-                    cmd,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE,
-                )
+        async with self.lock:
+            try:
+                async with asyncio.timeout(self.timeout):
+                    # create new proc for model
+                    proc = await asyncio.create_subprocess_shell(
+                        cmd,
+                        stdout=asyncio.subprocess.PIPE,
+                        stderr=asyncio.subprocess.PIPE,
+                    )
 
-                # receive original prompt in stdout
-                # strip original prompt from return
-                prev_buf: bytes
-                buf: bytes
-                text: str
+                    # receive original prompt in stdout
+                    # strip original prompt from return
+                    prev_buf: bytes
+                    buf: bytes
+                    text: str
 
-                while not proc.stdout.at_eof():
-                    # stdout
-                    buf = await proc.stdout.read(1024)
-                    stdout += buf
+                    while not proc.stdout.at_eof():
+                        # stdout
+                        buf = await proc.stdout.read(1024)
+                        stdout += buf
 
-                    # skip original prompt
-                    if len(stdout) > len(prompt_enc):
-                        break
+                        # skip original prompt
+                        if len(stdout) > len(prompt_enc):
+                            break
 
-                    await asyncio.sleep(0.2)
+                        await asyncio.sleep(0.2)
 
-                # yield left-overs from stdout as buf
-                stdout = stdout[len(prompt_enc):]
-                buf = stdout
-                prev_buf = b''
-                text = stdout.decode()
-                # yield text
-
-                # read rest of tokens
-                stopped: bool = False
-
-                while not proc.stdout.at_eof():
-                    buf = await proc.stdout.read(256)
-                    prev_buf += buf
-                    stdout += buf
-
-                    try:
-                        text = prev_buf.decode()
-                    except Exception as e:
-                        print(f'[ERROR] buf.decode() exception: {e}')
-                        continue
-
-                    # NOTE: candle, check 'loaded XYZ tensors' and 'model built\n' in first line and strip it
-                    if 'loaded' in text and 'tensors' in text and text.endswith('\n'):
-                        text = ''
-                    elif 'model built\n' in text:
-                        text = ''
-
-                    # NOTE: candle, check 'tokens generated' in last line and strip it
-                    candle_eos = 'tokens generated ('
-                    candle_eos_1 = 'token/s'
-
-                    if candle_eos in text and candle_eos_2 in text:
-                        text = text[:text.index(candle_eos)]
-                        text = text[:text.rindex('\n')]
-
+                    # yield left-overs from stdout as buf
+                    stdout = stdout[len(prompt_enc):]
+                    buf = stdout
                     prev_buf = b''
-                    yield text
+                    text = stdout.decode()
+                    # yield text
 
-                    # check for stop words
-                    if stop_enc:
-                        for n in stop_enc:
-                            if n in stdout:
-                                print(f'[INFO] stop word: {stop!r}')
-                                stdout = stdout[:stdout.index(n)]
-                                stopped = True
-                                break
+                    # read rest of tokens
+                    stopped: bool = False
+
+                    while not proc.stdout.at_eof():
+                        buf = await proc.stdout.read(256)
+                        prev_buf += buf
+                        stdout += buf
+
+                        try:
+                            text = prev_buf.decode()
+                        except Exception as e:
+                            print(f'[ERROR] buf.decode() exception: {e}')
+                            continue
+
+                        # NOTE: candle, check 'loaded XYZ tensors' and 'model built\n' in first line and strip it
+                        if 'loaded' in text and 'tensors' in text and text.endswith('\n'):
+                            text = ''
+                        elif 'model built\n' in text:
+                            text = ''
+
+                        # NOTE: candle, check 'tokens generated' in last line and strip it
+                        candle_eos = 'tokens generated ('
+                        candle_eos_1 = 'token/s'
+
+                        if candle_eos in text and candle_eos_2 in text:
+                            text = text[:text.index(candle_eos)]
+                            text = text[:text.rindex('\n')]
+
+                        prev_buf = b''
+                        yield text
+
+                        # check for stop words
+                        if stop_enc:
+                            for n in stop_enc:
+                                if n in stdout:
+                                    print(f'[INFO] stop word: {stop!r}')
+                                    stdout = stdout[:stdout.index(n)]
+                                    stopped = True
+                                    break
+
+                        if stopped:
+                            break
+
+                        await asyncio.sleep(0.2)
 
                     if stopped:
-                        break
+                        print(f'[INFO] stop word, trying to kill proc: {proc}')
 
-                    await asyncio.sleep(0.2)
+                        try:
+                            proc.kill()
+                            await proc.wait()
+                            print('[INFO] proc kill [stop]')
+                        except Exception as e:
+                            print(f'[INFO] proc kill [stop]: {e}')
+                        finally:
+                            proc = None
+                    
+                    # read stderr at once
+                    stderr = await proc.stderr.read()
+            except asyncio.TimeoutError as e:
+                print(f'[ERROR] timeout, trying to kill proc: {proc}')
 
-                if stopped:
-                    print(f'[INFO] stop word, trying to kill proc: {proc}')
-
-                    try:
-                        proc.kill()
-                        await proc.wait()
-                        print('[INFO] proc kill [stop]')
-                    except Exception as e:
-                        print(f'[INFO] proc kill [stop]: {e}')
-                    finally:
-                        proc = None
-                
-                # read stderr at once
-                stderr = await proc.stderr.read()
-        except asyncio.TimeoutError as e:
-            print(f'[ERROR] timeout, trying to kill proc: {proc}')
-
-            try:
-                proc.kill()
-                await proc.wait()
-                print('[INFO] proc kill [timeout]')
-            except Exception as e:
-                print(f'[INFO] proc kill [timeout]: {e}')
-                raise e
-            finally:
-                proc = None
+                try:
+                    proc.kill()
+                    await proc.wait()
+                    print('[INFO] proc kill [timeout]')
+                except Exception as e:
+                    print(f'[INFO] proc kill [timeout]: {e}')
+                    raise e
+                finally:
+                    proc = None
 
 
     def _run_cmd(self, msg: dict) -> AsyncIterator[str]:
