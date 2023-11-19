@@ -16,7 +16,7 @@ from typing import AsyncIterator
 from aiohttp import web, WSMsgType
 
 
-class Server:
+class MLIServer:
     def __init__(self,
                  host: str='0.0.0.0',
                  port=5000,
@@ -96,7 +96,7 @@ class Server:
             ])
         elif kind == 'stable-lm':
             prompt: str = kwargs['prompt']
-            model_id: str = kwargs['model_id']
+            model_id: str = kwargs.get('model_id', 'lmz/candle-stablelm-3b-4e1t')
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
@@ -152,6 +152,31 @@ class Server:
                 '--temperature', temperature,
                 '--top-p', top_p,
                 '--sample-len', sample_len,
+                '--prompt', shell_prompt,
+            ])
+        elif kind == 'mistral':
+            prompt: str = kwargs['prompt']
+            model_id: str = kwargs.get('model_id')
+            temperature: int = float(kwargs.get('temperature', '0.8'))
+            top_p: int = float(kwargs.get('top_p', '0.9'))
+            sample_len: int = int(kwargs.get('sample_len', '100'))
+            shell_prompt: str = shlex.quote(prompt)
+
+            cmd.extend([
+                f'{self.candle_path}/target/release/examples/stable-lm',
+            ])
+
+            if model_id:
+                cmd.extend([
+                    '--model-id', model_id
+                ])
+
+            cmd.extend([
+                '--temperature', temperature,
+                '--top-p', top_p,
+                '--sample-len', sample_len,
+                '--quantized',
+                '--use-flash-attn',
                 '--prompt', shell_prompt,
             ])
         else:
@@ -234,6 +259,12 @@ class Server:
                             print(f'[ERROR] buf.decode() exception: {e}')
                             continue
 
+                        # NOTE: candle, check 'retrieved the files in' and 'loaded the model in' in first line and strip it
+                        if 'retrieved the files in' in text and text.endswith('\n'):
+                            text = ''
+                        elif 'loaded the model in' and text.endswith('\n'):
+                            text = ''
+
                         # NOTE: candle, check 'loaded XYZ tensors' and 'model built\n' in first line and strip it
                         if 'loaded' in text and 'tensors' in text and text.endswith('\n'):
                             text = ''
@@ -244,7 +275,15 @@ class Server:
                         candle_eos = 'tokens generated ('
                         candle_eos_1 = 'token/s'
 
-                        if candle_eos in text and candle_eos_2 in text:
+                        if candle_eos in text and candle_eos_1 in text:
+                            text = text[:text.index(candle_eos)]
+                            text = text[:text.rindex('\n')]
+
+                        # NOTE: candle, check 'prompt tokens processed' and 'tokens generated' in last line and strip it
+                        candle_eos = 'prompt tokens processed'
+                        candle_eos_1 = 'tokens generated'
+
+                        if candle_eos in text and candle_eos_1 in text:
                             text = text[:text.index(candle_eos)]
                             text = text[:text.rindex('\n')]
 
@@ -306,7 +345,7 @@ class Server:
         return res
 
 
-    async def _api_1_0_chat_completions(self, ws: web.WebSocketResponse, msg: dict):
+    async def _api_1_0_text_completions(self, ws: web.WebSocketResponse, msg: dict):
         async for chunk in self._run_cmd(msg):
             print(f'chunk: {chunk!r}')
             msg: dict = {'chunk': chunk}
@@ -315,12 +354,67 @@ class Server:
         await ws.close()
 
 
+    def _convert_chat_to_text_message(self, msg: dict) -> dict:
+        messages: list = msg['messages']
+        system_message_text: list[str] = []
+        conversation_text: list[str] = []
+        prompt: list[str] | str = []
+
+        for m in messages:
+            if m['role'] == 'system':
+                system_message_text.append(m['content'])
+                system_message_text.append('\n')
+            elif m['role'] == 'user':
+                conversation_text.append('User: ')
+                conversation_text.append(m['content'])
+                conversation_text.append('\n')
+            elif m['role'] == 'assistant':
+                conversation_text.append('Assistant: ')
+                conversation_text.append(m['content'])
+                conversation_text.append('\n')
+
+        prompt.extend(system_message_text)
+        prompt.extend(conversation_text)
+        prompt = ''.join(prompt)
+
+        chat_msg: dict = {k: v for k, v in msg.items() if k != 'messages'}
+        chat_msg['prompt'] = prompt
+        return chat_msg
+
+
     async def post_api_1_0_text_completions(self, request):
-        raise NotImplementedError
+        data: dict = await request.json()
+        text: list[str] | str = []
+
+        async for chunk in self._run_cmd(data):
+            print(f'chunk: {chunk!r}')
+            text.append(chunk)
+
+        text = ''.join(text)
+
+        res: dict = {
+            'output': text,
+        }
+
+        return web.json_response(res)
 
 
     async def post_api_1_0_chat_completions(self, request):
-        raise NotImplementedError
+        data: dict = await request.json()
+        data = self._convert_chat_to_text_message(data)
+        text: list[str] | str = []
+
+        async for chunk in self._run_cmd(data):
+            print(f'chunk: {chunk!r}')
+            text.append(chunk)
+
+        text = ''.join(text)
+
+        res: dict = {
+            'output': text,
+        }
+
+        return web.json_response(res)
 
 
     async def get_api_1_0_text_completions(self, request):
@@ -334,11 +428,8 @@ class Server:
                     if msg.type == WSMsgType.PING:
                         await ws.pong(msg.data)
                     elif msg.type == WSMsgType.TEXT:
-                        if msg.data == 'close':
-                            await ws.close()
-                        
                         data = json.loads(msg.data)
-                        coro = self._api_1_0_chat_completions(ws, data)
+                        coro = self._api_1_0_text_completions(ws, data)
                         task = tg.create_task(coro)
                     elif msg.type == WSMsgType.ERROR:
                         print(f'[ERROR] websocket closed with exception: {ws.exception()}')
@@ -354,17 +445,45 @@ class Server:
 
 
     async def get_api_1_0_chat_completions(self, request):
-        raise NotImplementedError
+        ws = web.WebSocketResponse()
+        await ws.prepare(request)
+        print(f'[INFO] websocket openned: {ws}')
+        
+        try:
+            async with asyncio.TaskGroup() as tg:
+                async for msg in ws:
+                    if msg.type == WSMsgType.PING:
+                        await ws.pong(msg.data)
+                    elif msg.type == WSMsgType.TEXT:
+                        data = json.loads(msg.data)
+                        data = self._convert_chat_to_text_message(data)
+                        coro = self._api_1_0_text_completions(ws, data)
+                        task = tg.create_task(coro)
+                    elif msg.type == WSMsgType.ERROR:
+                        print(f'[ERROR] websocket closed with exception: {ws.exception()}')
+        except ExceptionGroup as e:
+            traceback.print_exc()
+            print(f'[ERROR] websocket ExceptionGroup: {e}')
+
+            # close ws
+            await ws.close()
+
+        print(f'[INFO] websocket closed: {ws}')
+        return ws
 
 
-    def run(self):
-        self.app.add_routes([
+    def get_routes(self):
+        return [
             web.post('/api/1.0/text/completions', self.post_api_1_0_text_completions),
             web.post('/api/1.0/chat/completions', self.post_api_1_0_chat_completions),
             web.get('/api/1.0/text/completions', self.get_api_1_0_text_completions),
             web.get('/api/1.0/chat/completions', self.get_api_1_0_chat_completions),
-        ])
+        ]
 
+
+    def run(self):
+        routes = self.get_routes()
+        self.app.add_routes(routes)
         web.run_app(self.app, host=self.host, port=self.port)
 
 
@@ -378,7 +497,7 @@ if __name__ == '__main__':
     parser.add_argument('--gguf-models-path', help='gguf models directory path', default='~/models')
     cli_args = parser.parse_args()
 
-    server = Server(
+    server = MLIServer(
         host=cli_args.host,
         port=cli_args.port,
         timeout=cli_args.timeout,
