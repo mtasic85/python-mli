@@ -70,6 +70,9 @@ cargo build -r --bins --examples
 # Run Development Server
 
 ```bash
+git clone https://github.com/mtasic85/mlipy.git
+cd mlipy
+
 python3.11 -m venv venv
 source venv/bin/activate
 pip install poetry
