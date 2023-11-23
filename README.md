@@ -7,9 +7,10 @@ Python-based Machine Learning Interface
 Debian/Ubuntu:
 ```bash
 sudo apt update -y
-apt install build-essential rustc cargo git
+sudo apt install build-essential rustc cargo git
 ```
 
+Arch/Manjaro:
 ```bash
 sudo pacman -Sy base-devel rust cargo rust-wasm wasm-bindgen
 ```
