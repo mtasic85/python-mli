@@ -6,17 +6,36 @@ Python-based Machine Learning Interface
 # Prerequisites
 
 ## Debian/Ubuntu
+
 ```bash
 sudo apt update -y
-sudo apt install build-essential rustc cargo git libssl-dev libffi-dev
+sudo apt install build-essential git curl libssl-dev libffi-dev pkg-config
 ```
 
-1) Using internal repository:
+### Rust
+
+1) Using latest system repository:
+
+```bash
+sudo apt install rustc cargo
+```
+
+2) Install rustup using official instructions:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source "$HOME/.cargo/env"
+rustup default stable
+```
+
+### Python
+
+1) Install Python using internal repository:
 ```bash
 sudo apt install python3.11 python3.11-dev python3.11-venv
 ```
 
-2) Using external repository:
+2) Install Python using external repository:
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update -y
@@ -25,6 +44,8 @@ sudo apt install python3.11 python3.11-dev python3.11-venv
 
 
 ## Arch/Manjaro
+
+### Rust
 
 1) Using latest system-wide rust/cargo:
 ```bash
