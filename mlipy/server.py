@@ -1,3 +1,10 @@
+__all__ = [
+    'LlamaCppParams',
+    'CandleParams',
+    'LLMParams',
+    'MLIServer',
+]
+
 import asyncio
 
 try:
@@ -10,9 +17,39 @@ import json
 import shlex
 import argparse
 import traceback
-from typing import AsyncIterator
+from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 
 from aiohttp import web, WSMsgType
+
+
+class LlamaCppParams(TypedDict):
+    kind: Optional[str]
+    model: Required[str]
+    n_predict: int
+    ctx_size: int
+    batch_size: int
+    temp: float
+    n_gpu_layers: int
+    top_k: int
+    top_p: float
+    stop: Optional[list[str]]
+    prompt: Optional[str]
+    messages: Optional[list[dict]]
+
+
+class CandleParams(TypedDict):
+    kind: Optional[str]
+    model: Optional[str]
+    model_id: Optional[str]
+    temperature: int
+    top_p: int
+    sample_len: int
+    stop: Optional[list[str]]
+    prompt: Optional[str]
+    messages: Optional[list[dict]]
+
+
+LLMParams: type = LlamaCppParams | CandleParams
 
 
 class MLIServer:
@@ -43,7 +80,7 @@ class MLIServer:
         self.lock = asyncio.Lock()
 
 
-    def _format_llama_cpp_cmd(self, kind: str, **kwargs) -> str:
+    def _format_llama_cpp_cmd(self, kind: str, **kwargs: Unpack[LlamaCppParams]) -> str:
         cmd: list[str] | str = []
         
         if kind == 'main':
@@ -82,7 +119,7 @@ class MLIServer:
         return cmd
 
 
-    def _format_candle_cmd(self, kind: str, **kwargs) -> str:
+    def _format_candle_cmd(self, kind: str, **kwargs: Unpack[CandleParams]) -> str:
         cmd: list[str] | str = []
         
         if kind == 'phi':
@@ -196,7 +233,7 @@ class MLIServer:
         return cmd
 
 
-    def _format_cmd(self, msg: dict):
+    def _format_cmd(self, msg: LLMParams):
         engine: str = msg['engine']
         cmd: str
 
@@ -210,7 +247,7 @@ class MLIServer:
         return cmd
 
 
-    async def _run_shell_cmd(self, msg: dict, cmd: str) -> AsyncIterator[str]:
+    async def _run_shell_cmd(self, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
         prompt: str = msg['prompt']
         stop: str = msg.get('stop', [])
         prompt_enc: bytes = prompt.encode()
@@ -341,7 +378,7 @@ class MLIServer:
                     proc = None
 
 
-    def _run_cmd(self, msg: dict) -> AsyncIterator[str]:
+    def _run_cmd(self, msg: LLMParams) -> AsyncIterator[str]:
         engine: str = msg['engine']
         cmd: str = self._format_cmd(msg)
         res: AsyncIterator[str]
@@ -354,7 +391,7 @@ class MLIServer:
         return res
 
 
-    async def _api_1_0_text_completions(self, ws: web.WebSocketResponse, msg: dict):
+    async def _api_1_0_text_completions(self, ws: web.WebSocketResponse, msg: LLMParams):
         async for chunk in self._run_cmd(msg):
             print(f'chunk: {chunk!r}')
             msg: dict = {'chunk': chunk}
@@ -363,7 +400,7 @@ class MLIServer:
         await ws.close()
 
 
-    def _convert_chat_to_text_message(self, msg: dict) -> dict:
+    def _convert_chat_to_text_message(self, msg: LLMParams) -> LLMParams:
         messages: list = msg['messages']
         system_message_text: list[str] = []
         conversation_text: list[str] = []
@@ -392,7 +429,7 @@ class MLIServer:
 
 
     async def post_api_1_0_text_completions(self, request):
-        data: dict = await request.json()
+        data: LLMParams = await request.json()
         text: list[str] | str = []
 
         async for chunk in self._run_cmd(data):
@@ -409,7 +446,7 @@ class MLIServer:
 
 
     async def post_api_1_0_chat_completions(self, request):
-        data: dict = await request.json()
+        data: LLMParams = await request.json()
         data = self._convert_chat_to_text_message(data)
         text: list[str] | str = []
 
@@ -437,7 +474,7 @@ class MLIServer:
                     if msg.type == WSMsgType.PING:
                         await ws.pong(msg.data)
                     elif msg.type == WSMsgType.TEXT:
-                        data = json.loads(msg.data)
+                        data: LLMParams = json.loads(msg.data)
                         coro = self._api_1_0_text_completions(ws, data)
                         task = tg.create_task(coro)
                     elif msg.type == WSMsgType.ERROR:
@@ -464,7 +501,7 @@ class MLIServer:
                     if msg.type == WSMsgType.PING:
                         await ws.pong(msg.data)
                     elif msg.type == WSMsgType.TEXT:
-                        data = json.loads(msg.data)
+                        data: LLMParams = json.loads(msg.data)
                         data = self._convert_chat_to_text_message(data)
                         coro = self._api_1_0_text_completions(ws, data)
                         task = tg.create_task(coro)

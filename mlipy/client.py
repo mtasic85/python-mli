@@ -12,6 +12,12 @@ import json
 from typing import Iterator, AsyncIterator
 
 from aiohttp import ClientSession, WSMsgType
+from langchain.callbacks.manager import CallbackManagerForLLMRun, AsyncCallbackManagerForLLMRun
+from langchain.llms.base import LLM
+from langchain.llms.utils import enforce_stop_tokens
+from langchain.schema.output import GenerationChunk
+
+from .server import LLMParams
 
 
 class BaseMLIClient:
@@ -109,94 +115,124 @@ class AsyncMLIClient(BaseMLIClient):
                         break
 
 
-def sync_demo():
-    sync_client = SyncMLIClient('http://127.0.0.1:5000', 'ws://127.0.0.1:5000')
+class LangchainMLIClient(LLM):
+    endpoint: str = 'http://127.0.0.1:5000'
+    ws_endpoint: str = 'ws://127.0.0.1:5000'
+    verbose: bool = False
 
-    print(sync_client.text(**{
-        "engine": "candle",
-        "kind": "stable-lm",
-        "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "prompt": "Building a website can be done in 10 simple steps:\nStep 1:"
-    }))
+    
+    @property
+    def _llm_type(self) -> str:
+        """Return type of llm."""
+        return 'LangchainMLIClient'
 
-    print(sync_client.chat(**{
-        "engine": "candle",
-        "kind": "stable-lm",
-        "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "I need help building a website."},
-            {"role": "assistant", "content": "Sure, let me know what and hwo do you need it built."},
-            {"role": "user", "content": "Building a website can be done in 10 simple steps. Explain step by step."}
-        ]
-    }))
-
-    # for chunk in sync_client.iter_text(**{
-    #     "engine": "candle",
-    #     "kind": "stable-lm",
-    #     "model_id": "lmz/candle-stablelm-3b-4e1t",
-    #     "prompt": "Building a website can be done in 10 simple steps:\nStep 1:"
-    # }):
-    #     print(chunk)
-
-    # for chunk in sync_client.iter_chat(**{
-    #     "engine": "candle",
-    #     "kind": "stable-lm",
-    #     "model_id": "lmz/candle-stablelm-3b-4e1t",
-    #     "messages": [
-    #         {"role": "system", "content": "You are a helpful assistant."},
-    #         {"role": "user", "content": "I need help building a website."},
-    #         {"role": "assistant", "content": "Sure, let me know what and hwo do you need it built."},
-    #         {"role": "user", "content": "Building a website can be done in 10 simple steps. Explain step by step."}
-    #     ]
-    # }):
-    #     print(chunk)
+    
+    @property
+    def _identifying_params(self) -> Mapping[str, Any]:
+        """Get the identifying parameters."""
+        return {
+            'endpoint': self.endpoint,
+            'ws_endpoint': self.ws_endpoint,
+        }
 
 
-async def async_demo():
-    async_client = AsyncMLIClient('http://127.0.0.1:5000', 'ws://127.0.0.1:5000')
+    def _call(
+        self,
+        prompt: str,
+        stop: Optional[list[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        **kwargs: Unpack[LLMParams],
+    ) -> str:
+        sync_client = SyncMLIClient(self.endpoint, self.ws_endpoint)
+        res: dict = sync_client.text(prompt=prompt, stop=stop, **kwargs)
+        output: str = res['output']
+        logprobs = None
 
-    print(await async_client.text(**{
-        "engine": "candle",
-        "kind": "stable-lm",
-        "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "prompt": "Building a website can be done in 10 simple steps:\nStep 1:"
-    }))
+        if run_manager:
+            run_manager.on_llm_new_token(
+                token=output,
+                verbose=self.verbose,
+                log_probs=logprobs,
+            )
 
-    print(await async_client.chat(**{
-        "engine": "candle",
-        "kind": "stable-lm",
-        "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "I need help building a website."},
-            {"role": "assistant", "content": "Sure, let me know what and hwo do you need it built."},
-            {"role": "user", "content": "Building a website can be done in 10 simple steps. Explain step by step."}
-        ]
-    }))
-
-    async for chunk in async_client.iter_text(**{
-        "engine": "candle",
-        "kind": "stable-lm",
-        "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "prompt": "Building a website can be done in 10 simple steps:\nStep 1:"
-    }):
-        print(chunk)
-
-    async for chunk in async_client.iter_chat(**{
-        "engine": "candle",
-        "kind": "stable-lm",
-        "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "I need help building a website."},
-            {"role": "assistant", "content": "Sure, let me know what and hwo do you need it built."},
-            {"role": "user", "content": "Building a website can be done in 10 simple steps. Explain step by step."}
-        ]
-    }):
-        print(chunk)
+        return output
 
 
-if __name__ == '__main__':
-    sync_demo()
-    asyncio.run(async_demo())
+    async def _acall(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
+        **kwargs: Unpack[LLMParams],
+    ) -> str:
+        """Run the LLM on the given prompt and input."""
+        async_client = AsyncMLIClient(self.endpoint, self.ws_endpoint)
+        res: dict = await async_client.text(prompt=prompt, stop=stop, **kwargs)
+        output: str = res['output']
+        logprobs = None
+
+        if run_manager:
+            await run_manager.on_llm_new_token(
+                token=output,
+                verbose=self.verbose,
+                log_probs=logprobs,
+            )
+
+        return output
+
+
+    def _stream(
+        self,
+        prompt: str,
+        stop: Optional[list[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        **kwargs: Unpack[LLMParams],
+    ) -> Iterator[GenerationChunk]:
+        """Yields results objects as they are generated in real time.
+
+        It also calls the callback manager's on_llm_new_token event with
+        similar parameters to the LLM class method of the same name.
+        """
+        sync_client = SyncMLIClient(self.endpoint, self.ws_endpoint)
+        logprobs = None
+
+        for text in sync_client.iter_text(prompt=prompt, stop=stop, **kwargs):
+            chunk = GenerationChunk(
+                text=text,
+                generation_info={'logprobs': logprobs},
+            )
+
+            yield chunk
+
+            if run_manager:
+                run_manager.on_llm_new_token(
+                    token=chunk.text,
+                    verbose=self.verbose,
+                    log_probs=logprobs,
+                )
+
+
+    async def _astream(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
+        **kwargs: Unpack[LLMParams],
+    ) -> AsyncIterator[GenerationChunk]:
+        async_client = AsyncMLIClient(self.endpoint, self.ws_endpoint)
+        logprobs = None
+
+        async for text in async_client.iter_text(prompt=prompt, stop=stop, **kwargs):
+            chunk = GenerationChunk(
+                text=text,
+                generation_info={'logprobs': logprobs},
+            )
+
+            yield chunk
+
+            if run_manager:
+                await run_manager.on_llm_new_token(
+                    token=chunk.text,
+                    verbose=self.verbose,
+                    log_probs=logprobs,
+                )
