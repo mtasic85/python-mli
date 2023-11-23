@@ -1,3 +1,7 @@
+import asyncio
+
+from mli import AsyncMLIClient
+
 
 async def async_demo():
     async_client = AsyncMLIClient('http://127.0.0.1:5000', 'ws://127.0.0.1:5000')

@@ -248,6 +248,7 @@ class MLIServer:
 
 
     async def _run_shell_cmd(self, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
+        engine: str = msg['engine']
         prompt: str = msg['prompt']
         stop: str = msg.get('stop', [])
         prompt_enc: bytes = prompt.encode()
@@ -267,25 +268,27 @@ class MLIServer:
                         stderr=asyncio.subprocess.PIPE,
                     )
 
-                    # receive original prompt in stdout
-                    # strip original prompt from return
                     prev_buf: bytes
                     buf: bytes
                     text: str
+                    
+                    # receive original prompt in stdout
+                    # strip original prompt from return
+                    if engine == 'llama.cpp':
+                        while not proc.stdout.at_eof():
+                            # stdout
+                            buf = await proc.stdout.read(1024)
+                            stdout += buf
 
-                    while not proc.stdout.at_eof():
-                        # stdout
-                        buf = await proc.stdout.read(1024)
-                        stdout += buf
+                            # skip original prompt
+                            if len(stdout) > len(prompt_enc):
+                                break
 
-                        # skip original prompt
-                        if len(stdout) > len(prompt_enc):
-                            break
+                            await asyncio.sleep(0.2)
 
-                        await asyncio.sleep(0.2)
+                        # yield left-overs from stdout as buf
+                        stdout = stdout[len(prompt_enc):]
 
-                    # yield left-overs from stdout as buf
-                    stdout = stdout[len(prompt_enc):]
                     buf = stdout
                     prev_buf = b''
                     text = stdout.decode()
@@ -305,33 +308,33 @@ class MLIServer:
                             print(f'[ERROR] buf.decode() exception: {e}')
                             continue
 
-                        # NOTE: candle, check 'retrieved the files in' and 'loaded the model in' in first line and strip it
-                        if 'retrieved the files in' in text and text.endswith('\n'):
-                            text = ''
-                        elif 'loaded the model in' and text.endswith('\n'):
-                            text = ''
+                        # # NOTE: candle, check 'retrieved the files in' and 'loaded the model in' in first line and strip it
+                        # if 'retrieved the files in' in text and text.endswith('\n'):
+                        #     text = ''
+                        # elif 'loaded the model in' and text.endswith('\n'):
+                        #     text = ''
 
-                        # NOTE: candle, check 'loaded XYZ tensors' and 'model built\n' in first line and strip it
-                        if 'loaded' in text and 'tensors' in text and text.endswith('\n'):
-                            text = ''
-                        elif 'model built\n' in text:
-                            text = ''
+                        # # NOTE: candle, check 'loaded XYZ tensors' and 'model built\n' in first line and strip it
+                        # if 'loaded' in text and 'tensors' in text and text.endswith('\n'):
+                        #     text = ''
+                        # elif 'model built' in text and text.endswith('\n'):
+                        #     text = ''
 
-                        # NOTE: candle, check 'tokens generated' in last line and strip it
-                        candle_eos = 'tokens generated ('
-                        candle_eos_1 = 'token/s'
+                        # # NOTE: candle, check 'tokens generated' in last line and strip it
+                        # candle_eos = 'tokens generated ('
+                        # candle_eos_1 = 'token/s'
 
-                        if candle_eos in text and candle_eos_1 in text:
-                            text = text[:text.index(candle_eos)]
-                            text = text[:text.rindex('\n')]
+                        # if candle_eos in text and candle_eos_1 in text:
+                        #     text = text[:text.index(candle_eos)]
+                        #     text = text[:text.index('\n') + 1]
 
-                        # NOTE: candle, check 'prompt tokens processed' and 'tokens generated' in last line and strip it
-                        candle_eos = 'prompt tokens processed'
-                        candle_eos_1 = 'tokens generated'
+                        # # NOTE: candle, check 'prompt tokens processed' and 'tokens generated' in last line and strip it
+                        # candle_eos = 'prompt tokens processed'
+                        # candle_eos_1 = 'tokens generated'
 
-                        if candle_eos in text and candle_eos_1 in text:
-                            text = text[:text.index(candle_eos)]
-                            text = text[:text.rindex('\n')]
+                        # if candle_eos in text and candle_eos_1 in text:
+                        #     text = text[:text.index(candle_eos)]
+                        #     text = text[:text.index('\n') + 1]
 
                         prev_buf = b''
                         yield text

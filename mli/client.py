@@ -1,4 +1,4 @@
-__all__ = ['SyncMLIClient', 'AsyncMLIClient']
+__all__ = ['SyncMLIClient', 'AsyncMLIClient', 'LangchainMLIClient']
 
 import asyncio
 
@@ -9,7 +9,9 @@ except ImportError:
     pass
 
 import json
-from typing import Iterator, AsyncIterator
+import time
+import threading
+from typing import Iterator, AsyncIterator, Mapping, Any, Optional, Unpack, Callable
 
 from aiohttp import ClientSession, WSMsgType
 from langchain.callbacks.manager import CallbackManagerForLLMRun, AsyncCallbackManagerForLLMRun
@@ -18,6 +20,50 @@ from langchain.llms.utils import enforce_stop_tokens
 from langchain.schema.output import GenerationChunk
 
 from .server import LLMParams
+
+
+DONE = object()
+
+
+def _async_to_sync_iter(loop: Any, async_iter: AsyncIterator, queue: asyncio.Queue) -> Iterator:
+    t = threading.Thread(target=_run_coroutine, args=(loop, async_iter, queue))
+    t.start()
+
+    while True:
+        if queue.empty():
+            time.sleep(0.001)
+            continue
+
+        item = queue.get_nowait()
+
+        if item is DONE:
+            break
+
+        yield item
+
+    t.join()
+
+
+def _run_coroutine(loop, async_iter, queue):
+    loop.run_until_complete(_consume_async_iterable(async_iter, queue))
+
+
+async def _consume_async_iterable(async_iter, queue):
+    async for item in async_iter:
+        await queue.put(item)
+
+    await queue.put(DONE)
+
+
+def async_to_sync_iter(async_iter: AsyncIterator) -> Callable:
+    queue = asyncio.Queue()
+    
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError as e:
+        loop = asyncio.new_event_loop()
+
+    return _async_to_sync_iter(loop, async_iter, queue)
 
 
 class BaseMLIClient:
@@ -47,15 +93,13 @@ class SyncMLIClient(BaseMLIClient):
 
 
     def iter_text(self, **kwargs) -> Iterator[str]:
-        # for chunk in asyncio.run(self.async_client.iter_text(**kwargs)):
-        #     yield chunk
-        raise NotImplementedError
+        for chunk in async_to_sync_iter(self.async_client.iter_text(**kwargs)):
+            yield chunk
 
 
     def iter_chat(self, **kwargs) -> Iterator[str]:
-        # for chunk in asyncio.run(self.async_client.iter_chat(**kwargs)):
-        #     yield chunk
-        raise NotImplementedError
+        for chunk in async_to_sync_iter(self.async_client.iter_chat(**kwargs)):
+            yield chunk
 
 
 class AsyncMLIClient(BaseMLIClient):
@@ -118,7 +162,7 @@ class AsyncMLIClient(BaseMLIClient):
 class LangchainMLIClient(LLM):
     endpoint: str = 'http://127.0.0.1:5000'
     ws_endpoint: str = 'ws://127.0.0.1:5000'
-    verbose: bool = False
+    streaming: bool = False
 
     
     @property
@@ -143,17 +187,29 @@ class LangchainMLIClient(LLM):
         run_manager: Optional[CallbackManagerForLLMRun] = None,
         **kwargs: Unpack[LLMParams],
     ) -> str:
+        """Run the LLM on the given prompt and input."""
+        print('_call', self)
         sync_client = SyncMLIClient(self.endpoint, self.ws_endpoint)
-        res: dict = sync_client.text(prompt=prompt, stop=stop, **kwargs)
-        output: str = res['output']
-        logprobs = None
 
-        if run_manager:
-            run_manager.on_llm_new_token(
-                token=output,
-                verbose=self.verbose,
-                log_probs=logprobs,
-            )
+        if self.streaming:
+            output: list[str] | str = []
+
+            for chunk in self._stream(prompt=prompt, stop=stop, run_manager=run_manager, **kwargs):
+                output.append(chunk.text)
+
+            output = ''.join(output)
+        else:
+            res: dict = sync_client.text(prompt=prompt, stop=stop, **kwargs)
+            output: str = res['output']
+        
+            logprobs = None
+
+            if run_manager:
+                run_manager.on_llm_new_token(
+                    token=output,
+                    verbose=self.verbose,
+                    log_probs=logprobs,
+                )
 
         return output
 
@@ -161,7 +217,7 @@ class LangchainMLIClient(LLM):
     async def _acall(
         self,
         prompt: str,
-        stop: Optional[List[str]] = None,
+        stop: Optional[list[str]] = None,
         run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
         **kwargs: Unpack[LLMParams],
     ) -> str:
@@ -193,6 +249,7 @@ class LangchainMLIClient(LLM):
         It also calls the callback manager's on_llm_new_token event with
         similar parameters to the LLM class method of the same name.
         """
+        print('_stream', self)
         sync_client = SyncMLIClient(self.endpoint, self.ws_endpoint)
         logprobs = None
 
@@ -215,7 +272,7 @@ class LangchainMLIClient(LLM):
     async def _astream(
         self,
         prompt: str,
-        stop: Optional[List[str]] = None,
+        stop: Optional[list[str]] = None,
         run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
         **kwargs: Unpack[LLMParams],
     ) -> AsyncIterator[GenerationChunk]:

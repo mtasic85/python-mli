@@ -84,7 +84,8 @@ make
 cd ~
 git clone https://github.com/huggingface/candle.git
 cd candle
-cargo build -r --bins --examples
+find candle-examples -type f -exec sed -i 's/println/eprintln/g' {} +
+cargo build -r --examples
 ```
 
 
@@ -98,7 +99,17 @@ python3.11 -m venv venv
 source venv/bin/activate
 pip install poetry
 poetry install
-python -B mlipy/server.py
+python -B mli/server.py
+```
+
+
+# Run Examples
+
+```bash
+python -B examples/sync_demo.py
+python -B examples/async_demo.py
+python -B examples/langchain_sync_demo.py
+python -B examples/langchain_async_demo.py
 ```
 
 
@@ -108,5 +119,5 @@ python -B mlipy/server.py
 python3.11 -m venv venv
 source venv/bin/activate
 pip install -U mlipy
-python -m mlipy.server
+python -B -m mli.server
 ```
