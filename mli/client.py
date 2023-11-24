@@ -222,17 +222,27 @@ class LangchainMLIClient(LLM):
         **kwargs: Unpack[LLMParams],
     ) -> str:
         """Run the LLM on the given prompt and input."""
+        print('_acall', self)
         async_client = AsyncMLIClient(self.endpoint, self.ws_endpoint)
-        res: dict = await async_client.text(prompt=prompt, stop=stop, **kwargs)
-        output: str = res['output']
-        logprobs = None
 
-        if run_manager:
-            await run_manager.on_llm_new_token(
-                token=output,
-                verbose=self.verbose,
-                log_probs=logprobs,
-            )
+        if self.streaming:
+            output: list[str] | str = []
+
+            async for chunk in self._astream(prompt=prompt, stop=stop, run_manager=run_manager, **kwargs):
+                output.append(chunk.text)
+
+            output = ''.join(output)
+        else:
+            res: dict = await async_client.text(prompt=prompt, stop=stop, **kwargs)
+            output: str = res['output']
+            logprobs = None
+
+            if run_manager:
+                await run_manager.on_llm_new_token(
+                    token=output,
+                    verbose=self.verbose,
+                    log_probs=logprobs,
+                )
 
         return output
 
@@ -276,6 +286,7 @@ class LangchainMLIClient(LLM):
         run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
         **kwargs: Unpack[LLMParams],
     ) -> AsyncIterator[GenerationChunk]:
+        print('_astream', self)
         async_client = AsyncMLIClient(self.endpoint, self.ws_endpoint)
         logprobs = None
 

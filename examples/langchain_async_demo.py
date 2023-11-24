@@ -1,11 +1,44 @@
 import asyncio
 
-from langchain.callbacks import StdOutCallbackHandler
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from mli import LangchainMLIClient
 
 
 async def langchain_async_demo():
-    pass
+    callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+
+    llm = LangchainMLIClient(
+        endpoint='http://127.0.0.1:5000',
+        ws_endpoint='ws://127.0.0.1:5000',
+        callback_manager=callback_manager,
+        streaming=True,
+    )
+
+    engine = 'candle'
+    kind = 'stable-lm'
+    model_id = 'lmz/candle-stablelm-3b-4e1t'
+    
+    prompt = PromptTemplate.from_template(
+        template='Building a website can be done in 10 simple steps:\nStep 1:'
+    )
+    prompt.format()
+
+    chain = LLMChain(
+        llm=llm,
+        prompt=prompt,
+        llm_kwargs=dict(
+            engine=engine,
+            kind=kind,
+            model_id=model_id,
+            sample_len=1024,
+        )
+    )
+
+    text = await chain.arun(dummy='')
+    print(text)
 
 
 if __name__ == '__main__':
