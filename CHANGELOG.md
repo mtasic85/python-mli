@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.2
+
+Added:
+    - Examples: sync_demo uses candle/llama.cpp for llama2/mistral/stablelm
+
+Changed:
+    - Server does not assert anymore model names/ids.
+
 ## v0.1.1
 
 Added:
@@ -14,6 +22,7 @@ Changed:
     - Insomnia examples use context size 1024.
     - Package `mlipy` renamed to `mli`.
     - Streaming sync and async langchain functions.
+    - Less noisy output on token generation.
 
 ## v0.1.0
 

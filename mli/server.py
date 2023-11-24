@@ -132,7 +132,7 @@ class MLIServer:
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
             shell_prompt: str = shlex.quote(prompt)
-            assert model in ('1', '1.5', 'puffin-phi-v2', 'phi-hermes')
+            # assert model in ('1', '1.5', 'puffin-phi-v2', 'phi-hermes')
 
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/phi',
@@ -150,7 +150,7 @@ class MLIServer:
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
             shell_prompt: str = shlex.quote(prompt)
-            assert model_id in ('lmz/candle-stablelm-3b-4e1t',)
+            # assert model_id in ('lmz/candle-stablelm-3b-4e1t',)
 
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/stable-lm',
