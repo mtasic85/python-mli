@@ -22,6 +22,9 @@ from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 from aiohttp import web, WSMsgType
 
 
+DEBUG = False
+
+
 class LlamaCppParams(TypedDict):
     kind: Optional[str]
     model: Required[str]
@@ -308,34 +311,6 @@ class MLIServer:
                             print(f'[ERROR] buf.decode() exception: {e}')
                             continue
 
-                        # # NOTE: candle, check 'retrieved the files in' and 'loaded the model in' in first line and strip it
-                        # if 'retrieved the files in' in text and text.endswith('\n'):
-                        #     text = ''
-                        # elif 'loaded the model in' and text.endswith('\n'):
-                        #     text = ''
-
-                        # # NOTE: candle, check 'loaded XYZ tensors' and 'model built\n' in first line and strip it
-                        # if 'loaded' in text and 'tensors' in text and text.endswith('\n'):
-                        #     text = ''
-                        # elif 'model built' in text and text.endswith('\n'):
-                        #     text = ''
-
-                        # # NOTE: candle, check 'tokens generated' in last line and strip it
-                        # candle_eos = 'tokens generated ('
-                        # candle_eos_1 = 'token/s'
-
-                        # if candle_eos in text and candle_eos_1 in text:
-                        #     text = text[:text.index(candle_eos)]
-                        #     text = text[:text.index('\n') + 1]
-
-                        # # NOTE: candle, check 'prompt tokens processed' and 'tokens generated' in last line and strip it
-                        # candle_eos = 'prompt tokens processed'
-                        # candle_eos_1 = 'tokens generated'
-
-                        # if candle_eos in text and candle_eos_1 in text:
-                        #     text = text[:text.index(candle_eos)]
-                        #     text = text[:text.index('\n') + 1]
-
                         prev_buf = b''
                         yield text
 
@@ -396,7 +371,9 @@ class MLIServer:
 
     async def _api_1_0_text_completions(self, ws: web.WebSocketResponse, msg: LLMParams):
         async for chunk in self._run_cmd(msg):
-            print(f'chunk: {chunk!r}')
+            if DEBUG:
+                print(f'chunk: {chunk!r}')
+
             msg: dict = {'chunk': chunk}
             await ws.send_json(msg)
 
@@ -436,7 +413,9 @@ class MLIServer:
         text: list[str] | str = []
 
         async for chunk in self._run_cmd(data):
-            print(f'chunk: {chunk!r}')
+            if DEBUG:
+                print(f'chunk: {chunk!r}')
+
             text.append(chunk)
 
         text = ''.join(text)
@@ -454,7 +433,9 @@ class MLIServer:
         text: list[str] | str = []
 
         async for chunk in self._run_cmd(data):
-            print(f'chunk: {chunk!r}')
+            if DEBUG:
+                print(f'chunk: {chunk!r}')
+
             text.append(chunk)
 
         text = ''.join(text)
