@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mli"
+name = "mlipy"
 version = "0.1.1"
 description = "Python-based Machine Learning Interface"
 homepage = "https://github.com/mtasic85/mlipy"
