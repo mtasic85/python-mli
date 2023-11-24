@@ -10,7 +10,7 @@ async def async_demo():
         "engine": "candle",
         "kind": "stable-lm",
         "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "sample_len": 1024,
+        "sample_len": 512,
         "prompt": "Building a website can be done in 10 simple steps:\nStep 1:"
     }))
 
@@ -18,7 +18,7 @@ async def async_demo():
         "engine": "candle",
         "kind": "stable-lm",
         "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "sample_len": 1024,
+        "sample_len": 512,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "I need help building a website."},
@@ -31,7 +31,7 @@ async def async_demo():
         "engine": "candle",
         "kind": "stable-lm",
         "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "sample_len": 1024,
+        "sample_len": 512,
         "prompt": "Building a website can be done in 10 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
@@ -40,7 +40,7 @@ async def async_demo():
         "engine": "candle",
         "kind": "stable-lm",
         "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "sample_len": 1024,
+        "sample_len": 512,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "I need help building a website."},

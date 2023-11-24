@@ -71,13 +71,20 @@ class BaseMLIClient:
     ws_endpoint: str
 
 
-    def __init__(self, endpoint: str, ws_endpoint: str):
+    def __init__(self, endpoint: str, ws_endpoint: str | None=None):
         self.endpoint = endpoint
+
+        if ws_endpoint is None:
+            if endpoint.startswith('http://'):
+                ws_endpoint = 'ws://' + endpoint[len('http://'):]
+            elif endpoint.startswith('https://'):
+                ws_endpoint = 'wss://' + endpoint[len('https://'):]
+        
         self.ws_endpoint = ws_endpoint
 
 
 class SyncMLIClient(BaseMLIClient):
-    def __init__(self, endpoint: str, ws_endpoint: str):
+    def __init__(self, endpoint: str, ws_endpoint: str | None=None):
         super().__init__(endpoint, ws_endpoint)
         self.async_client = AsyncMLIClient(endpoint, ws_endpoint)
 
@@ -161,7 +168,6 @@ class AsyncMLIClient(BaseMLIClient):
 
 class LangchainMLIClient(LLM):
     endpoint: str = 'http://127.0.0.1:5000'
-    ws_endpoint: str = 'ws://127.0.0.1:5000'
     streaming: bool = False
 
     
@@ -176,7 +182,6 @@ class LangchainMLIClient(LLM):
         """Get the identifying parameters."""
         return {
             'endpoint': self.endpoint,
-            'ws_endpoint': self.ws_endpoint,
         }
 
 
@@ -189,7 +194,7 @@ class LangchainMLIClient(LLM):
     ) -> str:
         """Run the LLM on the given prompt and input."""
         print('_call', self)
-        sync_client = SyncMLIClient(self.endpoint, self.ws_endpoint)
+        sync_client = SyncMLIClient(self.endpoint)
 
         if self.streaming:
             output: list[str] | str = []
@@ -223,7 +228,7 @@ class LangchainMLIClient(LLM):
     ) -> str:
         """Run the LLM on the given prompt and input."""
         print('_acall', self)
-        async_client = AsyncMLIClient(self.endpoint, self.ws_endpoint)
+        async_client = AsyncMLIClient(self.endpoint)
 
         if self.streaming:
             output: list[str] | str = []
@@ -260,7 +265,7 @@ class LangchainMLIClient(LLM):
         similar parameters to the LLM class method of the same name.
         """
         print('_stream', self)
-        sync_client = SyncMLIClient(self.endpoint, self.ws_endpoint)
+        sync_client = SyncMLIClient(self.endpoint)
         logprobs = None
 
         for text in sync_client.iter_text(prompt=prompt, stop=stop, **kwargs):
@@ -287,7 +292,7 @@ class LangchainMLIClient(LLM):
         **kwargs: Unpack[LLMParams],
     ) -> AsyncIterator[GenerationChunk]:
         print('_astream', self)
-        async_client = AsyncMLIClient(self.endpoint, self.ws_endpoint)
+        async_client = AsyncMLIClient(self.endpoint)
         logprobs = None
 
         async for text in async_client.iter_text(prompt=prompt, stop=stop, **kwargs):

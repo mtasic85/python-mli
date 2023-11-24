@@ -1,6 +1,23 @@
 # python-mli
 
-Python-based Machine Learning Interface
+<!--
+[![Build][build-image]]()
+[![Status][status-image]][pypi-project-url]
+[![Stable Version][stable-ver-image]][pypi-project-url]
+[![Coverage][coverage-image]]()
+[![Python][python-ver-image]][pypi-project-url]
+[![License][mit-image]][mit-url]
+-->
+[![Downloads](https://img.shields.io/pypi/dm/mlipy)](https://pypistats.org/packages/mlipy)
+[![Supported Versions](https://img.shields.io/pypi/pyversions/mlipy)](https://pypi.org/project/mlipy)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+Pure **Python**-based **Machine Learning Interface** for multiple engines with multi-modal support.
+
+Python HTTP Server/Client (including WebSocket streaming support) for:
+- [candle](https://github.com/huggingface/candle)
+- [llama.cpp](https://github.com/ggerganov/llama.cpp)
+- [LangChain](https://python.langchain.com)
 
 
 # Prerequisites

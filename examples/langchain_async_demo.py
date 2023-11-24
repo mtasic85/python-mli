@@ -33,7 +33,7 @@ async def langchain_async_demo():
             engine=engine,
             kind=kind,
             model_id=model_id,
-            sample_len=1024,
+            sample_len=512,
         )
     )
 

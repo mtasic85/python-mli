@@ -10,8 +10,10 @@ Added:
 Changed:
     - Client examples.
     - Server: data/msg of type LLMParams.
+    - Examples use context size 512.
     - Insomnia examples use context size 1024.
     - Package `mlipy` renamed to `mli`.
+    - Streaming sync and async langchain functions.
 
 ## v0.1.0
 

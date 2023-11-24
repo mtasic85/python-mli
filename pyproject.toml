@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mli"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python-based Machine Learning Interface"
 homepage = "https://github.com/mtasic85/mlipy"
 repository = "https://github.com/mtasic85/mlipy"
