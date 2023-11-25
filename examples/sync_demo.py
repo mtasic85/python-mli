@@ -170,6 +170,22 @@ def sync_demo_llama_cpp_main_stablelm():
     }):
         print(chunk, sep='', end='', flush=True)
 
+    for chunk in sync_client.iter_chat(**{
+        "engine": "llama.cpp",
+        "kind": "main",
+        "n_gpu_layers": 35,
+        "model": "rocket-3b.Q4_K_M.gguf",
+        "model_id": "TheBloke/rocket-3B-GGUF",
+        "sample_len": 3 * 1024,
+        "messages": [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "I need help building a website."},
+            {"role": "assistant", "content": "Sure, let me know what and hwo do you need it built."},
+            {"role": "user", "content": "Building a perfect e-commerce website in 1234 simple steps. Explain step by step."}
+        ]
+    }):
+        print(chunk, sep='', end='', flush=True)
+
 
 if __name__ == '__main__':
     # sync_demo_candle_codellama()
