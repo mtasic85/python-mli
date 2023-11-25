@@ -165,7 +165,7 @@ def sync_demo_llama_cpp_main_stablelm():
         "n_gpu_layers": 35,
         "model": "rocket-3b.Q4_K_M.gguf",
         "model_id": "TheBloke/rocket-3B-GGUF",
-        "sample_len": 4 * 1024,
+        "sample_len": 3 * 1024,
         "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
@@ -176,7 +176,7 @@ if __name__ == '__main__':
     # sync_demo_candle_llama()
     # sync_demo_candle_mistral()
     # sync_demo_candle_phi()
-    sync_demo_candle_stable_lm()
+    # sync_demo_candle_stable_lm()
     # sync_demo_candle_quantized()
     # sync_demo_llama_cpp_main_llama()
-    # sync_demo_llama_cpp_main_stablelm()
+    sync_demo_llama_cpp_main_stablelm()
