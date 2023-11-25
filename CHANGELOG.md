@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.7
+
+Added:
+    - Server: `LlamaCppParams` now supports `chatml`.
+
 ## v0.1.6
 
 Added:

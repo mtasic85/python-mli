@@ -31,13 +31,14 @@ class LlamaCppParams(TypedDict):
     kind: Optional[str]
     model: Optional[str]
     model_id: Optional[str]
+    chatml: Optional[bool]
     n_predict: int
     ctx_size: int
-    batch_size: int
+    batch_size: Optional[int]
     temp: float
-    n_gpu_layers: int
-    top_k: int
-    top_p: float
+    n_gpu_layers: Optional[int]
+    top_k: Optional[int]
+    top_p: Optional[float]
     stop: Optional[list[str]]
     prompt: Optional[str]
     messages: Optional[list[dict]]
@@ -48,7 +49,7 @@ class CandleParams(TypedDict):
     model: Optional[str]
     model_id: Optional[str]
     temperature: int
-    top_p: int
+    top_p: Optional[int]
     sample_len: int
     quantized: Optional[bool]
     use_flash_attn: Optional[bool]
@@ -92,6 +93,7 @@ class MLIServer:
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
             model_id: str | None = kwargs.get('model_id')
+            chatml: bool | None = bool(kwargs.get('chatml', False))
             n_predict: int = int(kwargs.get('n_predict', '-1'))
             ctx_size: int = int(kwargs.get('ctx_size', '2048'))
             batch_size: int = int(kwargs.get('batch_size', '512'))
@@ -99,16 +101,27 @@ class MLIServer:
             n_gpu_layers: int = int(kwargs.get('n_gpu_layers', '0'))
             top_k: int = int(kwargs.get('top_k', '40'))
             top_p: float = float(kwargs.get('top_p', '0.9'))
+            
+            # shell_prompt
             shell_prompt: str = shlex.quote(prompt)
 
+            # model_path
             if model_id:
                 model_path = try_to_load_from_cache(repo_id=model_id, filename=model)
             else:
                 model_path = model
 
             cmd.extend([
-                f'{self.llama_cpp_path}/main',
+                f'{self.llama_cpp_path}/{kind}',
                 '--model', model_path,
+            ])
+
+            if chatml:
+                cmd.extend([
+                    '--chatml',
+                ])
+
+            cmd.extend([
                 '--n-predict', n_predict,
                 '--ctx-size', ctx_size,
                 '--batch-size', batch_size,
@@ -116,8 +129,6 @@ class MLIServer:
                 '--n-gpu-layers', n_gpu_layers,
                 '--top-k', top_k,
                 '--top-p', top_p,
-                # '--mlock',
-                # '--no-mmap',
                 '--simple-io',
                 '--log-disable',
                 '--prompt', shell_prompt,
@@ -125,8 +136,7 @@ class MLIServer:
         else:
             raise ValueError(f'Unsupported kind: {kind}')
 
-        cmd = [str(n) for n in cmd]
-        cmd = ' '.join(cmd)
+        cmd = ' '.join(str(n) for n in cmd)
         return cmd
 
 
@@ -140,6 +150,8 @@ class MLIServer:
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
             quantized: bool = bool(kwargs.get('quantized', False))
+
+            # shell_prompt
             shell_prompt: str = shlex.quote(prompt)
             
             cmd.extend([
@@ -166,6 +178,8 @@ class MLIServer:
             sample_len: int = int(kwargs.get('sample_len', '100'))
             quantized: bool = bool(kwargs.get('quantized', False))
             use_flash_attn: bool = bool(kwargs.get('use_flash_attn', False))
+
+            # shell_prompt
             shell_prompt: str = shlex.quote(prompt)
             
             cmd.extend([
@@ -196,6 +210,8 @@ class MLIServer:
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
             use_flash_attn: bool = bool(kwargs.get('use_flash_attn', False))
+
+            # shell_prompt
             shell_prompt: str = shlex.quote(prompt)
 
             cmd.extend([
@@ -229,6 +245,8 @@ class MLIServer:
             sample_len: int = int(kwargs.get('sample_len', '100'))
             quantized: bool = bool(kwargs.get('quantized', False))
             use_flash_attn: bool = bool(kwargs.get('use_flash_attn', False))
+
+            # shell_prompt
             shell_prompt: str = shlex.quote(prompt)
 
             cmd.extend([
@@ -266,6 +284,8 @@ class MLIServer:
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
+
+            # shell_prompt
             shell_prompt: str = shlex.quote(prompt)
 
             if model_id:
@@ -284,8 +304,7 @@ class MLIServer:
         else:
             raise ValueError(f'Unsupported kind: {kind}')
 
-        cmd = [str(n) for n in cmd]
-        cmd = ' '.join(cmd)
+        cmd = ' '.join(str(n) for n in cmd)
         return cmd
 
 
@@ -304,8 +323,8 @@ class MLIServer:
 
 
     async def _run_shell_cmd(self, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
-        engine: str = msg['engine']
-        kind: str = msg['kind']
+        # engine: str = msg['engine']
+        # kind: str = msg['kind']
         prompt: str = msg['prompt']
         stop: str = msg.get('stop', [])
         prompt_enc: bytes = prompt.encode()
@@ -408,7 +427,7 @@ class MLIServer:
                 finally:
                     proc = None
 
-            stderr = stderr.decode()
+            stderr = '...' + stderr.decode()[-1024:]
             print('[DEBUG] stderr:')
             print(stderr)
 

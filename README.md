@@ -132,6 +132,7 @@ Download models:
 # phi
 huggingface-cli download microsoft/phi-1_5
 huggingface-cli download lmz/candle-quantized-phi
+huggingface-cli download Open-Orca/oo-phi-1_5
 
 # stable-lm
 huggingface-cli download stabilityai/stablelm-3b-4e1t
@@ -156,6 +157,9 @@ huggingface-cli download TheBloke/rocket-3B-GGUF rocket-3b.Q4_K_M.gguf
 # code mistral-based
 # huggingface-cli download codellama/CodeLlama-7b-Python-hf
 huggingface-cli download TheBloke/sqlcoder-7B-GGUF sqlcoder-7b.Q4_K_M.gguf
+huggingface-cli download TheBloke/deepseek-coder-1.3b-instruct-GGUF deepseek-coder-1.3b-instruct.Q4_K_M.gguf
+huggingface-cli download TheBloke/deepseek-coder-6.7B-instruct-GGUF deepseek-coder-6.7b-instruct.Q4_K_M.gguf
+huggingface-cli download TheBloke/tora-code-7B-v1.0-GGUF tora-code-7b-v1.0.Q4_K_M.gguf
 ```
 
 Run server:
@@ -175,7 +179,7 @@ python -B examples/langchain_async_demo.py
 ```
 
 
-# Run mlipy Server
+# Run Production Server
 
 ```bash
 python3.11 -m venv venv
