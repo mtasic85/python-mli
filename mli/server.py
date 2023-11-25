@@ -392,8 +392,6 @@ class MLIServer:
             else:
                 model_path = model
 
-            
-
         if engine in ('llama.cpp', 'candle'):
             res = self._run_shell_cmd(msg, cmd)
         else:
