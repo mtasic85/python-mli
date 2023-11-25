@@ -104,7 +104,8 @@ cd ~
 git clone https://github.com/huggingface/candle.git
 cd candle
 find candle-examples -type f -exec sed -i 's/println/eprintln/g' {} +
-cargo build -r --examples
+cargo clean
+cargo build -r --bins --examples
 ```
 
 
@@ -145,6 +146,7 @@ huggingface-cli download TheBloke/Yarn-Llama-2-7B-128K-GGUF yarn-llama-2-7b-128k
 huggingface-cli download TheBloke/rocket-3B-GGUF rocket-3b.Q4_K_M.gguf
 
 # code mistral-based
+# huggingface-cli download codellama/CodeLlama-7b-Python-hf
 huggingface-cli download TheBloke/sqlcoder-7B-GGUF sqlcoder-7b.Q4_K_M.gguf
 ```
 

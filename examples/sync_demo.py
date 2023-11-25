@@ -74,7 +74,7 @@ def sync_demo_candle_quantized():
         "engine": "candle",
         "kind": "quantized",
         # "model": "mistral-7b-v0.1.Q4_K_M.gguf", # bad
-        "model": "orca-2-7b.Q4_K_M.gguf", # good
+        "model_id": "TheBloke/Orca-2-7B-GGUF", "model": "orca-2-7b.Q4_K_M.gguf", # good
         # "model": "yarn-llama-2-7b-128k.Q4_K_M.gguf", # good
         # "model": "rocket-3b.Q4_K_M.gguf", # bad
         "sample_len": 4 * 1024,
@@ -83,18 +83,8 @@ def sync_demo_candle_quantized():
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_llama_cpp_main_llama2():
+def sync_demo_llama_cpp_main_llama():
     sync_client = SyncMLIClient('http://127.0.0.1:5000')
-
-    print(sync_client.text(**{
-        "engine": "llama.cpp",
-        "kind": "main",
-        "n_gpu_layers": 35,
-        # "model": "orca-2-7b.Q4_K_M.gguf", "model_id": "TheBloke/Orca-2-7B-GGUF",
-        "model": "rocket-3b.Q4_K_M.gguf", "model_id": "TheBloke/rocket-3b-GGUF",
-        "sample_len": 4 * 1024,
-        "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
-    }))
 
     for chunk in sync_client.iter_text(**{
         "engine": "llama.cpp",
@@ -106,6 +96,16 @@ def sync_demo_llama_cpp_main_llama2():
         "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
+
+    print(sync_client.text(**{
+        "engine": "llama.cpp",
+        "kind": "main",
+        "n_gpu_layers": 35,
+        # "model": "orca-2-7b.Q4_K_M.gguf", "model_id": "TheBloke/Orca-2-7B-GGUF",
+        "model": "rocket-3b.Q4_K_M.gguf", "model_id": "TheBloke/rocket-3b-GGUF",
+        "sample_len": 4 * 1024,
+        "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
+    }))
 
 
 def sync_demo_llama_cpp_main_stablelm():
@@ -124,10 +124,10 @@ def sync_demo_llama_cpp_main_stablelm():
 
 
 if __name__ == '__main__':
-    # sync_demo_candle_codellama()
+    sync_demo_candle_codellama()
     # sync_demo_candle_llama()
-    sync_demo_candle_mistral()
+    # sync_demo_candle_mistral()
     # sync_demo_candle_stable_lm()
     # sync_demo_candle_quantized()
-    # sync_demo_llama_cpp_main_llama2()
+    # sync_demo_llama_cpp_main_llama()
     # sync_demo_llama_cpp_main_stablelm()

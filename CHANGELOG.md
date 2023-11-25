@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.4
+
+Changed:
+    - Client: auto-prefix (http / https) for BaseMLIClient's argument `endpoint`.
+
+Fixed:
+    - Removing echo-ed prompt to stdout for both `candle` and `llama.cpp`.
+
 ## v0.1.3
 
 Added:

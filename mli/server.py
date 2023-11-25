@@ -163,7 +163,7 @@ class MLIServer:
                 '--top-p', top_p,
                 '--sample-len', sample_len,
                 '--quantized',
-                '--use-flash-attn',
+                # '--use-flash-attn',
                 '--prompt', shell_prompt,
             ])
         elif kind == 'llama':
@@ -187,7 +187,7 @@ class MLIServer:
                 '--temperature', temperature,
                 '--top-p', top_p,
                 '--sample-len', sample_len,
-                '--use-flash-attn',
+                # '--use-flash-attn',
                 '--prompt', shell_prompt,
             ])
         elif kind == 'mistral':
@@ -212,7 +212,7 @@ class MLIServer:
                 '--top-p', top_p,
                 '--sample-len', sample_len,
                 '--quantized',
-                '--use-flash-attn',
+                # '--use-flash-attn',
                 '--prompt', shell_prompt,
             ])
         elif kind == 'quantized':
@@ -265,9 +265,9 @@ class MLIServer:
         prompt: str = msg['prompt']
         stop: str = msg.get('stop', [])
         prompt_enc: bytes = prompt.encode()
-        shell_prompt: str = shlex.quote(prompt)
         stop_enc = None if stop is None else [n.encode() for n in stop]
         stdout: bytes = b''
+        stderr: bytes = b''
 
         print(f'[DEBUG] _run_shell_cmd: {cmd}')
 
@@ -287,23 +287,22 @@ class MLIServer:
                     
                     # receive original prompt in stdout
                     # strip original prompt from return
-                    if engine == 'llama.cpp':
-                        while not proc.stdout.at_eof():
-                            # stdout
-                            buf = await proc.stdout.read(1024)
-                            stdout += buf
+                    while not proc.stdout.at_eof():
+                        # stdout
+                        buf = await proc.stdout.read(1024)
+                        stdout += buf
+                    
+                        # skip original prompt
+                        if len(stdout) > len(prompt_enc):
+                            break
 
-                            # skip original prompt
-                            if len(stdout) > len(prompt_enc):
-                                break
+                        await asyncio.sleep(0.2)
 
-                            await asyncio.sleep(0.2)
-
-                        # yield left-overs from stdout as buf
-                        stdout = stdout[len(prompt_enc):]
+                    # yield left-overs from stdout as buf
+                    stdout = stdout[len(prompt_enc):]
 
                     buf = stdout
-                    prev_buf = b''
+                    prev_buf = buf
                     text = stdout.decode()
                     # yield text
 

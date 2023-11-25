@@ -72,8 +72,17 @@ class BaseMLIClient:
 
 
     def __init__(self, endpoint: str, ws_endpoint: str | None=None):
+        # endpoint
+        if not (endpoint.startswith('http://') or endpoint.startswith('https://')):
+            # check if IPv4 address
+            if endpoint.replace('.', '').isnumeric():
+                endpoint = 'http://' + endpoint
+            else:
+                endpoint = 'https://' + endpoint
+
         self.endpoint = endpoint
 
+        # ws_endpoint
         if ws_endpoint is None:
             if endpoint.startswith('http://'):
                 ws_endpoint = 'ws://' + endpoint[len('http://'):]
