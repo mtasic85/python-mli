@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.1.5
+
+Added:
+    - Server: `CandleParams` support now `quantized` and `use_flash_attn`.
+    - Examples: Default ENDPOINT to `http://127.0.0.1:5000`.
+
 ## v0.1.4
 
 Changed:

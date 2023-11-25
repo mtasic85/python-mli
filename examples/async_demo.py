@@ -3,8 +3,11 @@ import asyncio
 from mli import AsyncMLIClient
 
 
+ENDPOINT = 'http://127.0.0.1:5000'
+
+
 async def async_demo():
-    async_client = AsyncMLIClient('http://127.0.0.1:5000', 'ws://127.0.0.1:5000')
+    async_client = AsyncMLIClient(ENDPOINT)
 
     async for chunk in async_client.iter_text(**{
         "engine": "candle",

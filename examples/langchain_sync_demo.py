@@ -3,12 +3,14 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from mli import LangchainMLIClient
 
 
+ENDPOINT = 'http://127.0.0.1:5000'
+
+
 def langchain_sync_demo():
     callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 
     llm = LangchainMLIClient(
-        endpoint='http://127.0.0.1:5000',
-        ws_endpoint='ws://127.0.0.1:5000',
+        endpoint=ENDPOINT,
         callback_manager=callback_manager,
         streaming=True,
     )

@@ -50,6 +50,8 @@ class CandleParams(TypedDict):
     temperature: int
     top_p: int
     sample_len: int
+    quantized: Optional[bool]
+    use_flash_attn: Optional[bool]
     stop: Optional[list[str]]
     prompt: Optional[str]
     messages: Optional[list[dict]]
@@ -137,6 +139,7 @@ class MLIServer:
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
+            quantized: bool = bool(kwargs.get('quantized', False))
             shell_prompt: str = shlex.quote(prompt)
             
             cmd.extend([
@@ -145,7 +148,14 @@ class MLIServer:
                 '--temperature', temperature,
                 '--top-p', top_p,
                 '--sample-len', sample_len,
-                '--quantized',
+            ])
+            
+            if quantized:
+                cmd.extend([
+                    '--quantized',
+                ])
+
+            cmd.extend([
                 '--prompt', shell_prompt,
             ])
         elif kind == 'stable-lm':
@@ -154,6 +164,8 @@ class MLIServer:
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
+            quantized: bool = bool(kwargs.get('quantized', False))
+            use_flash_attn: bool = bool(kwargs.get('use_flash_attn', False))
             shell_prompt: str = shlex.quote(prompt)
             
             cmd.extend([
@@ -162,8 +174,19 @@ class MLIServer:
                 '--temperature', temperature,
                 '--top-p', top_p,
                 '--sample-len', sample_len,
-                '--quantized',
-                # '--use-flash-attn',
+            ])
+            
+            if quantized:
+                cmd.extend([
+                    '--quantized',
+                ])
+            
+            if use_flash_attn:
+                cmd.extend([
+                    '--use-flash-attn',
+                ])
+
+            cmd.extend([
                 '--prompt', shell_prompt,
             ])
         elif kind == 'llama':
@@ -172,6 +195,7 @@ class MLIServer:
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
+            use_flash_attn: bool = bool(kwargs.get('use_flash_attn', False))
             shell_prompt: str = shlex.quote(prompt)
 
             cmd.extend([
@@ -187,7 +211,14 @@ class MLIServer:
                 '--temperature', temperature,
                 '--top-p', top_p,
                 '--sample-len', sample_len,
-                # '--use-flash-attn',
+            ])
+            
+            if use_flash_attn:
+                cmd.extend([
+                    '--use-flash-attn',
+                ])
+
+            cmd.extend([
                 '--prompt', shell_prompt,
             ])
         elif kind == 'mistral':
@@ -196,6 +227,8 @@ class MLIServer:
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
+            quantized: bool = bool(kwargs.get('quantized', False))
+            use_flash_attn: bool = bool(kwargs.get('use_flash_attn', False))
             shell_prompt: str = shlex.quote(prompt)
 
             cmd.extend([
@@ -211,8 +244,19 @@ class MLIServer:
                 '--temperature', temperature,
                 '--top-p', top_p,
                 '--sample-len', sample_len,
-                '--quantized',
-                # '--use-flash-attn',
+            ])
+            
+            if quantized:
+                cmd.extend([
+                    '--quantized',
+                ])
+
+            if use_flash_attn:
+                cmd.extend([
+                    '--use-flash-attn',
+                ])
+
+            cmd.extend([
                 '--prompt', shell_prompt,
             ])
         elif kind == 'quantized':

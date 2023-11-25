@@ -1,8 +1,11 @@
 from mli import SyncMLIClient
 
 
+ENDPOINT = 'http://127.0.0.1:5000'
+
+
 def sync_demo_candle_codellama():
-    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+    sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(**{
         "engine": "candle",
@@ -15,7 +18,7 @@ def sync_demo_candle_codellama():
 
 
 def sync_demo_candle_llama():
-    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+    sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(**{
         "engine": "candle",
@@ -28,7 +31,7 @@ def sync_demo_candle_llama():
 
 
 def sync_demo_candle_mistral():
-    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+    sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(**{
         "engine": "candle",
@@ -40,8 +43,39 @@ def sync_demo_candle_mistral():
         print(chunk, sep='', end='', flush=True)
 
 
+def sync_demo_candle_phi():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(**{
+        "engine": "candle",
+        "kind": "phi",
+        "model": "1.5",
+        "model_id": "microsoft/phi-1_5",
+        "sample_len": 2 * 1024,
+        "quantized": True,
+        "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
+    }):
+        print(chunk, sep='', end='', flush=True)
+
+    for chunk in sync_client.iter_chat(**{
+        "engine": "candle",
+        "kind": "phi",
+        "model": "1.5",
+        "model_id": "microsoft/phi-1_5",
+        "sample_len": 2 * 1024,
+        "quantized": True,
+        "messages": [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "I need help building a website."},
+            {"role": "assistant", "content": "Sure, let me know what and hwo do you need it built."},
+            {"role": "user", "content": "Building a perfect e-commerce website in 1234 simple steps. Explain step by step."}
+        ]
+    }):
+        print(chunk, sep='', end='', flush=True)
+
+
 def sync_demo_candle_stable_lm():
-    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+    sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(**{
         "engine": "candle",
@@ -68,7 +102,7 @@ def sync_demo_candle_stable_lm():
 
 
 def sync_demo_candle_quantized():
-    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+    sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(**{
         "engine": "candle",
@@ -84,7 +118,7 @@ def sync_demo_candle_quantized():
 
 
 def sync_demo_llama_cpp_main_llama():
-    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+    sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(**{
         "engine": "llama.cpp",
@@ -109,7 +143,7 @@ def sync_demo_llama_cpp_main_llama():
 
 
 def sync_demo_llama_cpp_main_stablelm():
-    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+    sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(**{
         "engine": "llama.cpp",
@@ -124,9 +158,10 @@ def sync_demo_llama_cpp_main_stablelm():
 
 
 if __name__ == '__main__':
-    sync_demo_candle_codellama()
+    # sync_demo_candle_codellama()
     # sync_demo_candle_llama()
     # sync_demo_candle_mistral()
+    sync_demo_candle_phi()
     # sync_demo_candle_stable_lm()
     # sync_demo_candle_quantized()
     # sync_demo_llama_cpp_main_llama()

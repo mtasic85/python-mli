@@ -129,6 +129,14 @@ Download models:
 # NOTE: login in case you need to accept terms and conditions for some models
 # huggingface-cli login
 
+# phi
+huggingface-cli download microsoft/phi-1_5
+huggingface-cli download lmz/candle-quantized-phi
+
+# stable-lm
+huggingface-cli download stabilityai/stablelm-3b-4e1t
+huggingface-cli download lmz/candle-stablelm-3b-4e1t
+
 # mistral
 huggingface-cli download TheBloke/Mistral-7B-v0.1-GGUF mistral-7b-v0.1.Q4_K_M.gguf
 huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.1-GGUF mistral-7b-instruct-v0.1.Q4_K_M.gguf
