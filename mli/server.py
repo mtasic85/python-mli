@@ -408,6 +408,10 @@ class MLIServer:
                 finally:
                     proc = None
 
+            stderr = stderr.decode()
+            print('[DEBUG] stderr:')
+            print(stderr)
+
 
     def _run_cmd(self, msg: LLMParams) -> AsyncIterator[str]:
         engine: str = msg['engine']

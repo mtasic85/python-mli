@@ -50,9 +50,11 @@ def sync_demo_candle_phi():
         "engine": "candle",
         "kind": "phi",
         "model": "1.5",
-        "model_id": "microsoft/phi-1_5",
+        # "model_id": "microsoft/phi-1_5",
+        "model_id": "lmz/candle-quantized-phi",
         "sample_len": 2 * 1024,
-        "quantized": True,
+        # "quantized": True,
+        "quantized": False,
         "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
@@ -61,9 +63,11 @@ def sync_demo_candle_phi():
         "engine": "candle",
         "kind": "phi",
         "model": "1.5",
-        "model_id": "microsoft/phi-1_5",
+        # "model_id": "microsoft/phi-1_5",
+        "model_id": "lmz/candle-quantized-phi",
         "sample_len": 2 * 1024,
-        "quantized": True,
+        # "quantized": True,
+        "quantized": False,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "I need help building a website."},
@@ -81,7 +85,12 @@ def sync_demo_candle_stable_lm():
         "engine": "candle",
         "kind": "stable-lm",
         "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "sample_len": 4 * 1024,
+        # "model_id": "stabilityai/stablelm-3b-4e1t",
+        "sample_len": 2 * 1024,
+        # "quantized": True,
+        # "use_flash_attn": False,
+        "quantized": False,
+        # "use_flash_attn": True,
         "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
@@ -90,7 +99,12 @@ def sync_demo_candle_stable_lm():
         "engine": "candle",
         "kind": "stable-lm",
         "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "sample_len": 4 * 1024,
+        # "model_id": "stabilityai/stablelm-3b-4e1t",
+        "sample_len": 2 * 1024,
+        # "quantized": True,
+        # "use_flash_attn": False,
+        "quantized": False,
+        # "use_flash_attn": True,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "I need help building a website."},
@@ -161,8 +175,8 @@ if __name__ == '__main__':
     # sync_demo_candle_codellama()
     # sync_demo_candle_llama()
     # sync_demo_candle_mistral()
-    sync_demo_candle_phi()
-    # sync_demo_candle_stable_lm()
+    # sync_demo_candle_phi()
+    sync_demo_candle_stable_lm()
     # sync_demo_candle_quantized()
     # sync_demo_llama_cpp_main_llama()
     # sync_demo_llama_cpp_main_stablelm()

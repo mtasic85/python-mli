@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.6
+
+Added:
+    - Print `stderr` to debug output of ML engines.
+
+Changed:
+    - Examples: sync_demo.py, try `quantized` and `use_flash_attn`.
+
 ## v0.1.5
 
 Added:
