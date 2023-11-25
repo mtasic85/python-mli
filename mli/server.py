@@ -13,6 +13,7 @@ try:
 except ImportError:
     pass
 
+import os
 import json
 import shlex
 import argparse
@@ -20,14 +21,16 @@ import traceback
 from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 
 from aiohttp import web, WSMsgType
+from huggingface_hub import hf_hub_download, try_to_load_from_cache
 
 
-DEBUG = False
+DEBUG = True
 
 
 class LlamaCppParams(TypedDict):
     kind: Optional[str]
-    model: Required[str]
+    model: Optional[str]
+    model_id: Optional[str]
     n_predict: int
     ctx_size: int
     batch_size: int
@@ -61,7 +64,6 @@ class MLIServer:
     timeout: float
     candle_path: str
     llama_cpp_path: str
-    gguf_models_path: str
     app: web.Application
     lock: asyncio.Lock
 
@@ -71,14 +73,12 @@ class MLIServer:
                  port=5000,
                  timeout: float=90.0,
                  candle_path: str | None=None,
-                 llama_cpp_path: str | None=None,
-                 gguf_models_path: str | None=None):
+                 llama_cpp_path: str | None=None):
         self.host = host
         self.port = port
         self.timeout = timeout
         self.candle_path = candle_path
         self.llama_cpp_path = llama_cpp_path
-        self.gguf_models_path = gguf_models_path
         self.app = web.Application()
         self.lock = asyncio.Lock()
 
@@ -89,6 +89,7 @@ class MLIServer:
         if kind == 'main':
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
+            model_id: str | None = kwargs.get('model_id')
             n_predict: int = int(kwargs.get('n_predict', '-1'))
             ctx_size: int = int(kwargs.get('ctx_size', '2048'))
             batch_size: int = int(kwargs.get('batch_size', '512'))
@@ -98,9 +99,14 @@ class MLIServer:
             top_p: float = float(kwargs.get('top_p', '0.9'))
             shell_prompt: str = shlex.quote(prompt)
 
+            if model_id:
+                model_path = try_to_load_from_cache(repo_id=model_id, filename=model)
+            else:
+                model_path = model
+
             cmd.extend([
                 f'{self.llama_cpp_path}/main',
-                '--model', f'{self.gguf_models_path}/{model}',
+                '--model', model_path,
                 '--n-predict', n_predict,
                 '--ctx-size', ctx_size,
                 '--batch-size', batch_size,
@@ -132,8 +138,7 @@ class MLIServer:
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
             shell_prompt: str = shlex.quote(prompt)
-            # assert model in ('1', '1.5', 'puffin-phi-v2', 'phi-hermes')
-
+            
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/phi',
                 '--model', model,
@@ -150,8 +155,7 @@ class MLIServer:
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
             shell_prompt: str = shlex.quote(prompt)
-            # assert model_id in ('lmz/candle-stablelm-3b-4e1t',)
-
+            
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/stable-lm',
                 '--model-id', model_id,
@@ -171,7 +175,31 @@ class MLIServer:
             shell_prompt: str = shlex.quote(prompt)
 
             cmd.extend([
-                f'{self.candle_path}/target/release/examples/stable-lm',
+                f'{self.candle_path}/target/release/examples/llama',
+            ])
+
+            if model_id:
+                cmd.extend([
+                    '--model-id', model_id
+                ])
+
+            cmd.extend([
+                '--temperature', temperature,
+                '--top-p', top_p,
+                '--sample-len', sample_len,
+                '--use-flash-attn',
+                '--prompt', shell_prompt,
+            ])
+        elif kind == 'mistral':
+            prompt: str = kwargs['prompt']
+            model_id: str = kwargs.get('model_id')
+            temperature: int = float(kwargs.get('temperature', '0.8'))
+            top_p: int = float(kwargs.get('top_p', '0.9'))
+            sample_len: int = int(kwargs.get('sample_len', '100'))
+            shell_prompt: str = shlex.quote(prompt)
+
+            cmd.extend([
+                f'{self.candle_path}/target/release/examples/mistral',
             ])
 
             if model_id:
@@ -190,42 +218,23 @@ class MLIServer:
         elif kind == 'quantized':
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
+            model_id: str | None = kwargs.get('model_id')
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
             shell_prompt: str = shlex.quote(prompt)
+
+            if model_id:
+                model_path = try_to_load_from_cache(repo_id=model_id, filename=model)
+            else:
+                model_path = model
 
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/quantized',
-                '--model', f'{self.gguf_models_path}/{model}',
+                '--model', model_path,
                 '--temperature', temperature,
                 '--top-p', top_p,
                 '--sample-len', sample_len,
-                '--prompt', shell_prompt,
-            ])
-        elif kind == 'mistral':
-            prompt: str = kwargs['prompt']
-            model_id: str = kwargs.get('model_id')
-            temperature: int = float(kwargs.get('temperature', '0.8'))
-            top_p: int = float(kwargs.get('top_p', '0.9'))
-            sample_len: int = int(kwargs.get('sample_len', '100'))
-            shell_prompt: str = shlex.quote(prompt)
-
-            cmd.extend([
-                f'{self.candle_path}/target/release/examples/stable-lm',
-            ])
-
-            if model_id:
-                cmd.extend([
-                    '--model-id', model_id
-                ])
-
-            cmd.extend([
-                '--temperature', temperature,
-                '--top-p', top_p,
-                '--sample-len', sample_len,
-                '--quantized',
-                '--use-flash-attn',
                 '--prompt', shell_prompt,
             ])
         else:
@@ -252,6 +261,7 @@ class MLIServer:
 
     async def _run_shell_cmd(self, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
         engine: str = msg['engine']
+        kind: str = msg['kind']
         prompt: str = msg['prompt']
         stop: str = msg.get('stop', [])
         prompt_enc: bytes = prompt.encode()
@@ -358,8 +368,31 @@ class MLIServer:
 
     def _run_cmd(self, msg: LLMParams) -> AsyncIterator[str]:
         engine: str = msg['engine']
+        kind: str = msg['kind']
         cmd: str = self._format_cmd(msg)
         res: AsyncIterator[str]
+
+        if (engine == 'llama.cpp' and 'model_id' in msg) or (engine == 'candle' and kind == 'quantized' and 'model_id' in msg):
+            model_id = msg['model_id']
+            model = msg['model']
+            
+            if model_id:
+                # download GGUF model only if it does not exist
+                model_path = try_to_load_from_cache(repo_id=model_id, filename=model)
+
+                if not isinstance(model_path, str):
+                    print(f'[WARN] could not find model: {model_path}')
+
+                    try:
+                        hf_hub_download(repo_id=model_id, filename=model)
+                    except Exception as e:
+                        print(f'{e = }')
+                else:
+                    print(f'[INFO] found model: {model_path}')
+            else:
+                model_path = model
+
+            
 
         if engine in ('llama.cpp', 'candle'):
             res = self._run_shell_cmd(msg, cmd)
@@ -525,16 +558,14 @@ if __name__ == '__main__':
     parser.add_argument('--timeout', help='llama.cpp timeout in seconds', default=300.0, type=float)
     parser.add_argument('--candle-path', help='candle directory path', default='~/candle')
     parser.add_argument('--llama-cpp-path', help='llama.cpp directory path', default='~/llama.cpp')
-    parser.add_argument('--gguf-models-path', help='gguf models directory path', default='~/models')
     cli_args = parser.parse_args()
 
     server = MLIServer(
         host=cli_args.host,
         port=cli_args.port,
         timeout=cli_args.timeout,
-        candle_path=cli_args.candle_path,
-        llama_cpp_path=cli_args.llama_cpp_path,
-        gguf_models_path=cli_args.gguf_models_path,
+        candle_path=os.path.expanduser(cli_args.candle_path),
+        llama_cpp_path=os.path.expanduser(cli_args.llama_cpp_path),
     )
 
     server.run()

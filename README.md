@@ -29,6 +29,7 @@ sudo apt update -y
 sudo apt install build-essential git curl libssl-dev libffi-dev pkg-config
 ```
 
+
 ### Rust
 
 1) Using latest system repository:
@@ -44,6 +45,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
 rustup default stable
 ```
+
 
 ### Python
 
@@ -94,27 +96,6 @@ cd llama.cpp
 make
 ```
 
-Download models:
-
-```bash
-mkdir -p ~/models
-cd ~/models
-
-# mistral
-wget https://huggingface.co/TheBloke/Mistral-7B-v0.1-GGUF/resolve/main/mistral-7b-v0.1.Q4_K_M.gguf
-wget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf
-wget https://huggingface.co/TheBloke/zephyr-7B-beta-GGUF/resolve/main/zephyr-7b-beta.Q4_K_M.gguf
-wget https://huggingface.co/TheBloke/Yarn-Mistral-7B-128k-GGUF/resolve/main/yarn-mistral-7b-128k.Q4_K_M.gguf
-
-# llama2
-wget https://huggingface.co/TheBloke/Orca-2-7B-GGUF/resolve/main/orca-2-7b.Q4_K_M.gguf
-wget https://huggingface.co/TheBloke/Llama-2-7B-GGUF/resolve/main/llama-2-7b.Q4_K_M.gguf
-wget https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_K_M.gguf
-wget https://huggingface.co/TheBloke/Yarn-Llama-2-7B-128K-GGUF/resolve/main/yarn-llama-2-7b-128k.Q4_K_M.gguf
-
-# stable-lm
-wget https://huggingface.co/TheBloke/rocket-3B-GGUF/resolve/main/rocket-3b.Q4_K_M.gguf
-```
 
 # candle
 
@@ -129,6 +110,8 @@ cargo build -r --examples
 
 # Run Development Server
 
+Setup virtualenv and install requirements:
+
 ```bash
 git clone https://github.com/mtasic85/mlipy.git
 cd mlipy
@@ -137,6 +120,37 @@ python3.11 -m venv venv
 source venv/bin/activate
 pip install poetry
 poetry install
+```
+
+Download models:
+
+```bash
+# NOTE: login in case you need to accept terms and conditions for some models
+# huggingface-cli login
+
+# mistral
+huggingface-cli download TheBloke/Mistral-7B-v0.1-GGUF mistral-7b-v0.1.Q4_K_M.gguf
+huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.1-GGUF mistral-7b-instruct-v0.1.Q4_K_M.gguf
+huggingface-cli download TheBloke/zephyr-7B-beta-GGUF zephyr-7b-beta.Q4_K_M.gguf
+huggingface-cli download TheBloke/Yarn-Mistral-7B-128k-GGUF yarn-mistral-7b-128k.Q4_K_M.gguf
+
+# llama2
+# huggingface-cli download meta-llama/Llama-2-7b-hf
+huggingface-cli download TheBloke/Orca-2-7B-GGUF orca-2-7b.Q4_K_M.gguf
+huggingface-cli download TheBloke/Llama-2-7B-GGUF llama-2-7b.Q4_K_M.gguf
+huggingface-cli download TheBloke/Llama-2-7B-Chat-GGUF llama-2-7b-chat.Q4_K_M.gguf
+huggingface-cli download TheBloke/Yarn-Llama-2-7B-128K-GGUF yarn-llama-2-7b-128k.Q4_K_M.gguf
+
+# stable-lm
+huggingface-cli download TheBloke/rocket-3B-GGUF rocket-3b.Q4_K_M.gguf
+
+# code mistral-based
+huggingface-cli download TheBloke/sqlcoder-7B-GGUF sqlcoder-7b.Q4_K_M.gguf
+```
+
+Run server:
+
+```bash
 python -B mli/server.py
 ```
 

@@ -1,6 +1,45 @@
 from mli import SyncMLIClient
 
 
+def sync_demo_candle_codellama():
+    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+
+    for chunk in sync_client.iter_text(**{
+        "engine": "candle",
+        "kind": "llama",
+        "model_id": "codellama/CodeLlama-7b-Python-hf",
+        "sample_len": 4 * 1024,
+        "prompt": "Lets write python web app for bookstore using aiohttp and pandas. Create dataframes for Users, Books, Rentals, Transactions and Ratings."
+    }):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_candle_llama():
+    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+
+    for chunk in sync_client.iter_text(**{
+        "engine": "candle",
+        "kind": "llama",
+        "model_id": "meta-llama/Llama-2-7b-hf",
+        "sample_len": 4 * 1024,
+        "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
+    }):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_candle_mistral():
+    sync_client = SyncMLIClient('http://127.0.0.1:5000')
+
+    for chunk in sync_client.iter_text(**{
+        "engine": "candle",
+        "kind": "mistral",
+        "model_id": "lmz/candle-mistral",
+        "sample_len": 4 * 1024,
+        "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
+    }):
+        print(chunk, sep='', end='', flush=True)
+
+
 def sync_demo_candle_stable_lm():
     sync_client = SyncMLIClient('http://127.0.0.1:5000')
 
@@ -8,7 +47,7 @@ def sync_demo_candle_stable_lm():
         "engine": "candle",
         "kind": "stable-lm",
         "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "sample_len": 8 * 1024,
+        "sample_len": 4 * 1024,
         "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
@@ -17,7 +56,7 @@ def sync_demo_candle_stable_lm():
         "engine": "candle",
         "kind": "stable-lm",
         "model_id": "lmz/candle-stablelm-3b-4e1t",
-        "sample_len": 8 * 1024,
+        "sample_len": 4 * 1024,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "I need help building a website."},
@@ -28,7 +67,7 @@ def sync_demo_candle_stable_lm():
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_candle_llama():
+def sync_demo_candle_quantized():
     sync_client = SyncMLIClient('http://127.0.0.1:5000')
 
     for chunk in sync_client.iter_text(**{
@@ -38,7 +77,7 @@ def sync_demo_candle_llama():
         "model": "orca-2-7b.Q4_K_M.gguf", # good
         # "model": "yarn-llama-2-7b-128k.Q4_K_M.gguf", # good
         # "model": "rocket-3b.Q4_K_M.gguf", # bad
-        "sample_len": 8 * 1024,
+        "sample_len": 4 * 1024,
         "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
@@ -47,12 +86,23 @@ def sync_demo_candle_llama():
 def sync_demo_llama_cpp_main_llama2():
     sync_client = SyncMLIClient('http://127.0.0.1:5000')
 
+    print(sync_client.text(**{
+        "engine": "llama.cpp",
+        "kind": "main",
+        "n_gpu_layers": 35,
+        # "model": "orca-2-7b.Q4_K_M.gguf", "model_id": "TheBloke/Orca-2-7B-GGUF",
+        "model": "rocket-3b.Q4_K_M.gguf", "model_id": "TheBloke/rocket-3b-GGUF",
+        "sample_len": 4 * 1024,
+        "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
+    }))
+
     for chunk in sync_client.iter_text(**{
         "engine": "llama.cpp",
         "kind": "main",
         "n_gpu_layers": 35,
-        "model": "orca-2-7b.Q4_K_M.gguf",
-        "sample_len": 8 * 1024,
+        # "model": "orca-2-7b.Q4_K_M.gguf", "model_id": "TheBloke/Orca-2-7B-GGUF",
+        "model": "rocket-3b.Q4_K_M.gguf", "model_id": "TheBloke/rocket-3b-GGUF",
+        "sample_len": 4 * 1024,
         "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
@@ -66,14 +116,18 @@ def sync_demo_llama_cpp_main_stablelm():
         "kind": "main",
         "n_gpu_layers": 35,
         "model": "rocket-3b.Q4_K_M.gguf",
-        "sample_len": 8 * 1024,
+        "model_id": "TheBloke/rocket-3B-GGUF",
+        "sample_len": 4 * 1024,
         "prompt": "Building a perfect e-commerce website in 1234 simple steps:\nStep 1:"
     }):
         print(chunk, sep='', end='', flush=True)
 
 
 if __name__ == '__main__':
-    sync_demo_candle_stable_lm()
-    sync_demo_candle_llama()
-    sync_demo_llama_cpp_main_llama2()
-    sync_demo_llama_cpp_main_stablelm()
+    # sync_demo_candle_codellama()
+    # sync_demo_candle_llama()
+    sync_demo_candle_mistral()
+    # sync_demo_candle_stable_lm()
+    # sync_demo_candle_quantized()
+    # sync_demo_llama_cpp_main_llama2()
+    # sync_demo_llama_cpp_main_stablelm()

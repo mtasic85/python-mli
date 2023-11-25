@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v0.1.3
+
+Added:
+    - Server: download `GGUF` model if it does not exist using `huggingface-hub`.
+    - Examples: `candle`-based sync examples `codellama`, `llama`, `mistral`.
+
+Changed:
+    - Instructions how to pre-download `GGUF` models required for `llama.cpp`.
+
+Deprecated:
+    - Server: `GGUF` model path is not passed anymore.
+
+Fixed:
+    - Server: engine `candle`, kind `llama`.
+    - Server: engine `candle`, kind `mistral`.
+
 ## v0.1.2
 
 Added:
