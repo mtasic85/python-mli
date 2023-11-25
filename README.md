@@ -131,8 +131,8 @@ Download models:
 
 # phi
 huggingface-cli download microsoft/phi-1_5
-huggingface-cli download lmz/candle-quantized-phi
 huggingface-cli download Open-Orca/oo-phi-1_5
+huggingface-cli download lmz/candle-quantized-phi
 
 # stable-lm
 huggingface-cli download stabilityai/stablelm-3b-4e1t
@@ -150,8 +150,11 @@ huggingface-cli download TheBloke/Orca-2-7B-GGUF orca-2-7b.Q4_K_M.gguf
 huggingface-cli download TheBloke/Llama-2-7B-GGUF llama-2-7b.Q4_K_M.gguf
 huggingface-cli download TheBloke/Llama-2-7B-Chat-GGUF llama-2-7b-chat.Q4_K_M.gguf
 huggingface-cli download TheBloke/Yarn-Llama-2-7B-128K-GGUF yarn-llama-2-7b-128k.Q4_K_M.gguf
+huggingface-cli download afrideva/TinyLlama-1.1B-Chat-v0.6-GGUF tinyllama-1.1b-chat-v0.6.q4_k_m.gguf
+huggingface-cli download afrideva/TinyLlama-1.1B-intermediate-step-955k-token-2T-GGUF tinyllama-1.1b-intermediate-step-955k-token-2t.q4_k_m.gguf
 
 # stable-lm
+huggingface-cli download afrideva/stablelm-3b-4e1t-GGUF stablelm-3b-4e1t.q4_k_m.gguf
 huggingface-cli download TheBloke/rocket-3B-GGUF rocket-3b.Q4_K_M.gguf
 
 # code mistral-based
