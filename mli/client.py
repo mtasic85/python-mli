@@ -126,7 +126,7 @@ class AsyncMLIClient(BaseMLIClient):
         url: str = f'{self.endpoint}/text/completions'
 
         async with ClientSession() as session:
-            async with session.post(url, json=kwargs) as resp:
+            async with session.post(url, json=kwargs, verify_ssl=False) as resp:
                 data = await resp.json()
 
         return data
@@ -136,7 +136,7 @@ class AsyncMLIClient(BaseMLIClient):
         url: str = f'{self.endpoint}/chat/completions'
 
         async with ClientSession() as session:
-            async with session.post(url, json=kwargs) as resp:
+            async with session.post(url, json=kwargs, verify_ssl=False) as resp:
                 data = await resp.json()
 
         return data
@@ -146,7 +146,7 @@ class AsyncMLIClient(BaseMLIClient):
         url: str = f'{self.ws_endpoint}/text/completions'
         
         async with ClientSession() as session:
-            async with session.ws_connect(url) as ws:
+            async with session.ws_connect(url, verify_ssl=False) as ws:
                 await ws.send_json(kwargs)
 
                 async for msg in ws:
@@ -164,7 +164,7 @@ class AsyncMLIClient(BaseMLIClient):
         url: str = f'{self.ws_endpoint}/chat/completions'
         
         async with ClientSession() as session:
-            async with session.ws_connect(url) as ws:
+            async with session.ws_connect(url, verify_ssl=False) as ws:
                 await ws.send_json(kwargs)
 
                 async for msg in ws:

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.9
+
+Changed:
+    - Client: Allow to access endpoints without checking for SSL, `verify_ssl=False`.
+
 ## v0.1.8
 
 Changed:
