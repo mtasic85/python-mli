@@ -59,16 +59,6 @@ async def async_demo_candle_stable_lm():
 async def async_demo_llama_cpp_main_stable_lm():
     async_client = AsyncMLIClient(ENDPOINT)
 
-    print(await async_client.text(
-        engine='llama.cpp',
-        kind='main',
-        n_gpu_layers=35,
-        model_id='TheBloke/rocket-3B-GGUF',
-        model='rocket-3b.Q4_K_M.gguf',
-        sample_len=3 * 1024,
-        prompt='Building a perfect e-commerce website in 1234 simple steps:\nStep 1:',
-    ))
-
     async for chunk in async_client.iter_text(
        engine='llama.cpp',
         kind='main',
@@ -95,6 +85,16 @@ async def async_demo_llama_cpp_main_stable_lm():
         ],
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print(await async_client.text(
+        engine='llama.cpp',
+        kind='main',
+        n_gpu_layers=35,
+        model_id='TheBloke/rocket-3B-GGUF',
+        model='rocket-3b.Q4_K_M.gguf',
+        sample_len=3 * 1024,
+        prompt='Building a perfect e-commerce website in 1234 simple steps:\nStep 1:',
+    ))
 
     print(await async_client.chat(
         engine='llama.cpp',
