@@ -1,7 +1,7 @@
 from mli import SyncMLIClient
 
 
-ENDPOINT = 'http://127.0.0.1:5000'
+ENDPOINT = 'http://127.0.0.1:5000/api/1.0'
 
 
 def sync_demo_candle_codellama():

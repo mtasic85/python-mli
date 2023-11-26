@@ -123,7 +123,7 @@ class SyncMLIClient(BaseMLIClient):
 
 class AsyncMLIClient(BaseMLIClient):
     async def text(self, **kwargs: Unpack[LLMParams]) -> str:
-        url: str = f'{self.endpoint}/api/1.0/text/completions'
+        url: str = f'{self.endpoint}/text/completions'
 
         async with ClientSession() as session:
             async with session.post(url, json=kwargs) as resp:
@@ -133,7 +133,7 @@ class AsyncMLIClient(BaseMLIClient):
 
 
     async def chat(self, **kwargs: Unpack[LLMParams]) -> str:
-        url: str = f'{self.endpoint}/api/1.0/chat/completions'
+        url: str = f'{self.endpoint}/chat/completions'
 
         async with ClientSession() as session:
             async with session.post(url, json=kwargs) as resp:
@@ -143,7 +143,7 @@ class AsyncMLIClient(BaseMLIClient):
 
 
     async def iter_text(self, **kwargs: Unpack[LLMParams]) -> AsyncIterator[str]:
-        url: str = f'{self.ws_endpoint}/api/1.0/text/completions'
+        url: str = f'{self.ws_endpoint}/text/completions'
         
         async with ClientSession() as session:
             async with session.ws_connect(url) as ws:
@@ -161,7 +161,7 @@ class AsyncMLIClient(BaseMLIClient):
 
 
     async def iter_chat(self, **kwargs: Unpack[LLMParams]) -> AsyncIterator[str]:
-        url: str = f'{self.ws_endpoint}/api/1.0/chat/completions'
+        url: str = f'{self.ws_endpoint}/chat/completions'
         
         async with ClientSession() as session:
             async with session.ws_connect(url) as ws:
@@ -179,7 +179,7 @@ class AsyncMLIClient(BaseMLIClient):
 
 
 class LangchainMLIClient(LLM):
-    endpoint: str = 'http://127.0.0.1:5000'
+    endpoint: str = 'http://127.0.0.1:5000/api/1.0'
     streaming: bool = False
 
     

@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.8
+
+Changed:
+    - Server: ENDPOINT needs to end with suffix like `/api/1.0`.
+
+Fixed:
+    - Server: disabled `traceback` module usage.
+
 ## v0.1.7
 
 Added:
