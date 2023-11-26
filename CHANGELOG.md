@@ -3,7 +3,21 @@
 ## v0.1.7
 
 Added:
-    - Server: `LlamaCppParams` now supports `chatml`.
+    - Server: `LlamaCppParams` support for `chatml` parameter.
+    - Server: `CandleParams` support for `cpu` parameter.
+
+Changed:
+    - Example: `sync_demo.py` now uses kwargs instead of unpacking dict.
+    - Server: Raise Error in case model does not exist.
+    - mli: `params.py` types in separate module.
+
+Fixed:
+    - Server: Fixed memory leak on WebSocket routes.
+    - Server: Wrong first characters of prompt output.
+    - Client: IPv4 with PORT gets `http://` prefix.
+
+Security:
+    - Removed auto-download using `hf_hub_download` models because of securty risks.
 
 ## v0.1.6
 

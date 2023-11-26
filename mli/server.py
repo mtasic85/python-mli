@@ -1,7 +1,4 @@
 __all__ = [
-    'LlamaCppParams',
-    'CandleParams',
-    'LLMParams',
     'MLIServer',
 ]
 
@@ -17,48 +14,17 @@ import os
 import json
 import shlex
 import argparse
-import traceback
+# import traceback
+from weakref import WeakKeyDictionary
 from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 
 from aiohttp import web, WSMsgType
-from huggingface_hub import hf_hub_download, try_to_load_from_cache
+from huggingface_hub import try_to_load_from_cache
+
+from .params import LlamaCppParams, CandleParams, LLMParams
 
 
-DEBUG = True
-
-
-class LlamaCppParams(TypedDict):
-    kind: Optional[str]
-    model: Optional[str]
-    model_id: Optional[str]
-    chatml: Optional[bool]
-    n_predict: int
-    ctx_size: int
-    batch_size: Optional[int]
-    temp: float
-    n_gpu_layers: Optional[int]
-    top_k: Optional[int]
-    top_p: Optional[float]
-    stop: Optional[list[str]]
-    prompt: Optional[str]
-    messages: Optional[list[dict]]
-
-
-class CandleParams(TypedDict):
-    kind: Optional[str]
-    model: Optional[str]
-    model_id: Optional[str]
-    temperature: int
-    top_p: Optional[int]
-    sample_len: int
-    quantized: Optional[bool]
-    use_flash_attn: Optional[bool]
-    stop: Optional[list[str]]
-    prompt: Optional[str]
-    messages: Optional[list[dict]]
-
-
-LLMParams: type = LlamaCppParams | CandleParams
+DEBUG = int(os.getenv('DEBUG', 0))
 
 
 class MLIServer:
@@ -69,6 +35,7 @@ class MLIServer:
     llama_cpp_path: str
     app: web.Application
     lock: asyncio.Lock
+    ws_proc_map: WeakKeyDictionary
 
 
     def __init__(self,
@@ -84,6 +51,7 @@ class MLIServer:
         self.llama_cpp_path = llama_cpp_path
         self.app = web.Application()
         self.lock = asyncio.Lock()
+        self.ws_proc_map = WeakKeyDictionary()
 
 
     def _format_llama_cpp_cmd(self, kind: str, **kwargs: Unpack[LlamaCppParams]) -> str:
@@ -146,6 +114,7 @@ class MLIServer:
         if kind == 'phi':
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
+            cpu: bool = bool(kwargs.get('cpu', False))
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
@@ -156,6 +125,14 @@ class MLIServer:
             
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/phi',
+            ])
+
+            if cpu:
+                cmd.extend([
+                    '--cpu',
+                ])
+
+            cmd.extend([
                 '--model', model,
                 '--temperature', temperature,
                 '--top-p', top_p,
@@ -173,6 +150,7 @@ class MLIServer:
         elif kind == 'stable-lm':
             prompt: str = kwargs['prompt']
             model_id: str = kwargs.get('model_id', 'lmz/candle-stablelm-3b-4e1t')
+            cpu: bool = bool(kwargs.get('cpu', False))
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
@@ -184,6 +162,14 @@ class MLIServer:
             
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/stable-lm',
+            ])
+
+            if cpu:
+                cmd.extend([
+                    '--cpu',
+                ])
+
+            cmd.extend([
                 '--model-id', model_id,
                 '--temperature', temperature,
                 '--top-p', top_p,
@@ -206,6 +192,7 @@ class MLIServer:
         elif kind == 'llama':
             prompt: str = kwargs['prompt']
             model_id: str = kwargs.get('model_id')
+            cpu: bool = bool(kwargs.get('cpu', False))
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
@@ -217,6 +204,11 @@ class MLIServer:
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/llama',
             ])
+
+            if cpu:
+                cmd.extend([
+                    '--cpu',
+                ])
 
             if model_id:
                 cmd.extend([
@@ -240,6 +232,7 @@ class MLIServer:
         elif kind == 'mistral':
             prompt: str = kwargs['prompt']
             model_id: str = kwargs.get('model_id')
+            cpu: bool = bool(kwargs.get('cpu', False))
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
@@ -252,6 +245,11 @@ class MLIServer:
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/mistral',
             ])
+
+            if cpu:
+                cmd.extend([
+                    '--cpu',
+                ])
 
             if model_id:
                 cmd.extend([
@@ -281,6 +279,7 @@ class MLIServer:
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
             model_id: str | None = kwargs.get('model_id')
+            cpu: bool = bool(kwargs.get('cpu', False))
             temperature: int = float(kwargs.get('temperature', '0.8'))
             top_p: int = float(kwargs.get('top_p', '0.9'))
             sample_len: int = int(kwargs.get('sample_len', '100'))
@@ -295,6 +294,14 @@ class MLIServer:
 
             cmd.extend([
                 f'{self.candle_path}/target/release/examples/quantized',
+            ])
+
+            if cpu:
+                cmd.extend([
+                    '--cpu',
+                ])
+
+            cmd.extend([
                 '--model', model_path,
                 '--temperature', temperature,
                 '--top-p', top_p,
@@ -322,17 +329,14 @@ class MLIServer:
         return cmd
 
 
-    async def _run_shell_cmd(self, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
-        # engine: str = msg['engine']
-        # kind: str = msg['kind']
+    async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
         prompt: str = msg['prompt']
         stop: str = msg.get('stop', [])
         prompt_enc: bytes = prompt.encode()
         stop_enc = None if stop is None else [n.encode() for n in stop]
         stdout: bytes = b''
         stderr: bytes = b''
-
-        print(f'[DEBUG] _run_shell_cmd: {cmd}')
+        print(f'[DEBUG] _run_shell_cmd {ws} {msg} {cmd}')
 
         async with self.lock:
             try:
@@ -344,12 +348,15 @@ class MLIServer:
                         stderr=asyncio.subprocess.PIPE,
                     )
 
-                    prev_buf: bytes
-                    buf: bytes
-                    text: str
+                    # associate ws with proc
+                    if ws is not None:
+                        self.ws_proc_map[ws] = proc
                     
                     # receive original prompt in stdout
                     # strip original prompt from return
+                    prev_buf: bytes
+                    buf: bytes
+
                     while not proc.stdout.at_eof():
                         # stdout
                         buf = await proc.stdout.read(1024)
@@ -362,14 +369,12 @@ class MLIServer:
                         await asyncio.sleep(0.2)
 
                     # yield left-overs from stdout as buf
-                    stdout = stdout[len(prompt_enc):]
-
-                    buf = stdout
-                    prev_buf = buf
-                    text = stdout.decode()
-                    # yield text
+                    stdout = stdout[stdout.index(prompt_enc) + len(prompt_enc):]
 
                     # read rest of tokens
+                    prev_buf = stdout
+                    buf = b''
+                    text: str = stdout.decode()
                     stopped: bool = False
 
                     while not proc.stdout.at_eof():
@@ -432,42 +437,35 @@ class MLIServer:
             print(stderr)
 
 
-    def _run_cmd(self, msg: LLMParams) -> AsyncIterator[str]:
+    def _run_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams) -> AsyncIterator[str]:
         engine: str = msg['engine']
         kind: str = msg['kind']
         cmd: str = self._format_cmd(msg)
         res: AsyncIterator[str]
+        assert engine in ('llama.cpp', 'candle')
 
         if (engine == 'llama.cpp' and 'model_id' in msg) or (engine == 'candle' and kind == 'quantized' and 'model_id' in msg):
             model_id = msg['model_id']
             model = msg['model']
             
             if model_id:
-                # download GGUF model only if it does not exist
+                # check if model exists
                 model_path = try_to_load_from_cache(repo_id=model_id, filename=model)
 
                 if not isinstance(model_path, str):
-                    print(f'[WARN] could not find model: {model_path}')
-
-                    try:
-                        hf_hub_download(repo_id=model_id, filename=model)
-                    except Exception as e:
-                        print(f'{e = }')
+                    raise ValueError(f'Model missing: {model_path}')
                 else:
                     print(f'[INFO] found model: {model_path}')
             else:
+                # FIXME: check if model exists
                 model_path = model
 
-        if engine in ('llama.cpp', 'candle'):
-            res = self._run_shell_cmd(msg, cmd)
-        else:
-            raise ValueError(f'Unknown engine: {engine}')
-
+        res = self._run_shell_cmd(ws, msg, cmd)
         return res
 
 
     async def _api_1_0_text_completions(self, ws: web.WebSocketResponse, msg: LLMParams):
-        async for chunk in self._run_cmd(msg):
+        async for chunk in self._run_cmd(ws, msg):
             if DEBUG:
                 print(f'chunk: {chunk!r}')
 
@@ -509,7 +507,7 @@ class MLIServer:
         data: LLMParams = await request.json()
         text: list[str] | str = []
 
-        async for chunk in self._run_cmd(data):
+        async for chunk in self._run_cmd(None, data):
             if DEBUG:
                 print(f'chunk: {chunk!r}')
 
@@ -529,7 +527,7 @@ class MLIServer:
         data = self._convert_chat_to_text_message(data)
         text: list[str] | str = []
 
-        async for chunk in self._run_cmd(data):
+        async for chunk in self._run_cmd(None, data):
             if DEBUG:
                 print(f'chunk: {chunk!r}')
 
@@ -563,9 +561,25 @@ class MLIServer:
         except ExceptionGroup as e:
             traceback.print_exc()
             print(f'[ERROR] websocket ExceptionGroup: {e}')
+        except Exception as e:
+            traceback.print_exc()
+            print(f'[ERROR] TaskGroup Exception: {e}')
 
-            # close ws
-            await ws.close()
+        if ws in self.ws_proc_map:
+            proc = self.ws_proc_map.pop(ws)
+            print(f'[INFO] proc: {proc}')
+
+            try:
+                proc.kill()
+                await proc.wait()
+                print('[INFO] proc kill [TaskGroup]')
+            except Exception as e:
+                print(f'[WARN] proc kill [TaskGroup]: {e}')
+            finally:
+                proc = None
+
+        # close ws
+        await ws.close()
 
         print(f'[INFO] websocket closed: {ws}')
         return ws
@@ -590,11 +604,27 @@ class MLIServer:
                         print(f'[ERROR] websocket closed with exception: {ws.exception()}')
                         break
         except ExceptionGroup as e:
-            traceback.print_exc()
+            # traceback.print_exc()
             print(f'[ERROR] websocket ExceptionGroup: {e}')
+        except Exception as e:
+            # traceback.print_exc()
+            print(f'[ERROR] TaskGroup Exception: {e}')
 
-            # close ws
-            await ws.close()
+        if ws in self.ws_proc_map:
+            proc = self.ws_proc_map.pop(ws)
+            print('[INFO] proc: {proc}')
+
+            try:
+                proc.kill()
+                await proc.wait()
+                print('[INFO] proc kill [TaskGroup]')
+            except Exception as e:
+                print(f'[WARN] proc kill [TaskGroup]: {e}')
+            finally:
+                proc = None
+
+        # close ws
+        await ws.close()
 
         print(f'[INFO] websocket closed: {ws}')
         return ws

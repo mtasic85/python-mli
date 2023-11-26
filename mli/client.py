@@ -8,6 +8,7 @@ try:
 except ImportError:
     pass
 
+import os
 import json
 import time
 import threading
@@ -20,8 +21,10 @@ from langchain.llms.utils import enforce_stop_tokens
 from langchain.schema.output import GenerationChunk
 
 from .server import LLMParams
+from .params import LlamaCppParams, CandleParams, LLMParams
 
 
+DEBUG = int(os.getenv('DEBUG', 0))
 DONE = object()
 
 
@@ -75,7 +78,7 @@ class BaseMLIClient:
         # endpoint
         if not (endpoint.startswith('http://') or endpoint.startswith('https://')):
             # check if IPv4 address
-            if endpoint.replace('.', '').isnumeric():
+            if endpoint.replace('.', '').replace(':', '').isnumeric():
                 endpoint = 'http://' + endpoint
             else:
                 endpoint = 'https://' + endpoint
@@ -98,28 +101,28 @@ class SyncMLIClient(BaseMLIClient):
         self.async_client = AsyncMLIClient(endpoint, ws_endpoint)
 
 
-    def text(self, **kwargs) -> str:
+    def text(self, **kwargs: Unpack[LLMParams]) -> str:
         data = asyncio.run(self.async_client.text(**kwargs))
         return data
 
 
-    def chat(self, **kwargs) -> str:
+    def chat(self, **kwargs: Unpack[LLMParams]) -> str:
         data = asyncio.run(self.async_client.chat(**kwargs))
         return data
 
 
-    def iter_text(self, **kwargs) -> Iterator[str]:
+    def iter_text(self, **kwargs: Unpack[LLMParams]) -> Iterator[str]:
         for chunk in async_to_sync_iter(self.async_client.iter_text(**kwargs)):
             yield chunk
 
 
-    def iter_chat(self, **kwargs) -> Iterator[str]:
+    def iter_chat(self, **kwargs: Unpack[LLMParams]) -> Iterator[str]:
         for chunk in async_to_sync_iter(self.async_client.iter_chat(**kwargs)):
             yield chunk
 
 
 class AsyncMLIClient(BaseMLIClient):
-    async def text(self, **kwargs) -> str:
+    async def text(self, **kwargs: Unpack[LLMParams]) -> str:
         url: str = f'{self.endpoint}/api/1.0/text/completions'
 
         async with ClientSession() as session:
@@ -129,7 +132,7 @@ class AsyncMLIClient(BaseMLIClient):
         return data
 
 
-    async def chat(self, **kwargs) -> str:
+    async def chat(self, **kwargs: Unpack[LLMParams]) -> str:
         url: str = f'{self.endpoint}/api/1.0/chat/completions'
 
         async with ClientSession() as session:
@@ -139,7 +142,7 @@ class AsyncMLIClient(BaseMLIClient):
         return data
 
 
-    async def iter_text(self, **kwargs) -> AsyncIterator[str]:
+    async def iter_text(self, **kwargs: Unpack[LLMParams]) -> AsyncIterator[str]:
         url: str = f'{self.ws_endpoint}/api/1.0/text/completions'
         
         async with ClientSession() as session:
@@ -157,7 +160,7 @@ class AsyncMLIClient(BaseMLIClient):
                         break
 
 
-    async def iter_chat(self, **kwargs) -> AsyncIterator[str]:
+    async def iter_chat(self, **kwargs: Unpack[LLMParams]) -> AsyncIterator[str]:
         url: str = f'{self.ws_endpoint}/api/1.0/chat/completions'
         
         async with ClientSession() as session:
@@ -300,6 +303,11 @@ class LangchainMLIClient(LLM):
         run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
         **kwargs: Unpack[LLMParams],
     ) -> AsyncIterator[GenerationChunk]:
+        """Yields results objects as they are generated in real time.
+
+        It also calls the callback manager's on_llm_new_token event with
+        similar parameters to the LLM class method of the same name.
+        """
         print('_astream', self)
         async_client = AsyncMLIClient(self.endpoint)
         logprobs = None

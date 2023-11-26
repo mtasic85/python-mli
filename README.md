@@ -143,6 +143,7 @@ huggingface-cli download TheBloke/Mistral-7B-v0.1-GGUF mistral-7b-v0.1.Q4_K_M.gg
 huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.1-GGUF mistral-7b-instruct-v0.1.Q4_K_M.gguf
 huggingface-cli download TheBloke/zephyr-7B-beta-GGUF zephyr-7b-beta.Q4_K_M.gguf
 huggingface-cli download TheBloke/Yarn-Mistral-7B-128k-GGUF yarn-mistral-7b-128k.Q4_K_M.gguf
+huggingface-cli download lmz/candle-mistral
 
 # llama2
 # huggingface-cli download meta-llama/Llama-2-7b-hf
@@ -168,7 +169,7 @@ huggingface-cli download TheBloke/tora-code-7B-v1.0-GGUF tora-code-7b-v1.0.Q4_K_
 Run server:
 
 ```bash
-python -B mli/server.py
+python -B -m mli.server
 ```
 
 
