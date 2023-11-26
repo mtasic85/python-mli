@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.10
+
+Fixed:
+    - Server: disabled `traceback` module usage.
+
 ## v0.1.9
 
 Changed:
