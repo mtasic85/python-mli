@@ -8,7 +8,7 @@ from typing import TypedDict, Optional, Required
 
 
 class LlamaCppParams(TypedDict):
-    engine: str                             # 'llama_cpp'
+    engine: str                             # 'llama.cpp'
     kind: Optional[str]                     # 'main'
     model_id: Optional[str]                 # creator of model
     model: Optional[str]                    # model name
