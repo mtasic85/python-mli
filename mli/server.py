@@ -333,7 +333,7 @@ class MLIServer:
         prompt: str = msg['prompt']
         stop: str = msg.get('stop', [])
         prompt_enc: bytes = prompt.encode()
-        stop_enc = None if stop is None else [n.encode() for n in stop]
+        # stop_enc = None if stop is None else [n.encode() for n in stop]
         stdout: bytes = b''
         stderr: bytes = b''
         print(f'[DEBUG] _run_shell_cmd {ws} {msg} {cmd}')
@@ -404,8 +404,8 @@ class MLIServer:
                         """
                         
                         # check for stop words
-                        if stop_enc:
-                            for n in stop_enc:
+                        if stop:
+                            for n in stop:
                                 if n in text:
                                     print(f'[INFO] stop word: {stop!r}')
                                     text = text[:text.index(n)]
