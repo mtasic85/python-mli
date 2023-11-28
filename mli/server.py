@@ -389,6 +389,8 @@ class MLIServer:
                             continue
 
                         prev_buf = b''
+                        
+                        """
                         yield text
 
                         # check for stop words
@@ -399,6 +401,18 @@ class MLIServer:
                                     stdout = stdout[:stdout.index(n)]
                                     stopped = True
                                     break
+                        """
+                        
+                        # check for stop words
+                        if stop_enc:
+                            for n in stop_enc:
+                                if n in text:
+                                    print(f'[INFO] stop word: {stop!r}')
+                                    text = text[:text.index(n)]
+                                    stopped = True
+                                    break
+
+                        yield text
 
                         if stopped:
                             break

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.12
+
+Fixed:
+    - server: fixed `stop` logic while streaming.
+
 ## v0.1.11
 
 Changed:
