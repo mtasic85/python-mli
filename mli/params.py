@@ -8,9 +8,10 @@ from typing import TypedDict, Optional, Required
 
 
 class LlamaCppParams(TypedDict):
+    engine: str                             # 'llama_cpp'
     kind: Optional[str]                     # 'main'
-    model: Optional[str]                    # model name
     model_id: Optional[str]                 # creator of model
+    model: Optional[str]                    # model name
     chatml: Optional[bool]                  # False
     n_predict: Optional[int]                # -1
     ctx_size: Optional[int]                 # 2048
@@ -25,9 +26,10 @@ class LlamaCppParams(TypedDict):
 
 
 class CandleParams(TypedDict):
+    engine: str                             # 'candle'
     kind: Optional[str]                     # 'phi', 'stable-lm', 'llama', 'mistral', 'quantized'
-    model: Optional[str]
     model_id: Optional[str]
+    model: Optional[str]
     cpu: Optional[bool]                     # False
     temperature: Optional[int]              # 0.8
     top_p: Optional[int]                    # 0.9

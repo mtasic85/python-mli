@@ -14,7 +14,7 @@ import os
 import json
 import shlex
 import argparse
-# import traceback
+import traceback
 from weakref import WeakKeyDictionary
 from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 
@@ -559,10 +559,10 @@ class MLIServer:
                     elif msg.type == WSMsgType.ERROR:
                         print(f'[ERROR] websocket closed with exception: {ws.exception()}')
         except ExceptionGroup as e:
-            # traceback.print_exc()
+            traceback.print_exc()
             print(f'[ERROR] websocket ExceptionGroup: {e}')
         except Exception as e:
-            # traceback.print_exc()
+            traceback.print_exc()
             print(f'[ERROR] TaskGroup Exception: {e}')
 
         if ws in self.ws_proc_map:
@@ -604,10 +604,10 @@ class MLIServer:
                         print(f'[ERROR] websocket closed with exception: {ws.exception()}')
                         break
         except ExceptionGroup as e:
-            # traceback.print_exc()
+            traceback.print_exc()
             print(f'[ERROR] websocket ExceptionGroup: {e}')
         except Exception as e:
-            # traceback.print_exc()
+            traceback.print_exc()
             print(f'[ERROR] TaskGroup Exception: {e}')
 
         if ws in self.ws_proc_map:

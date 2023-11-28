@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.11
+
+Changed:
+    - Server: enabled `traceback` module usage.
+
+Fixed:
+    - params: added missing `engine` field.
+
 ## v0.1.10
 
 Fixed:
