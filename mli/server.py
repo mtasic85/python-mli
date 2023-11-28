@@ -369,7 +369,14 @@ class MLIServer:
                         await asyncio.sleep(0.2)
 
                     # yield left-overs from stdout as buf
-                    stdout = stdout[stdout.index(prompt_enc) + len(prompt_enc):]
+                    # stdout = stdout[stdout.index(prompt_enc) + len(prompt_enc):]
+                    for i in range(len(prompt_enc), 0, -1):
+                        try:
+                            stdout = stdout[stdout.index(prompt_enc[:i]) + len(prompt_enc):]
+                        except ValueError as e:
+                            continue
+
+                        break
 
                     # read rest of tokens
                     prev_buf = stdout
@@ -389,19 +396,6 @@ class MLIServer:
                             continue
 
                         prev_buf = b''
-                        
-                        """
-                        yield text
-
-                        # check for stop words
-                        if stop_enc:
-                            for n in stop_enc:
-                                if n in stdout:
-                                    print(f'[INFO] stop word: {stop!r}')
-                                    stdout = stdout[:stdout.index(n)]
-                                    stopped = True
-                                    break
-                        """
                         
                         # check for stop words
                         if stop:

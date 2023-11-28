@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.15
+
+Fixed:
+    - server: fixed finding position of printed initial prompt, so it can be skipped.
+
 ## v0.1.14
 
 Fixed:
