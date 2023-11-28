@@ -428,8 +428,6 @@ class MLIServer:
                             print('[INFO] proc kill [stop]')
                         except Exception as e:
                             print(f'[INFO] proc kill [stop]: {e}')
-                        finally:
-                            proc = None
                     
                     # read stderr at once
                     stderr = await proc.stderr.read()
@@ -443,9 +441,8 @@ class MLIServer:
                 except Exception as e:
                     print(f'[INFO] proc kill [timeout]: {e}')
                     raise e
-                finally:
-                    proc = None
-
+            
+            proc = None
             stderr = '...' + stderr.decode()[-1024:]
             print('[DEBUG] stderr:')
             print(stderr)

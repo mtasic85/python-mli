@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.14
+
+Fixed:
+    - server: fixed trying to read `stderr` when `proc is None`.
+
 ## v0.1.13
 
 Fixed:
