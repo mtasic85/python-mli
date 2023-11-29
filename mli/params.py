@@ -1,10 +1,16 @@
 __all__ = [
+    'Message',
     'LlamaCppParams',
     'CandleParams',
     'LLMParams',
 ]
 
 from typing import TypedDict, Optional, Required
+
+
+class Message(TypedDict):
+    role: Required[str]
+    content: Required[str]
 
 
 class LlamaCppParams(TypedDict):
@@ -22,7 +28,8 @@ class LlamaCppParams(TypedDict):
     top_p: Optional[float]                  # 0.9
     stop: Optional[list[str]]               # []
     prompt: Optional[str]                   # | prompt xor messages
-    messages: Optional[list[dict]]          # /
+    messages: Optional[list[Message]]       # /
+    messages_syntax: Optional[str]          # None, 'chatml', 'llama', 'zephyr'
 
 
 class CandleParams(TypedDict):
@@ -38,7 +45,8 @@ class CandleParams(TypedDict):
     use_flash_attn: Optional[bool]          # False
     stop: Optional[list[str]]               # []
     prompt: Optional[str]                   # | prompt xor messages
-    messages: Optional[list[dict]]          # /
+    messages: Optional[list[Message]]       # /
+    messages_syntax: Optional[str]          # None, 'chatml', 'llama', 'zephyr'
 
 
 LLMParams: type = LlamaCppParams | CandleParams

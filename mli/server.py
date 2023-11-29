@@ -21,7 +21,7 @@ from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 from aiohttp import web, WSMsgType
 from huggingface_hub import try_to_load_from_cache
 
-from .params import LlamaCppParams, CandleParams, LLMParams
+from .params import Message, LLMParams, LlamaCppParams, CandleParams
 
 
 DEBUG = int(os.getenv('DEBUG', 0))
@@ -331,8 +331,10 @@ class MLIServer:
 
     async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
         prompt: str = msg['prompt']
+        chatml_prompt: str | None = prompt if msg['messages_syntax'] == 'chatml' else None
+        stripped_chatml_prompt: str | None = chatml_prompt.replace('<|im_start|>', '').replace('<|im_end|>', '') if chatml_prompt else None
         stop: str = msg.get('stop', [])
-        prompt_enc: bytes = prompt.encode()
+        prompt_enc: bytes = stripped_chatml_prompt.encode() if msg['messages_syntax'] == 'chatml' else prompt.encode()
         # stop_enc = None if stop is None else [n.encode() for n in stop]
         stdout: bytes = b''
         stderr: bytes = b''
@@ -481,30 +483,93 @@ class MLIServer:
 
 
     def _convert_chat_to_text_message(self, msg: LLMParams) -> LLMParams:
-        messages: list = msg['messages']
+        """
+        messages_syntax: None, 'chatml', 'llama', 'zephyr'
+        """
+        messages: list[Message] = msg['messages']
+        messages_syntax: str = msg['messages_syntax']
         system_message_text: list[str] = []
         conversation_text: list[str] = []
         prompt: list[str] | str = []
 
-        for m in messages:
-            if m['role'] == 'system':
-                system_message_text.append(m['content'])
-                system_message_text.append('\n')
-            elif m['role'] == 'user':
-                conversation_text.append('User: ')
-                conversation_text.append(m['content'])
-                conversation_text.append('\n')
-            elif m['role'] == 'assistant':
+        if messages_syntax is None:
+            for m in messages:
+                if m['role'] == 'system':
+                    system_message_text.append(m['content'])
+                    system_message_text.append('\n')
+                elif m['role'] == 'user':
+                    conversation_text.append('User: ')
+                    conversation_text.append(m['content'])
+                    conversation_text.append('\n')
+                elif m['role'] == 'assistant':
+                    conversation_text.append('Assistant: ')
+                    conversation_text.append(m['content'])
+                    conversation_text.append('\n')
+
+            if m['role'] == 'user':
                 conversation_text.append('Assistant: ')
-                conversation_text.append(m['content'])
-                conversation_text.append('\n')
+        elif messages_syntax == 'chatml':
+            for m in messages:
+                if m['role'] == 'system':
+                    system_message_text.append('<|im_start|>system\n')
+                    system_message_text.append(m['content'])
+                    system_message_text.append('<|im_end|>\n')
+                elif m['role'] == 'user':
+                    conversation_text.append('<|im_start|>user\n')
+                    conversation_text.append(m['content'])
+                    conversation_text.append('<|im_end|>\n')
+                elif m['role'] == 'assistant':
+                    conversation_text.append('<|im_start|>assistant\n')
+                    conversation_text.append(m['content'])
+                    conversation_text.append('<|im_end|>\n')
+
+            if m['role'] == 'user':
+                conversation_text.append('<|im_start|>assistant\n')
+        elif messages_syntax == 'llama':
+            for m in messages:
+                if m['role'] == 'system':
+                    system_message_text.append('[INST] <<SYS>>\n')
+                    system_message_text.append(m['content'])
+                    system_message_text.append('\n<<SYS>>\n')
+                elif m['role'] == 'user':
+                    conversation_text.append('User: ')
+                    conversation_text.append(m['content'])
+                    conversation_text.append('\n')
+                elif m['role'] == 'assistant':
+                    conversation_text.append('Assistant: ')
+                    conversation_text.append(m['content'])
+                    conversation_text.append('\n')
+
+            if m['role'] == 'user':
+                conversation_text.append('Assistant: ')
+        elif messages_syntax == 'zephyr':
+            for m in messages:
+                if m['role'] == 'system':
+                    system_message_text.append('<|system|>')
+                    system_message_text.append(m['content'])
+                    system_message_text.append('</s>\n')
+                elif m['role'] == 'user':
+                    conversation_text.append('<|user|>')
+                    conversation_text.append(m['content'])
+                    conversation_text.append('</s>\n')
+                elif m['role'] == 'assistant':
+                    conversation_text.append('<|assistant|>')
+                    conversation_text.append(m['content'])
+                    conversation_text.append('</s>\n')
+
+            if m['role'] == 'user':
+                conversation_text.append('<|assistant|>')
+        else:
+            raise ValueError(f'Unknown syntax: {messages_syntax}')
 
         prompt.extend(system_message_text)
         prompt.extend(conversation_text)
         prompt = ''.join(prompt)
 
-        chat_msg: dict = {k: v for k, v in msg.items() if k != 'messages'}
-        chat_msg['prompt'] = prompt
+        # FIXME: remove comment
+        ## make sure either "prompt" or ("messages", "messages_syntax") is present in msg
+        ## chat_msg: LLMParams = {k: v for k, v in msg.items() if k not in ('messages', 'messages_syntax')}
+        chat_msg: LLMParams = {**msg, 'prompt': prompt}
         return chat_msg
 
 
@@ -617,7 +682,7 @@ class MLIServer:
 
         if ws in self.ws_proc_map:
             proc = self.ws_proc_map.pop(ws)
-            print('[INFO] proc: {proc}')
+            print(f'[INFO] proc: {proc}')
 
             try:
                 proc.kill()

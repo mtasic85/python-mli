@@ -210,7 +210,7 @@ def sync_demo_candle_quantized():
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_llama_cpp_main_llama():
+def sync_demo_llama_cpp_main_llama_text():
     sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(
@@ -219,13 +219,53 @@ def sync_demo_llama_cpp_main_llama():
         n_gpu_layers=35,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
-        sample_len=4 * 1024,
+        ctx_size=4 * 1024,
         prompt='Building a perfect e-commerce website in 1234 simple steps:\nStep 1:',
     ):
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_llama_cpp_main_mistral():
+def sync_demo_llama_cpp_main_llama_chat():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        kind='main',
+        n_gpu_layers=35,
+        model_id='TheBloke/Llama-2-7B-Chat-GGUF',
+        model='llama-2-7b-chat.Q4_K_M.gguf',
+        ctx_size=4 * 1024,
+        stop=['Assistant:', 'User:'],
+        messages=[
+            {'role': 'system', 'content': 'You are a helpful assistant.'},
+            {'role': 'user', 'content': 'I need help building a website.'},
+            {'role': 'assistant', 'content': 'Sure, let me know what and hwo do you need it built.'},
+            {'role': 'user', 'content': 'Building a perfect e-commerce website in 10 simple steps. Explain step by step.'},
+        ],
+        messages_syntax='llama',
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        kind='main',
+        n_gpu_layers=35,
+        model_id='TheBloke/Orca-2-7B-GGUF',
+        model='orca-2-7b.Q4_K_M.gguf',
+        ctx_size=4 * 1024,
+        stop=['Assistant:', 'User:'],
+        messages=[
+            {'role': 'system', 'content': 'You are a helpful assistant.'},
+            {'role': 'user', 'content': 'I need help building a website.'},
+            {'role': 'assistant', 'content': 'Sure, let me know what and hwo do you need it built.'},
+            {'role': 'user', 'content': 'Building a perfect e-commerce website in 10 simple steps. Explain step by step.'},
+        ],
+        messages_syntax='llama',
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_llama_cpp_main_mistral_text():
     sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(
@@ -234,7 +274,7 @@ def sync_demo_llama_cpp_main_mistral():
         n_gpu_layers=35,
         model_id='TheBloke/zephyr-7B-beta-GGUF',
         model='zephyr-7b-beta.Q4_K_M.gguf',
-        sample_len=4 * 1024,
+        ctx_size=4 * 1024,
         prompt='Building a perfect e-commerce website in 1234 simple steps:\nStep 1:',
     ):
         print(chunk, sep='', end='', flush=True)
@@ -245,12 +285,52 @@ def sync_demo_llama_cpp_main_mistral():
         n_gpu_layers=35,
         model_id='TheBloke/zephyr-7B-beta-GGUF',
         model='zephyr-7b-beta.Q4_K_M.gguf',
-        sample_len=4 * 1024,
+        ctx_size=4 * 1024,
         prompt='Building a perfect e-commerce website in 1234 simple steps:\nStep 1:',
     ))
 
 
-def sync_demo_llama_cpp_main_stablelm():
+def sync_demo_llama_cpp_main_mistral_chat():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        kind='main',
+        n_gpu_layers=35,
+        model_id='TheBloke/Mistral-7B-Instruct-v0.1-GGUF',
+        model='mistral-7b-instruct-v0.1.Q4_K_M.gguf',
+        ctx_size=4 * 1024,
+        stop=['Assistant:', 'User:'],
+        messages=[
+            {'role': 'system', 'content': 'You are a helpful assistant.'},
+            {'role': 'user', 'content': 'I need help building a website.'},
+            {'role': 'assistant', 'content': 'Sure, let me know what and hwo do you need it built.'},
+            {'role': 'user', 'content': 'Building a perfect e-commerce website in 10 simple steps. Explain step by step.'},
+        ],
+        messages_syntax=None,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        kind='main',
+        n_gpu_layers=35,
+        model_id='TheBloke/zephyr-7B-beta-GGUF',
+        model='zephyr-7b-beta.Q4_K_M.gguf',
+        ctx_size=4 * 1024,
+        stop=['Assistant:', 'User:'],
+        messages=[
+            {'role': 'system', 'content': 'You are a helpful assistant.'},
+            {'role': 'user', 'content': 'I need help building a website.'},
+            {'role': 'assistant', 'content': 'Sure, let me know what and hwo do you need it built.'},
+            {'role': 'user', 'content': 'Building a perfect e-commerce website in 10 simple steps. Explain step by step.'},
+        ],
+        messages_syntax='zephyr',
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_llama_cpp_main_stablelm_text():
     sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(
@@ -259,10 +339,14 @@ def sync_demo_llama_cpp_main_stablelm():
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
-        sample_len=3 * 1024,
+        ctx_size=3 * 1024,
         prompt='Building a perfect e-commerce website in 1234 simple steps:\nStep 1:',
     ):
         print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_llama_cpp_main_stablelm_chat():
+    sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
@@ -270,13 +354,14 @@ def sync_demo_llama_cpp_main_stablelm():
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
-        sample_len=3 * 1024,
+        ctx_size=3 * 1024,
         messages=[
             {'role': 'system', 'content': 'You are a helpful assistant.'},
             {'role': 'user', 'content': 'I need help building a website.'},
             {'role': 'assistant', 'content': 'Sure, let me know what and hwo do you need it built.'},
             {'role': 'user', 'content': 'Building a perfect e-commerce website in 1234 simple steps. Explain step by step.'},
         ],
+        messages_syntax='chatml',
     ):
         print(chunk, sep='', end='', flush=True)
 
@@ -290,6 +375,9 @@ if __name__ == '__main__':
     # sync_demo_candle_stable_lm()
     # sync_demo_candle_stable_lm_quantized()
     # sync_demo_candle_quantized()
-    # sync_demo_llama_cpp_main_llama()
-    # sync_demo_llama_cpp_main_mistral()
-    sync_demo_llama_cpp_main_stablelm()
+    # sync_demo_llama_cpp_main_llama_text()
+    sync_demo_llama_cpp_main_llama_chat()
+    # sync_demo_llama_cpp_main_mistral_text()
+    # sync_demo_llama_cpp_main_mistral_chat()
+    # sync_demo_llama_cpp_main_stablelm_text()
+    # sync_demo_llama_cpp_main_stablelm_chat()

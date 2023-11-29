@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.16
+
+Changed:
+    - server: support for `messages_syntax` formating `chatml`, `llama`, `zephyr`.
+
+Fixed:
+    - client: fixed `llama.cpp` examples, `ctx_size`.
+
 ## v0.1.15
 
 Fixed:
