@@ -331,10 +331,10 @@ class MLIServer:
 
     async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
         prompt: str = msg['prompt']
-        chatml_prompt: str | None = prompt if msg['messages_syntax'] == 'chatml' else None
+        chatml_prompt: str | None = prompt if msg.get('messages_syntax') == 'chatml' else None
         stripped_chatml_prompt: str | None = chatml_prompt.replace('<|im_start|>', '').replace('<|im_end|>', '') if chatml_prompt else None
         stop: str = msg.get('stop', [])
-        prompt_enc: bytes = stripped_chatml_prompt.encode() if msg['messages_syntax'] == 'chatml' else prompt.encode()
+        prompt_enc: bytes = stripped_chatml_prompt.encode() if msg.get('messages_syntax') == 'chatml' else prompt.encode()
         # stop_enc = None if stop is None else [n.encode() for n in stop]
         stdout: bytes = b''
         stderr: bytes = b''
@@ -487,7 +487,7 @@ class MLIServer:
         messages_syntax: None, 'chatml', 'llama', 'zephyr'
         """
         messages: list[Message] = msg['messages']
-        messages_syntax: str = msg['messages_syntax']
+        messages_syntax: str = msg.get('messages_syntax')
         system_message_text: list[str] = []
         conversation_text: list[str] = []
         prompt: list[str] | str = []
@@ -566,9 +566,6 @@ class MLIServer:
         prompt.extend(conversation_text)
         prompt = ''.join(prompt)
 
-        # FIXME: remove comment
-        ## make sure either "prompt" or ("messages", "messages_syntax") is present in msg
-        ## chat_msg: LLMParams = {k: v for k, v in msg.items() if k not in ('messages', 'messages_syntax')}
         chat_msg: LLMParams = {**msg, 'prompt': prompt}
         return chat_msg
 

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.17
+
+Fixed:
+    - server: optional `messages_syntax`.
+
 ## v0.1.16
 
 Changed:
