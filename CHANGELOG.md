@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.18
+
+Changed:
+    - server: improved `messages_syntax` formating.
+
+Fixed:
+    - server: better handling of `stop` words.
+
 ## v0.1.17
 
 Fixed:

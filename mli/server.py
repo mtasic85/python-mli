@@ -331,14 +331,31 @@ class MLIServer:
 
     async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
         prompt: str = msg['prompt']
-        chatml_prompt: str | None = prompt if msg.get('messages_syntax') == 'chatml' else None
-        stripped_chatml_prompt: str | None = chatml_prompt.replace('<|im_start|>', '').replace('<|im_end|>', '') if chatml_prompt else None
+        # chatml_prompt: str | None = prompt if msg.get('messages_syntax') == 'chatml' else None
+        # stripped_chatml_prompt: str | None = chatml_prompt.replace('<|im_start|>', '').replace('<|im_end|>', '') if chatml_prompt else None
         stop: str = msg.get('stop', [])
-        prompt_enc: bytes = stripped_chatml_prompt.encode() if msg.get('messages_syntax') == 'chatml' else prompt.encode()
-        # stop_enc = None if stop is None else [n.encode() for n in stop]
+        # prompt_enc: bytes = stripped_chatml_prompt.encode() if msg.get('messages_syntax') == 'chatml' else prompt.encode()
+        # prompt_enc: bytes = prompt.encode()
         stdout: bytes = b''
         stderr: bytes = b''
+        stdout_text: str = ''
+        prev_buf: bytes
+        buf: bytes
         print(f'[DEBUG] _run_shell_cmd {ws} {msg} {cmd}')
+
+        stop_ngrams: str = []
+
+        for n in stop:
+            for i in range(1, len(n) + 1):
+                ngram = n[:i]
+                stop_ngrams.append(ngram)
+
+        print(f'{stop_ngrams = }')
+        ngram_found: bool = False
+        min_enc_stop_len: int = min(len(n.encode()) for n in stop) if stop else -1
+        max_enc_stop_len: int = max(len(n.encode()) for n in stop) if stop else -1
+        print(f'{min_enc_stop_len = }')
+        print(f'{max_enc_stop_len = }')
 
         async with self.lock:
             try:
@@ -354,6 +371,7 @@ class MLIServer:
                     if ws is not None:
                         self.ws_proc_map[ws] = proc
                     
+                    """
                     # receive original prompt in stdout
                     # strip original prompt from return
                     prev_buf: bytes
@@ -379,6 +397,9 @@ class MLIServer:
                             continue
 
                         break
+                    """
+                    # receive and skip original prompt in stdout
+                    buf = await proc.stdout.read(128 * 1024)
 
                     # read rest of tokens
                     prev_buf = stdout
@@ -393,27 +414,64 @@ class MLIServer:
 
                         try:
                             text = prev_buf.decode()
+                            # print(f'0 {text = }')
                         except Exception as e:
                             print(f'[ERROR] buf.decode() exception: {e}')
                             continue
 
-                        prev_buf = b''
-                        
                         # check for stop words
-                        if stop:
-                            for n in stop:
+                        if ngram_found:
+                            skip = False
+
+                            while len(prev_buf) < max_enc_stop_len:
+                                skip = True
+                                break
+
+                            if skip:
+                                await asyncio.sleep(0.1)
+                                continue
+
+                            ngram_found = False
+                        else:
+                            for n in stop_ngrams:
                                 if n in text:
-                                    print(f'[INFO] stop word: {stop!r}')
-                                    text = text[:text.index(n)]
-                                    stopped = True
+                                    print(f'[INFO] stop ngram word {n!r}')
+                                    ngram_found = True
                                     break
 
+                            if ngram_found:
+                                await asyncio.sleep(0.1)
+                                continue
+                        
+                        prev_buf = b''
+                        stdout_text += text
+
+                        for n in stop:
+                            if n in stdout_text:
+                                print(f'[INFO] stop word {n!r} found as one of {stop!r}')
+                                # print(f'{stdout_text = }')
+                                # print(f'{text = }')
+                                
+                                b = stdout_text.rfind(text)
+                                e = stdout_text.rfind(n)
+                                # print(f'{b = }')
+                                # print(f'{e = }')
+
+                                if b > e:
+                                    b = e
+                                    # print(f'{b = }')
+
+                                text = stdout_text[b:e]
+                                stopped = True
+                                break
+
                         yield text
+                        # print(f'1 {text = }')
 
                         if stopped:
                             break
 
-                        await asyncio.sleep(0.2)
+                        # await asyncio.sleep(0.2)
 
                     if stopped:
                         print(f'[INFO] stop word, trying to kill proc: {proc}')
@@ -485,87 +543,122 @@ class MLIServer:
     def _convert_chat_to_text_message(self, msg: LLMParams) -> LLMParams:
         """
         messages_syntax: None, 'chatml', 'llama', 'zephyr'
+        role: 'system', 'user', 'assistant' but also supports 'question', 'answer'
         """
         messages: list[Message] = msg['messages']
         messages_syntax: str = msg.get('messages_syntax')
-        system_message_text: list[str] = []
         conversation_text: list[str] = []
         prompt: list[str] | str = []
+        roles: list[str] = []
 
         if messages_syntax is None:
             for m in messages:
+                # Expected: system, user, assistant
+                m_role = m['role']
+                
+                if m_role not in roles:
+                    roles.append(m_role)
+
                 if m['role'] == 'system':
-                    system_message_text.append(m['content'])
-                    system_message_text.append('\n')
-                elif m['role'] == 'user':
-                    conversation_text.append('User: ')
-                    conversation_text.append(m['content'])
+                    m_content = ' '.join(m['content'].splitlines())
+                    conversation_text.append(m_content)
                     conversation_text.append('\n')
-                elif m['role'] == 'assistant':
-                    conversation_text.append('Assistant: ')
+                else:
+                    conversation_text.append(f'{m_role.capitalize()}: ')
                     conversation_text.append(m['content'])
                     conversation_text.append('\n')
 
             if m['role'] == 'user':
                 conversation_text.append('Assistant: ')
+            else:
+                # other than last role and system
+                other_roles = [r for r in roles if r not in ('system', m['role'])]
+
+                if other_roles:
+                    m_role = other_roles[0]
+                    conversation_text.append(f'{m_role.capitalize()}: ')
         elif messages_syntax == 'chatml':
             for m in messages:
+                # Expected: system, user, assistant
+                # Supported: system, question, answer
+                m_role = m['role']
+
+                if m_role not in roles:
+                    roles.append(m_role)
+
                 if m['role'] == 'system':
-                    system_message_text.append('<|im_start|>system\n')
-                    system_message_text.append(m['content'])
-                    system_message_text.append('<|im_end|>\n')
-                elif m['role'] == 'user':
-                    conversation_text.append('<|im_start|>user\n')
+                    conversation_text.append('<|im_start|>system\n')
                     conversation_text.append(m['content'])
                     conversation_text.append('<|im_end|>\n')
-                elif m['role'] == 'assistant':
-                    conversation_text.append('<|im_start|>assistant\n')
+                else:
+                    conversation_text.append(f'<|im_start|>{m_role}\n')
                     conversation_text.append(m['content'])
                     conversation_text.append('<|im_end|>\n')
 
             if m['role'] == 'user':
                 conversation_text.append('<|im_start|>assistant\n')
+            else:
+                # other than last role and system
+                other_roles = [r for r in roles if r not in ('system', m['role'])]
+
+                if other_roles:
+                    m_role = other_roles[0]
+                    conversation_text.append(f'<|im_start|>{m_role}\n')
         elif messages_syntax == 'llama':
             for m in messages:
+                m_role = m['role']
+
+                if m_role not in roles:
+                    roles.append(m_role)
+
                 if m['role'] == 'system':
-                    system_message_text.append('[INST] <<SYS>>\n')
-                    system_message_text.append(m['content'])
-                    system_message_text.append('\n<<SYS>>\n')
-                elif m['role'] == 'user':
-                    conversation_text.append('User: ')
+                    conversation_text.append('[INST] <<SYS>>\n')
                     conversation_text.append(m['content'])
-                    conversation_text.append('\n')
-                elif m['role'] == 'assistant':
-                    conversation_text.append('Assistant: ')
+                    conversation_text.append('\n<<SYS>>\n')
+                else:
+                    conversation_text.append(f'{m_role.capitalize()}: ')
                     conversation_text.append(m['content'])
                     conversation_text.append('\n')
 
             if m['role'] == 'user':
                 conversation_text.append('Assistant: ')
+            else:
+                # other than last role and system
+                other_roles = [r for r in roles if r not in ('system', m['role'])]
+
+                if other_roles:
+                    m_role = other_roles[0]
+                    conversation_text.append(f'{m_role.capitalize()}: ')
         elif messages_syntax == 'zephyr':
             for m in messages:
+                m_role = m['role']
+
+                if m_role not in roles:
+                    roles.append(m_role)
+
                 if m['role'] == 'system':
-                    system_message_text.append('<|system|>')
-                    system_message_text.append(m['content'])
-                    system_message_text.append('</s>\n')
-                elif m['role'] == 'user':
-                    conversation_text.append('<|user|>')
+                    conversation_text.append('<|system|>\n')
                     conversation_text.append(m['content'])
                     conversation_text.append('</s>\n')
-                elif m['role'] == 'assistant':
-                    conversation_text.append('<|assistant|>')
+                else:
+                    conversation_text.append(f'<|{m_role}|>\n')
                     conversation_text.append(m['content'])
                     conversation_text.append('</s>\n')
 
             if m['role'] == 'user':
-                conversation_text.append('<|assistant|>')
+                conversation_text.append('<|assistant|>\n')
+            else:
+                # other than last role and system
+                other_roles = [r for r in roles if r not in ('system', m['role'])]
+
+                if other_roles:
+                    m_role = other_roles[0]
+                    conversation_text.append(f'<|{m_role}|>\n')
         else:
             raise ValueError(f'Unknown syntax: {messages_syntax}')
 
-        prompt.extend(system_message_text)
         prompt.extend(conversation_text)
         prompt = ''.join(prompt)
-
         chat_msg: LLMParams = {**msg, 'prompt': prompt}
         return chat_msg
 

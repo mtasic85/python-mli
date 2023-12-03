@@ -123,7 +123,7 @@ pip install poetry
 poetry install
 ```
 
-Download models:
+Download one of popular models to try them:
 
 ```bash
 # NOTE: login in case you need to accept terms and conditions for some models
@@ -137,6 +137,8 @@ huggingface-cli download lmz/candle-quantized-phi
 # stable-lm
 huggingface-cli download stabilityai/stablelm-3b-4e1t
 huggingface-cli download lmz/candle-stablelm-3b-4e1t
+huggingface-cli download afrideva/stablelm-3b-4e1t-GGUF stablelm-3b-4e1t.q4_k_m.gguf
+huggingface-cli download TheBloke/rocket-3B-GGUF rocket-3b.Q4_K_M.gguf
 
 # mistral
 huggingface-cli download TheBloke/Mistral-7B-v0.1-GGUF mistral-7b-v0.1.Q4_K_M.gguf
@@ -144,7 +146,16 @@ huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.1-GGUF mistral-7b-instr
 huggingface-cli download TheBloke/zephyr-7B-beta-GGUF zephyr-7b-beta.Q4_K_M.gguf
 huggingface-cli download TheBloke/Yarn-Mistral-7B-128k-GGUF yarn-mistral-7b-128k.Q4_K_M.gguf
 huggingface-cli download TheBloke/OpenHermes-2.5-Mistral-7B-GGUF openhermes-2.5-mistral-7b.Q4_K_M.gguf
+huggingface-cli download TheBloke/neural-chat-7B-v3-1-GGUF neural-chat-7b-v3-1.Q4_K_M.gguf
+huggingface-cli download TheBloke/neural-chat-7B-v3-2-GGUF neural-chat-7b-v3-2.Q4_K_M.gguf
+huggingface-cli download TheBloke/NeuralHermes-2.5-Mistral-7B-GGUF neuralhermes-2.5-mistral-7b.Q4_K_M.gguf
 huggingface-cli download lmz/candle-mistral
+
+# mistral code
+huggingface-cli download TheBloke/sqlcoder-7B-GGUF sqlcoder-7b.Q4_K_M.gguf
+huggingface-cli download TheBloke/deepseek-coder-1.3b-instruct-GGUF deepseek-coder-1.3b-instruct.Q4_K_M.gguf
+huggingface-cli download TheBloke/deepseek-coder-6.7B-instruct-GGUF deepseek-coder-6.7b-instruct.Q4_K_M.gguf
+huggingface-cli download TheBloke/tora-code-7B-v1.0-GGUF tora-code-7b-v1.0.Q4_K_M.gguf
 
 # llama2
 # huggingface-cli download meta-llama/Llama-2-7b-hf
@@ -155,16 +166,11 @@ huggingface-cli download TheBloke/Yarn-Llama-2-7B-128K-GGUF yarn-llama-2-7b-128k
 huggingface-cli download afrideva/TinyLlama-1.1B-Chat-v0.6-GGUF tinyllama-1.1b-chat-v0.6.q4_k_m.gguf
 huggingface-cli download afrideva/TinyLlama-1.1B-intermediate-step-955k-token-2T-GGUF tinyllama-1.1b-intermediate-step-955k-token-2t.q4_k_m.gguf
 
-# stable-lm
-huggingface-cli download afrideva/stablelm-3b-4e1t-GGUF stablelm-3b-4e1t.q4_k_m.gguf
-huggingface-cli download TheBloke/rocket-3B-GGUF rocket-3b.Q4_K_M.gguf
+# llama2 code
+huggingface-cli download TheBloke/CodeLlama-7B-GGUF codellama-7b.Q4_K_M.gguf
 
-# code mistral-based
-# huggingface-cli download codellama/CodeLlama-7b-Python-hf
-huggingface-cli download TheBloke/sqlcoder-7B-GGUF sqlcoder-7b.Q4_K_M.gguf
-huggingface-cli download TheBloke/deepseek-coder-1.3b-instruct-GGUF deepseek-coder-1.3b-instruct.Q4_K_M.gguf
-huggingface-cli download TheBloke/deepseek-coder-6.7B-instruct-GGUF deepseek-coder-6.7b-instruct.Q4_K_M.gguf
-huggingface-cli download TheBloke/tora-code-7B-v1.0-GGUF tora-code-7b-v1.0.Q4_K_M.gguf
+# llama2 medical
+huggingface-cli download TheBloke/meditron-7B-GGUF meditron-7b.Q4_K_M.gguf
 ```
 
 Run server:
