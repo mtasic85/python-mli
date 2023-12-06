@@ -300,10 +300,12 @@ def sync_demo_llama_cpp_main_yarn_llama_2_128k_text():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         kind='main',
-        n_gpu_layers=35,
+        # n_gpu_layers=0,
+        n_gpu_layers=32,
         model_id='TheBloke/Yarn-Llama-2-7B-128K-GGUF',
         model='yarn-llama-2-7b-128k.Q4_K_M.gguf',
-        ctx_size=128 * 1024,
+        # ctx_size=128 * 1024,
+        ctx_size=8 * 1024,
         temp=0.9,
         prompt='Building a perfect e-commerce website in 1234 simple steps:\nStep 1:',
     ):
@@ -316,10 +318,12 @@ def sync_demo_llama_cpp_main_yarn_llama_2_128k_chat():
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         kind='main',
-        n_gpu_layers=35,
+        # n_gpu_layers=0,
+        n_gpu_layers=32,
         model_id='TheBloke/Yarn-Llama-2-7B-128K-GGUF',
         model='yarn-llama-2-7b-128k.Q4_K_M.gguf',
-        ctx_size=128 * 1024,
+        # ctx_size=128 * 1024,
+        ctx_size=8 * 1024,
         temp=0.9,
         stop=['Assistant:', 'User:'],
         messages=[
@@ -478,13 +482,13 @@ if __name__ == '__main__':
     # sync_demo_candle_codellama()
     # sync_demo_candle_llama()
     # sync_demo_candle_mistral()
-    # sync_demo_candle_phi()
+    sync_demo_candle_phi()
     # sync_demo_candle_phi_quantized()
     # sync_demo_candle_stable_lm()
     # sync_demo_candle_stable_lm_quantized()
     # sync_demo_candle_quantized_orca_text()
     # sync_demo_llama_cpp_main_llama_text()
-    sync_demo_llama_cpp_main_llama_chat()
+    # sync_demo_llama_cpp_main_llama_chat()
     # sync_demo_llama_cpp_main_yarn_llama_2_128k_text()
     # sync_demo_llama_cpp_main_yarn_llama_2_128k_chat()
     # sync_demo_llama_cpp_main_mistral_text()
