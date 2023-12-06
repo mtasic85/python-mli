@@ -110,9 +110,17 @@ find candle-examples/examples/mistral/main.rs -type f -exec sed -i -E 's/print\\
 find candle-examples/examples/stable-lm/main.rs -type f -exec sed -i -E 's/print\\!\\("\\{t\\}"\\)$/eprint\\!\\("\\{t\\}"\\)/g' {} +
 find candle-examples -type f -exec sed -i 's/println/eprintln/g' {} +
 cargo clean
+```
+
+CPU:
+```bash
 cargo build -r --bins --examples
 ```
 
+GPU / CUDA:
+```bash
+cargo build --features cuda -r --bins --examples
+```
 
 # Run Development Server
 
