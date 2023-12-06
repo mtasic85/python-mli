@@ -331,11 +331,7 @@ class MLIServer:
 
     async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
         prompt: str = msg['prompt']
-        # chatml_prompt: str | None = prompt if msg.get('messages_syntax') == 'chatml' else None
-        # stripped_chatml_prompt: str | None = chatml_prompt.replace('<|im_start|>', '').replace('<|im_end|>', '') if chatml_prompt else None
         stop: str = msg.get('stop', [])
-        # prompt_enc: bytes = stripped_chatml_prompt.encode() if msg.get('messages_syntax') == 'chatml' else prompt.encode()
-        # prompt_enc: bytes = prompt.encode()
         stdout: bytes = b''
         stderr: bytes = b''
         stdout_text: str = ''
@@ -371,40 +367,10 @@ class MLIServer:
                     if ws is not None:
                         self.ws_proc_map[ws] = proc
                     
-                    """
-                    # receive original prompt in stdout
-                    # strip original prompt from return
-                    prev_buf: bytes
-                    buf: bytes
-
-                    while not proc.stdout.at_eof():
-                        # stdout
-                        buf = await proc.stdout.read(1024)
-                        stdout += buf
-                    
-                        # skip original prompt
-                        if len(stdout) > len(prompt_enc):
-                            break
-
-                        await asyncio.sleep(0.2)
-
-                    # yield left-overs from stdout as buf
-                    # stdout = stdout[stdout.index(prompt_enc) + len(prompt_enc):]
-                    for i in range(len(prompt_enc), 0, -1):
-                        try:
-                            stdout = stdout[stdout.index(prompt_enc[:i]) + len(prompt_enc):]
-                        except ValueError as e:
-                            continue
-
-                        break
-                    """
-                    # receive and skip original prompt in stdout
-                    buf = await proc.stdout.read(128 * 1024)
-
                     # read rest of tokens
-                    prev_buf = stdout
                     buf = b''
-                    text: str = stdout.decode()
+                    prev_buf = b''
+                    text: str = prev_buf.decode()
                     stopped: bool = False
 
                     while not proc.stdout.at_eof():
@@ -414,7 +380,6 @@ class MLIServer:
 
                         try:
                             text = prev_buf.decode()
-                            # print(f'0 {text = }')
                         except Exception as e:
                             print(f'[ERROR] buf.decode() exception: {e}')
                             continue
@@ -449,8 +414,6 @@ class MLIServer:
                         for n in stop:
                             if n in stdout_text:
                                 print(f'[INFO] stop word {n!r} found as one of {stop!r}')
-                                # print(f'{stdout_text = }')
-                                # print(f'{text = }')
                                 
                                 b = stdout_text.rfind(text)
                                 e = stdout_text.rfind(n)
@@ -466,12 +429,11 @@ class MLIServer:
                                 break
 
                         yield text
-                        # print(f'1 {text = }')
 
                         if stopped:
                             break
 
-                        # await asyncio.sleep(0.2)
+                        await asyncio.sleep(0.2)
 
                     if stopped:
                         print(f'[INFO] stop word, trying to kill proc: {proc}')
@@ -562,7 +524,7 @@ class MLIServer:
                 if m['role'] == 'system':
                     m_content = ' '.join(m['content'].splitlines())
                     conversation_text.append(m_content)
-                    conversation_text.append('\n')
+                    conversation_text.append('\n\n')
                 else:
                     conversation_text.append(f'{m_role.capitalize()}: ')
                     conversation_text.append(m['content'])
@@ -605,30 +567,32 @@ class MLIServer:
                     m_role = other_roles[0]
                     conversation_text.append(f'<|im_start|>{m_role}\n')
         elif messages_syntax == 'llama':
+            system_message_closed: bool = False
+
             for m in messages:
                 m_role = m['role']
 
                 if m_role not in roles:
                     roles.append(m_role)
 
-                if m['role'] == 'system':
+                if m_role == 'system':
                     conversation_text.append('[INST] <<SYS>>\n')
                     conversation_text.append(m['content'])
-                    conversation_text.append('\n<<SYS>>\n')
-                else:
-                    conversation_text.append(f'{m_role.capitalize()}: ')
+                    conversation_text.append('\n<</SYS>>\n')
+                elif m_role == 'user':
+                    if system_message_closed:
+                        conversation_text.append('[INST] ')
+                        conversation_text.append(m['content'])
+                        conversation_text.append(' [/INST]\n')
+                    else:
+                        conversation_text.append(m['content'])
+                        conversation_text.append(' [/INST]\n')
+                        system_message_closed = True
+                elif m_role == 'assistant':
                     conversation_text.append(m['content'])
                     conversation_text.append('\n')
-
-            if m['role'] == 'user':
-                conversation_text.append('Assistant: ')
-            else:
-                # other than last role and system
-                other_roles = [r for r in roles if r not in ('system', m['role'])]
-
-                if other_roles:
-                    m_role = other_roles[0]
-                    conversation_text.append(f'{m_role.capitalize()}: ')
+                else:
+                    raise ValueError(f'Unknown role {m_role!r}')
         elif messages_syntax == 'zephyr':
             for m in messages:
                 m_role = m['role']

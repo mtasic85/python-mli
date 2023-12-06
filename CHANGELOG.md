@@ -1,9 +1,19 @@
 # CHANGELOG
 
+## v0.1.19
+
+Changed:
+    - README: instructions how to build `llama.cpp` and `candle`.
+    - examples: more examples and improvements in `sync_demo.py`.
+    - server: fixed format output for `messages_syntax='llama'`.
+
+Fixed:
+    - server: no need to parse printed/echoed prompt thanks to new instructions how to build `llama.cpp` and `candle`.
+
 ## v0.1.18
 
 Changed:
-    - server: improved `messages_syntax` formating.
+    - server: improved `messages_syntax` formatting.
 
 Fixed:
     - server: better handling of `stop` words.

@@ -93,6 +93,7 @@ rustup default stable
 cd ~
 git clone https://github.com/ggerganov/llama.cpp.git
 cd llama.cpp
+find examples/main/main.cpp -type f -exec sed -i 's/bool input_echo/bool input_echo = false; \/\//g' {} +
 make
 ```
 
@@ -103,6 +104,10 @@ make
 cd ~
 git clone https://github.com/huggingface/candle.git
 cd candle
+find candle-examples/examples/llama/main.rs -type f -exec sed -i 's/print!("{prompt}")/eprint!("{prompt}")/g' {} +
+find candle-examples/examples/phi/main.rs -type f -exec sed -i 's/print!("{prompt}")/eprint!("{prompt}")/g' {} +
+find candle-examples/examples/mistral/main.rs -type f -exec sed -i -E 's/print\\!\\("\\{t\\}"\\)$/eprint\\!\\("\\{t\\}"\\)/g' {} +
+find candle-examples/examples/stable-lm/main.rs -type f -exec sed -i -E 's/print\\!\\("\\{t\\}"\\)$/eprint\\!\\("\\{t\\}"\\)/g' {} +
 find candle-examples -type f -exec sed -i 's/println/eprintln/g' {} +
 cargo clean
 cargo build -r --bins --examples
