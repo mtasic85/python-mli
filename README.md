@@ -93,7 +93,6 @@ rustup default stable
 cd ~
 git clone https://github.com/ggerganov/llama.cpp.git
 cd llama.cpp
-find examples/main/main.cpp -type f -exec sed -i 's/bool input_echo/bool input_echo = false; \/\//g' {} +
 make
 ```
 
@@ -143,47 +142,42 @@ Download one of popular models to try them:
 # huggingface-cli login
 
 # phi
+huggingface-cli download TheBloke/phi-2-GGUF phi-2.Q4_K_M.gguf
+huggingface-cli download TKDKid1000/phi-1_5-GGUF phi-1_5-Q4_K_M.gguf
+huggingface-cli download TheBloke/dolphin-2_6-phi-2-GGUF dolphin-2_6-phi-2.Q4_K_M.gguf
+huggingface-cli download microsoft/phi-2
 huggingface-cli download microsoft/phi-1_5
 huggingface-cli download Open-Orca/oo-phi-1_5
 huggingface-cli download lmz/candle-quantized-phi
 
 # stable-lm
+huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b
+huggingface-cli download stabilityai/stablelm-zephyr-3b
 huggingface-cli download stabilityai/stablelm-3b-4e1t
-huggingface-cli download lmz/candle-stablelm-3b-4e1t
+huggingface-cli download TheBloke/stablelm-zephyr-3b-GGUF stablelm-zephyr-3b.Q4_K_M.gguf
 huggingface-cli download afrideva/stablelm-3b-4e1t-GGUF stablelm-3b-4e1t.q4_k_m.gguf
 huggingface-cli download TheBloke/rocket-3B-GGUF rocket-3b.Q4_K_M.gguf
 
 # mistral
+huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q2_K.gguf
+huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q3_K_M.gguf
+huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q4_K_M.gguf
+huggingface-cli download TheBloke/dolphin-2.6-mistral-7B-GGUF dolphin-2.6-mistral-7b.Q4_K_M.gguf
+huggingface-cli download TheBloke/openchat-3.5-1210-GGUF openchat-3.5-1210.Q4_K_M.gguf
+huggingface-cli download TheBloke/Marcoroni-7B-v3-GGUF marcoroni-7b-v3.Q4_K_M.gguf
+huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q4_K_M.gguf
 huggingface-cli download TheBloke/Mistral-7B-v0.1-GGUF mistral-7b-v0.1.Q4_K_M.gguf
-huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.1-GGUF mistral-7b-instruct-v0.1.Q4_K_M.gguf
 huggingface-cli download TheBloke/zephyr-7B-beta-GGUF zephyr-7b-beta.Q4_K_M.gguf
 huggingface-cli download TheBloke/Yarn-Mistral-7B-128k-GGUF yarn-mistral-7b-128k.Q4_K_M.gguf
-huggingface-cli download TheBloke/OpenHermes-2.5-Mistral-7B-GGUF openhermes-2.5-mistral-7b.Q4_K_M.gguf
-huggingface-cli download TheBloke/neural-chat-7B-v3-1-GGUF neural-chat-7b-v3-1.Q4_K_M.gguf
-huggingface-cli download TheBloke/neural-chat-7B-v3-2-GGUF neural-chat-7b-v3-2.Q4_K_M.gguf
-huggingface-cli download TheBloke/NeuralHermes-2.5-Mistral-7B-GGUF neuralhermes-2.5-mistral-7b.Q4_K_M.gguf
-huggingface-cli download lmz/candle-mistral
-
-# mistral code
-huggingface-cli download TheBloke/sqlcoder-7B-GGUF sqlcoder-7b.Q4_K_M.gguf
-huggingface-cli download TheBloke/deepseek-coder-1.3b-instruct-GGUF deepseek-coder-1.3b-instruct.Q4_K_M.gguf
-huggingface-cli download TheBloke/deepseek-coder-6.7B-instruct-GGUF deepseek-coder-6.7b-instruct.Q4_K_M.gguf
-huggingface-cli download TheBloke/tora-code-7B-v1.0-GGUF tora-code-7b-v1.0.Q4_K_M.gguf
 
 # llama2
-# huggingface-cli download meta-llama/Llama-2-7b-hf
 huggingface-cli download TheBloke/Orca-2-7B-GGUF orca-2-7b.Q4_K_M.gguf
-huggingface-cli download TheBloke/Llama-2-7B-GGUF llama-2-7b.Q4_K_M.gguf
 huggingface-cli download TheBloke/Llama-2-7B-Chat-GGUF llama-2-7b-chat.Q4_K_M.gguf
+huggingface-cli download TheBloke/Llama-2-7B-GGUF llama-2-7b.Q4_K_M.gguf
+huggingface-cli download afrideva/MiniChat-1.5-3B-GGUF minichat-1.5-3b.q4_k_m.gguf
+huggingface-cli download TheBloke/TinyLlama-1.1B-intermediate-step-1431k-3T-GGUF tinyllama-1.1b-intermediate-step-1431k-3t.Q4_K_M.gguf
+huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
 huggingface-cli download TheBloke/Yarn-Llama-2-7B-128K-GGUF yarn-llama-2-7b-128k.Q4_K_M.gguf
-huggingface-cli download afrideva/TinyLlama-1.1B-Chat-v0.6-GGUF tinyllama-1.1b-chat-v0.6.q4_k_m.gguf
-huggingface-cli download afrideva/TinyLlama-1.1B-intermediate-step-955k-token-2T-GGUF tinyllama-1.1b-intermediate-step-955k-token-2t.q4_k_m.gguf
-
-# llama2 code
-huggingface-cli download TheBloke/CodeLlama-7B-GGUF codellama-7b.Q4_K_M.gguf
-
-# llama2 medical
-huggingface-cli download TheBloke/meditron-7B-GGUF meditron-7b.Q4_K_M.gguf
 ```
 
 Run server:

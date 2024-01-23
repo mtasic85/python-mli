@@ -19,7 +19,7 @@ class LlamaCppParams(TypedDict):
     model_id: Optional[str]                 # creator of model
     model: Optional[str]                    # model name
     chatml: Optional[bool]                  # False
-    n_predict: Optional[int]                # -1
+    n_predict: Optional[int]                # -2
     ctx_size: Optional[int]                 # 2048
     batch_size: Optional[int]               # 512
     temp: Optional[float]                   # 0.8
@@ -30,6 +30,7 @@ class LlamaCppParams(TypedDict):
     prompt: Optional[str]                   # | prompt xor messages
     messages: Optional[list[Message]]       # /
     messages_syntax: Optional[str]          # None, 'chatml', 'llama', 'zephyr'
+    no_display_prompt: Optional[bool]       # True
 
 
 class CandleParams(TypedDict):

@@ -62,13 +62,14 @@ class MLIServer:
             model: str = kwargs['model']
             model_id: str | None = kwargs.get('model_id')
             chatml: bool | None = bool(kwargs.get('chatml', False))
-            n_predict: int = int(kwargs.get('n_predict', '-1'))
+            n_predict: int = int(kwargs.get('n_predict', '-2'))
             ctx_size: int = int(kwargs.get('ctx_size', '2048'))
             batch_size: int = int(kwargs.get('batch_size', '512'))
             temp: float = float(kwargs.get('temp', '0.8'))
             n_gpu_layers: int = int(kwargs.get('n_gpu_layers', '0'))
             top_k: int = int(kwargs.get('top_k', '40'))
             top_p: float = float(kwargs.get('top_p', '0.9'))
+            no_display_prompt: float = float(kwargs.get('no_display_prompt', True))
             
             # shell_prompt
             shell_prompt: str = shlex.quote(prompt)
@@ -87,6 +88,11 @@ class MLIServer:
             if chatml:
                 cmd.extend([
                     '--chatml',
+                ])
+
+            if no_display_prompt:
+                cmd.extend([
+                    '--no-display-prompt',
                 ])
 
             cmd.extend([
@@ -548,14 +554,9 @@ class MLIServer:
                 if m_role not in roles:
                     roles.append(m_role)
 
-                if m['role'] == 'system':
-                    conversation_text.append('<|im_start|>system\n')
-                    conversation_text.append(m['content'])
-                    conversation_text.append('<|im_end|>\n')
-                else:
-                    conversation_text.append(f'<|im_start|>{m_role}\n')
-                    conversation_text.append(m['content'])
-                    conversation_text.append('<|im_end|>\n')
+                conversation_text.append(f'<|im_start|>{m_role}\n')
+                conversation_text.append(m['content'])
+                conversation_text.append('<|im_end|>\n')
 
             if m['role'] == 'user':
                 conversation_text.append('<|im_start|>assistant\n')
@@ -600,14 +601,32 @@ class MLIServer:
                 if m_role not in roles:
                     roles.append(m_role)
 
+                conversation_text.append(f'<|{m_role}|>\n')
+                conversation_text.append(m['content'])
+                conversation_text.append('</s>\n')
+
+            if m['role'] == 'user':
+                conversation_text.append('<|assistant|>\n')
+            else:
+                # other than last role and system
+                other_roles = [r for r in roles if r not in ('system', m['role'])]
+
+                if other_roles:
+                    m_role = other_roles[0]
+                    conversation_text.append(f'<|{m_role}|>\n')
+        elif messages_syntax == 'stablelm-2-zephyr-1_6b':
+            for m in messages:
+                m_role = m['role']
+
+                if m_role not in roles:
+                    roles.append(m_role)
+
                 if m['role'] == 'system':
-                    conversation_text.append('<|system|>\n')
                     conversation_text.append(m['content'])
-                    conversation_text.append('</s>\n')
                 else:
                     conversation_text.append(f'<|{m_role}|>\n')
                     conversation_text.append(m['content'])
-                    conversation_text.append('</s>\n')
+                    conversation_text.append('<|endoftext|>\n')
 
             if m['role'] == 'user':
                 conversation_text.append('<|assistant|>\n')

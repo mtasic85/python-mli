@@ -478,11 +478,46 @@ def sync_demo_llama_cpp_main_meditron_chat():
         print(chunk, sep='', end='', flush=True)
 
 
+def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        kind='main',
+        n_gpu_layers=35,
+        model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        model='stablelm-2-zephyr-1_6b-Q5_K_M.gguf',
+        ctx_size=2 * 1024,
+        prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        kind='main',
+        n_gpu_layers=35,
+        model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        model='stablelm-2-zephyr-1_6b-Q5_K_M.gguf',
+        ctx_size=2 * 1024,
+        stop=['<|user|>', '<|assistant|>', '<|endoftext|>'],
+        messages=[
+            {'role': 'system', 'content': f'{SYSTEM_TEXT}. You like to ask questions back.'},
+            {'role': 'user', 'content': 'Lets have a conversation. I want to know more about you.'},
+        ],
+        messages_syntax='stablelm-2-zephyr-1_6b',
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
 if __name__ == '__main__':
     # sync_demo_candle_codellama()
     # sync_demo_candle_llama()
     # sync_demo_candle_mistral()
-    sync_demo_candle_phi()
+    # sync_demo_candle_phi()
     # sync_demo_candle_phi_quantized()
     # sync_demo_candle_stable_lm()
     # sync_demo_candle_stable_lm_quantized()
@@ -497,3 +532,5 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_stablelm_chat()
     # sync_demo_llama_cpp_main_meditron_text()
     # sync_demo_llama_cpp_main_meditron_chat()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
