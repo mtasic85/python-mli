@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v0.1.21
+
+Added:
+    - server/client: `split_mode`, `tensor_split`, `main_gpu`.
+
+Changed:
+    - README: New models.
+
+## v0.1.20
+
+Changed:
+    - README: instructions how to build `llama.cpp`
+    - README: New models.
+
 ## v0.1.19
 
 Changed:

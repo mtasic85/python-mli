@@ -70,6 +70,9 @@ class MLIServer:
             top_k: int = int(kwargs.get('top_k', '40'))
             top_p: float = float(kwargs.get('top_p', '0.9'))
             no_display_prompt: float = float(kwargs.get('no_display_prompt', True))
+            split_mode: str | None = kwargs.get('split_mode')
+            tensor_split: str | None = kwargs.get('tensor_split')
+            main_gpu: int | None = kwargs.get('main_gpu')
             
             # shell_prompt
             shell_prompt: str = shlex.quote(prompt)
@@ -93,6 +96,21 @@ class MLIServer:
             if no_display_prompt:
                 cmd.extend([
                     '--no-display-prompt',
+                ])
+
+            if split_mode is not None:
+                cmd.extend([
+                    '--split-mode', split_mode,
+                ])
+
+            if tensor_split is not None:
+                cmd.extend([
+                    '--tensor-split', tensor_split,
+                ])
+
+            if main_gpu is not None:
+                cmd.extend([
+                    '--main-gpu', main_gpu,
                 ])
 
             cmd.extend([

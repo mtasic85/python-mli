@@ -31,6 +31,9 @@ class LlamaCppParams(TypedDict):
     messages: Optional[list[Message]]       # /
     messages_syntax: Optional[str]          # None, 'chatml', 'llama', 'zephyr'
     no_display_prompt: Optional[bool]       # True
+    split_mode: Optional[str]               # 'none', 'layer' (default), 'row'
+    tensor_split: Optional[str]             # None, e.g. '3,1'
+    main_gpu: Optional[int]                 # None, e.g. 0 (default)
 
 
 class CandleParams(TypedDict):
