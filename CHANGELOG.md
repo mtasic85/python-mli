@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.22
+
+Changed:
+    - params: `kind` is not `executable`
+
 ## v0.1.21
 
 Added:

@@ -20,7 +20,7 @@ async def langchain_async_demo():
     )
 
     engine = 'candle'
-    kind = 'stable-lm'
+    executable = 'stable-lm'
     model_id = 'lmz/candle-stablelm-3b-4e1t'
     
     prompt = PromptTemplate.from_template(
@@ -33,7 +33,7 @@ async def langchain_async_demo():
         prompt=prompt,
         llm_kwargs=dict(
             engine=engine,
-            kind=kind,
+            executable=executable,
             model_id=model_id,
             sample_len=512,
         )

@@ -16,13 +16,13 @@ def langchain_sync_demo():
     )
 
     engine = 'candle'
-    kind = 'stable-lm'
+    executable = 'stable-lm'
     model_id = 'lmz/candle-stablelm-3b-4e1t'
     
     text = llm(
         'Building a website can be done in 10 simple steps:\nStep 1:',
         engine=engine,
-        kind=kind,
+        executable=executable,
         model_id=model_id,
         sample_len=512,
     )

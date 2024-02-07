@@ -54,10 +54,10 @@ class MLIServer:
         self.ws_proc_map = WeakKeyDictionary()
 
 
-    def _format_llama_cpp_cmd(self, kind: str, **kwargs: Unpack[LlamaCppParams]) -> str:
+    def _format_llama_cpp_cmd(self, executable: str, **kwargs: Unpack[LlamaCppParams]) -> str:
         cmd: list[str] | str = []
         
-        if kind == 'main':
+        if executable == 'main':
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
             model_id: str | None = kwargs.get('model_id')
@@ -84,7 +84,7 @@ class MLIServer:
                 model_path = model
 
             cmd.extend([
-                f'{self.llama_cpp_path}/{kind}',
+                f'{self.llama_cpp_path}/{executable}',
                 '--model', model_path,
             ])
 
@@ -126,16 +126,16 @@ class MLIServer:
                 '--prompt', shell_prompt,
             ])
         else:
-            raise ValueError(f'Unsupported kind: {kind}')
+            raise ValueError(f'Unsupported executable: {executable}')
 
         cmd = ' '.join(str(n) for n in cmd)
         return cmd
 
 
-    def _format_candle_cmd(self, kind: str, **kwargs: Unpack[CandleParams]) -> str:
+    def _format_candle_cmd(self, executable: str, **kwargs: Unpack[CandleParams]) -> str:
         cmd: list[str] | str = []
         
-        if kind == 'phi':
+        if executable == 'phi':
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
             cpu: bool = bool(kwargs.get('cpu', False))
@@ -171,7 +171,7 @@ class MLIServer:
             cmd.extend([
                 '--prompt', shell_prompt,
             ])
-        elif kind == 'stable-lm':
+        elif executable == 'stable-lm':
             prompt: str = kwargs['prompt']
             model_id: str = kwargs.get('model_id', 'lmz/candle-stablelm-3b-4e1t')
             cpu: bool = bool(kwargs.get('cpu', False))
@@ -213,7 +213,7 @@ class MLIServer:
             cmd.extend([
                 '--prompt', shell_prompt,
             ])
-        elif kind == 'llama':
+        elif executable == 'llama':
             prompt: str = kwargs['prompt']
             model_id: str = kwargs.get('model_id')
             cpu: bool = bool(kwargs.get('cpu', False))
@@ -253,7 +253,7 @@ class MLIServer:
             cmd.extend([
                 '--prompt', shell_prompt,
             ])
-        elif kind == 'mistral':
+        elif executable == 'mistral':
             prompt: str = kwargs['prompt']
             model_id: str = kwargs.get('model_id')
             cpu: bool = bool(kwargs.get('cpu', False))
@@ -299,7 +299,7 @@ class MLIServer:
             cmd.extend([
                 '--prompt', shell_prompt,
             ])
-        elif kind == 'quantized':
+        elif executable == 'quantized':
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
             model_id: str | None = kwargs.get('model_id')
@@ -333,7 +333,7 @@ class MLIServer:
                 '--prompt', shell_prompt,
             ])
         else:
-            raise ValueError(f'Unsupported kind: {kind}')
+            raise ValueError(f'Unsupported executable: {executable}')
 
         cmd = ' '.join(str(n) for n in cmd)
         return cmd
@@ -490,12 +490,12 @@ class MLIServer:
 
     def _run_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams) -> AsyncIterator[str]:
         engine: str = msg['engine']
-        kind: str = msg['kind']
+        executable: str = msg['executable']
         cmd: str = self._format_cmd(msg)
         res: AsyncIterator[str]
         assert engine in ('llama.cpp', 'candle')
 
-        if (engine == 'llama.cpp' and 'model_id' in msg) or (engine == 'candle' and kind == 'quantized' and 'model_id' in msg):
+        if (engine == 'llama.cpp' and 'model_id' in msg) or (engine == 'candle' and executable == 'quantized' and 'model_id' in msg):
             model_id = msg['model_id']
             model = msg['model']
             

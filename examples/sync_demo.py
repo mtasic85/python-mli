@@ -12,7 +12,7 @@ def sync_demo_candle_codellama():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='llama',
+        executable='llama',
         model_id='codellama/CodeLlama-7b-Python-hf',
         sample_len=4 * 1024,
         prompt='Lets write python web app for bookstore using aiohttp and pandas. Create dataframes for Users, Books, Rentals, Transactions and Ratings.'
@@ -25,7 +25,7 @@ def sync_demo_candle_llama():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='llama',
+        executable='llama',
         model_id='meta-llama/Llama-2-7b-hf',
         sample_len=4 * 1024,
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:'
@@ -38,7 +38,7 @@ def sync_demo_candle_mistral():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='mistral',
+        executable='mistral',
         model_id='lmz/candle-mistral',
         sample_len=4 * 1024,
         quantized=True,
@@ -48,7 +48,7 @@ def sync_demo_candle_mistral():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='mistral',
+        executable='mistral',
         model_id='lmz/candle-mistral',
         sample_len=4 * 1024,
         quantized=False,
@@ -62,7 +62,7 @@ def sync_demo_candle_phi():
 
     for chunk in sync_client.iter_chat(
         engine='candle',
-        kind='phi',
+        executable='phi',
         model='1.5',
         model_id='microsoft/phi-1_5',
         sample_len=2 * 1024,
@@ -79,7 +79,7 @@ def sync_demo_candle_phi():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='phi',
+        executable='phi',
         model='1.5',
         model_id='Open-Orca/oo-phi-1_5',
         sample_len=2 * 1024,
@@ -90,7 +90,7 @@ def sync_demo_candle_phi():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='phi',
+        executable='phi',
         model='1.5',
         model_id='microsoft/phi-1_5',
         sample_len=2 * 1024,
@@ -105,7 +105,7 @@ def sync_demo_candle_phi_quantized():
 
     for chunk in sync_client.iter_chat(
         engine='candle',
-        kind='phi',
+        executable='phi',
         model='1.5',
         model_id='lmz/candle-quantized-phi',
         sample_len=2 * 1024,
@@ -122,7 +122,7 @@ def sync_demo_candle_phi_quantized():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='phi',
+        executable='phi',
         model='1.5',
         model_id='lmz/candle-quantized-phi',
         sample_len=2 * 1024,
@@ -137,7 +137,7 @@ def sync_demo_candle_stable_lm():
 
     for chunk in sync_client.iter_chat(
         engine='candle',
-        kind='stable-lm',
+        executable='stable-lm',
         model_id='stabilityai/stablelm-3b-4e1t',
         sample_len=2 * 1024,
         quantized=False,
@@ -154,7 +154,7 @@ def sync_demo_candle_stable_lm():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='stable-lm',
+        executable='stable-lm',
         model_id='stabilityai/stablelm-3b-4e1t',
         sample_len=2 * 1024,
         quantized=False,
@@ -169,7 +169,7 @@ def sync_demo_candle_stable_lm_quantized():
 
     for chunk in sync_client.iter_chat(
         engine='candle',
-        kind='stable-lm',
+        executable='stable-lm',
         model_id='lmz/candle-stablelm-3b-4e1t',
         sample_len=2 * 1024,
         quantized=True,
@@ -186,7 +186,7 @@ def sync_demo_candle_stable_lm_quantized():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='stable-lm',
+        executable='stable-lm',
         model_id='lmz/candle-stablelm-3b-4e1t',
         sample_len=2 * 1024,
         quantized=True,
@@ -201,7 +201,7 @@ def sync_demo_candle_quantized_orca_text():
 
     for chunk in sync_client.iter_chat(
         engine='candle',
-        kind='quantized',
+        executable='quantized',
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
         sample_len=2 * 1024,
@@ -219,7 +219,7 @@ def sync_demo_candle_quantized_orca_text():
 
     for chunk in sync_client.iter_text(
         engine='candle',
-        kind='quantized',
+        executable='quantized',
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
         sample_len=4 * 1024,
@@ -233,7 +233,7 @@ def sync_demo_llama_cpp_main_llama_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/Llama-2-7B-GGUF',
         model='llama-2-7b.Q4_K_M.gguf',
@@ -244,7 +244,7 @@ def sync_demo_llama_cpp_main_llama_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
@@ -259,7 +259,7 @@ def sync_demo_llama_cpp_main_llama_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/Llama-2-7B-Chat-GGUF',
         model='llama-2-7b-chat.Q4_K_M.gguf',
@@ -277,7 +277,7 @@ def sync_demo_llama_cpp_main_llama_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
@@ -299,7 +299,7 @@ def sync_demo_llama_cpp_main_yarn_llama_2_128k_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         # n_gpu_layers=0,
         n_gpu_layers=32,
         model_id='TheBloke/Yarn-Llama-2-7B-128K-GGUF',
@@ -317,7 +317,7 @@ def sync_demo_llama_cpp_main_yarn_llama_2_128k_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         # n_gpu_layers=0,
         n_gpu_layers=32,
         model_id='TheBloke/Yarn-Llama-2-7B-128K-GGUF',
@@ -342,7 +342,7 @@ def sync_demo_llama_cpp_main_mistral_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/zephyr-7B-beta-GGUF',
         model='zephyr-7b-beta.Q4_K_M.gguf',
@@ -353,7 +353,7 @@ def sync_demo_llama_cpp_main_mistral_text():
 
     print(sync_client.text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/zephyr-7B-beta-GGUF',
         model='zephyr-7b-beta.Q4_K_M.gguf',
@@ -367,7 +367,7 @@ def sync_demo_llama_cpp_main_mistral_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/Mistral-7B-Instruct-v0.1-GGUF',
         model='mistral-7b-instruct-v0.1.Q4_K_M.gguf',
@@ -385,7 +385,7 @@ def sync_demo_llama_cpp_main_mistral_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/zephyr-7B-beta-GGUF',
         model='zephyr-7b-beta.Q4_K_M.gguf',
@@ -407,7 +407,7 @@ def sync_demo_llama_cpp_main_stablelm_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
@@ -422,7 +422,7 @@ def sync_demo_llama_cpp_main_stablelm_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
@@ -442,7 +442,7 @@ def sync_demo_llama_cpp_main_meditron_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/meditron-7B-GGUF',
         model='meditron-7b.Q4_K_M.gguf',
@@ -450,7 +450,7 @@ def sync_demo_llama_cpp_main_meditron_text():
         temp=0.1,
         stop=['Question:', 'Answer:'],
         prompt=f'''{MD_SYSTEM_TEXT}
-Question: What is upper right quadrant endoscopy with bravo? What kind of sensors can be put in patients in gastrointestinal tract?
+Question: What is upper right quadrant endoscopy with bravo? What executable of sensors can be put in patients in gastrointestinal tract?
 Answer: '''):
         print(chunk, sep='', end='', flush=True)
 
@@ -460,7 +460,7 @@ def sync_demo_llama_cpp_main_meditron_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/meditron-7B-GGUF',
         model='meditron-7b.Q4_K_M.gguf',
@@ -471,7 +471,7 @@ def sync_demo_llama_cpp_main_meditron_chat():
             {'role': 'system', 'content': MD_SYSTEM_TEXT},
             {'role': 'question', 'content': 'I need help understanding my condition.'},
             {'role': 'answer', 'content': 'Sure, let me know what do you need to know.'},
-            {'role': 'question', 'content': 'What is upper right quadrant endoscopy with bravo? What kind of sensors can be put in patients in gastrointestinal tract?'},
+            {'role': 'question', 'content': 'What is upper right quadrant endoscopy with bravo? What executable of sensors can be put in patients in gastrointestinal tract?'},
         ],
         messages_syntax='chatml',
     ):
@@ -483,7 +483,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q5_K_M.gguf',
@@ -498,7 +498,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q5_K_M.gguf',

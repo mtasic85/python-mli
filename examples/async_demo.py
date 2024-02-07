@@ -11,7 +11,7 @@ async def async_demo_candle_stable_lm():
 
     async for chunk in async_client.iter_text(
         engine='candle',
-        kind='stable-lm',
+        executable='stable-lm',
         model_id='lmz/candle-stablelm-3b-4e1t',
         sample_len=512,
         quantized=True,
@@ -21,7 +21,7 @@ async def async_demo_candle_stable_lm():
 
     async for chunk in async_client.iter_chat(
         engine='candle',
-        kind='stable-lm',
+        executable='stable-lm',
         model_id='lmz/candle-stablelm-3b-4e1t',
         sample_len=512,
         quantized=True,
@@ -36,7 +36,7 @@ async def async_demo_candle_stable_lm():
 
     print(await async_client.text(
         engine='candle',
-        kind='stable-lm',
+        executable='stable-lm',
         model_id='lmz/candle-stablelm-3b-4e1t',
         sample_len=512,
         prompt='Building a website can be done in 10 simple steps:\nStep 1:'
@@ -44,7 +44,7 @@ async def async_demo_candle_stable_lm():
 
     print(await async_client.chat(
         engine='candle',
-        kind='stable-lm',
+        executable='stable-lm',
         model_id='lmz/candle-stablelm-3b-4e1t',
         sample_len=512,
         messages=[
@@ -61,7 +61,7 @@ async def async_demo_llama_cpp_main_stable_lm():
 
     async for chunk in async_client.iter_text(
        engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
@@ -72,7 +72,7 @@ async def async_demo_llama_cpp_main_stable_lm():
 
     async for chunk in async_client.iter_chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
@@ -88,7 +88,7 @@ async def async_demo_llama_cpp_main_stable_lm():
 
     print(await async_client.text(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
@@ -98,7 +98,7 @@ async def async_demo_llama_cpp_main_stable_lm():
 
     print(await async_client.chat(
         engine='llama.cpp',
-        kind='main',
+        executable='main',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',

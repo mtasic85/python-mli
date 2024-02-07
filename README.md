@@ -141,22 +141,7 @@ Download one of popular models to try them:
 # NOTE: login in case you need to accept terms and conditions for some models
 # huggingface-cli login
 
-# phi
-huggingface-cli download microsoft/phi-2
-huggingface-cli download microsoft/phi-1_5
-huggingface-cli download Open-Orca/oo-phi-1_5
-huggingface-cli download lmz/candle-quantized-phi
-huggingface-cli download TKDKid1000/phi-1_5-GGUF phi-1_5-Q4_K_M.gguf
-huggingface-cli download TheBloke/phi-2-GGUF phi-2.Q4_K_M.gguf
-huggingface-cli download TheBloke/dolphin-2_6-phi-2-GGUF dolphin-2_6-phi-2.Q4_K_M.gguf
-
-# stable-lm
-huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b stablelm-2-zephyr-1_6b-Q4_1.gguf
-# huggingface-cli download stabilityai/stablelm-zephyr-3b 
-huggingface-cli download TheBloke/stablelm-zephyr-3b-GGUF stablelm-zephyr-3b.Q4_K_M.gguf
-huggingface-cli download stabilityai/stable-code-3b  stable-code-3b-Q5_K_M.gguf
-
-# mistral
+# mistral ai
 huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q2_K.gguf
 huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q3_K_M.gguf
 huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q4_K_M.gguf
@@ -165,10 +150,29 @@ huggingface-cli download TheBloke/openchat-3.5-0106-GGUF openchat-3.5-0106.Q4_K_
 huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q4_K_M.gguf
 huggingface-cli download TheBloke/zephyr-7B-beta-GGUF zephyr-7b-beta.Q4_K_M.gguf
 
-# llama
+# stability ai
+huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b stablelm-2-zephyr-1_6b-Q4_1.gguf
+# huggingface-cli download stabilityai/stablelm-zephyr-3b 
+huggingface-cli download TheBloke/stablelm-zephyr-3b-GGUF stablelm-zephyr-3b.Q4_K_M.gguf
+huggingface-cli download stabilityai/stable-code-3b  stable-code-3b-Q5_K_M.gguf
+
+# technology innovation institute (tii)
+huggingface-cli download maddes8cht/tiiuae-falcon-7b-instruct-gguf tiiuae-falcon-7b-instruct-Q4_K_M.gguf
+huggingface-cli download maddes8cht/tiiuae-falcon-40b-instruct-gguf tiiuae-falcon-40b-instruct-Q3_K_M.gguf
+
+# meta llama
 huggingface-cli download TheBloke/Orca-2-7B-GGUF orca-2-7b.Q4_K_M.gguf
 # huggingface-cli download afrideva/MiniChat-1.5-3B-GGUF minichat-1.5-3b.q4_k_m.gguf
 huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
+
+# microsoft phi
+huggingface-cli download microsoft/phi-2
+huggingface-cli download microsoft/phi-1_5
+huggingface-cli download Open-Orca/oo-phi-1_5
+huggingface-cli download lmz/candle-quantized-phi
+huggingface-cli download TKDKid1000/phi-1_5-GGUF phi-1_5-Q4_K_M.gguf
+huggingface-cli download TheBloke/phi-2-GGUF phi-2.Q4_K_M.gguf
+huggingface-cli download TheBloke/dolphin-2_6-phi-2-GGUF dolphin-2_6-phi-2.Q4_K_M.gguf
 ```
 
 Run server:
