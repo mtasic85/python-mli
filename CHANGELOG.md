@@ -3,7 +3,8 @@
 ## v0.1.22
 
 Changed:
-    - params: `kind` is not `executable`
+    - params: `kind` is not `executable`.
+    - `langchain` package is optional now.
 
 ## v0.1.21
 

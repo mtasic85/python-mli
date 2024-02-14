@@ -19,6 +19,7 @@ from weakref import WeakKeyDictionary
 from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 
 from aiohttp import web, WSMsgType
+from transformers import AutoTokenizer
 from huggingface_hub import try_to_load_from_cache
 
 from .params import Message, LLMParams, LlamaCppParams, CandleParams
