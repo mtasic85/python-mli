@@ -23,6 +23,7 @@ from transformers import AutoTokenizer
 from huggingface_hub import try_to_load_from_cache
 
 from .params import Message, LLMParams, LlamaCppParams, CandleParams
+from .formatter import format_messages
 
 
 DEBUG = int(os.getenv('DEBUG', 0))

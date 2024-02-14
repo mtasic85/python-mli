@@ -294,49 +294,6 @@ def sync_demo_llama_cpp_main_llama_chat():
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_llama_cpp_main_yarn_llama_2_128k_text():
-    sync_client = SyncMLIClient(ENDPOINT)
-
-    for chunk in sync_client.iter_text(
-        engine='llama.cpp',
-        executable='main',
-        # n_gpu_layers=0,
-        n_gpu_layers=32,
-        model_id='TheBloke/Yarn-Llama-2-7B-128K-GGUF',
-        model='yarn-llama-2-7b-128k.Q4_K_M.gguf',
-        # ctx_size=128 * 1024,
-        ctx_size=8 * 1024,
-        temp=0.9,
-        prompt='Building a perfect e-commerce website in 1234 simple steps:\nStep 1:',
-    ):
-        print(chunk, sep='', end='', flush=True)
-
-
-def sync_demo_llama_cpp_main_yarn_llama_2_128k_chat():
-    sync_client = SyncMLIClient(ENDPOINT)
-
-    for chunk in sync_client.iter_chat(
-        engine='llama.cpp',
-        executable='main',
-        # n_gpu_layers=0,
-        n_gpu_layers=32,
-        model_id='TheBloke/Yarn-Llama-2-7B-128K-GGUF',
-        model='yarn-llama-2-7b-128k.Q4_K_M.gguf',
-        # ctx_size=128 * 1024,
-        ctx_size=8 * 1024,
-        temp=0.9,
-        stop=['Assistant:', 'User:'],
-        messages=[
-            {'role': 'system', 'content': SYSTEM_TEXT},
-            {'role': 'user', 'content': 'I need help building a website.'},
-            {'role': 'assistant', 'content': 'Sure, let me know what and how do you need it built.'},
-            {'role': 'user', 'content': 'Building a perfect e-commerce website in 1234 simple steps. Explain step by step.'},
-        ],
-        # messages_syntax='llama',
-    ):
-        print(chunk, sep='', end='', flush=True)
-
-
 def sync_demo_llama_cpp_main_mistral_text():
     sync_client = SyncMLIClient(ENDPOINT)
 
@@ -402,76 +359,35 @@ def sync_demo_llama_cpp_main_mistral_chat():
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_llama_cpp_main_stablelm_text():
+def sync_demo_llama_cpp_main_stablelm_zephyr_3b_text():
     sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
         n_gpu_layers=35,
-        model_id='TheBloke/rocket-3B-GGUF',
-        model='rocket-3b.Q4_K_M.gguf',
+        model_id='TheBloke/stablelm-zephyr-3b-GGUF',
+        model='stablelm-zephyr-3b.Q4_K_M.gguf',
         ctx_size=3 * 1024,
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
     ):
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_llama_cpp_main_stablelm_chat():
+def sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat():
     sync_client = SyncMLIClient(ENDPOINT)
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         executable='main',
         n_gpu_layers=35,
-        model_id='TheBloke/rocket-3B-GGUF',
-        model='rocket-3b.Q4_K_M.gguf',
+        model_id='TheBloke/stablelm-zephyr-3b-GGUF',
+        model='stablelm-zephyr-3b.Q4_K_M.gguf',
         ctx_size=3 * 1024,
-        stop=['<|im_start|>', '<|im_end|>'],
+        stop=["<|system|>", "<|user|>", "<|assistant|>", "<|endoftext|>"],
         messages=[
             {'role': 'system', 'content': f'{SYSTEM_TEXT}. You like to ask questions back.'},
             {'role': 'user', 'content': 'Lets have a conversation. I want to know more about you.'},
-        ],
-        messages_syntax='chatml',
-    ):
-        print(chunk, sep='', end='', flush=True)
-
-
-def sync_demo_llama_cpp_main_meditron_text():
-    sync_client = SyncMLIClient(ENDPOINT)
-
-    for chunk in sync_client.iter_text(
-        engine='llama.cpp',
-        executable='main',
-        n_gpu_layers=35,
-        model_id='TheBloke/meditron-7B-GGUF',
-        model='meditron-7b.Q4_K_M.gguf',
-        ctx_size=2 * 1024,
-        temp=0.1,
-        stop=['Question:', 'Answer:'],
-        prompt=f'''{MD_SYSTEM_TEXT}
-Question: What is upper right quadrant endoscopy with bravo? What executable of sensors can be put in patients in gastrointestinal tract?
-Answer: '''):
-        print(chunk, sep='', end='', flush=True)
-
-
-def sync_demo_llama_cpp_main_meditron_chat():
-    sync_client = SyncMLIClient(ENDPOINT)
-
-    for chunk in sync_client.iter_chat(
-        engine='llama.cpp',
-        executable='main',
-        n_gpu_layers=35,
-        model_id='TheBloke/meditron-7B-GGUF',
-        model='meditron-7b.Q4_K_M.gguf',
-        ctx_size=2 * 1024,
-        temp=0.1,
-        stop=['<|im_start|>', '<|im_end|>'],
-        messages=[
-            {'role': 'system', 'content': MD_SYSTEM_TEXT},
-            {'role': 'question', 'content': 'I need help understanding my condition.'},
-            {'role': 'answer', 'content': 'Sure, let me know what do you need to know.'},
-            {'role': 'question', 'content': 'What is upper right quadrant endoscopy with bravo? What executable of sensors can be put in patients in gastrointestinal tract?'},
         ],
         messages_syntax='chatml',
     ):
@@ -484,9 +400,9 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        # n_gpu_layers=35,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
-        model='stablelm-2-zephyr-1_6b-Q5_K_M.gguf',
+        model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
         ctx_size=2 * 1024,
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
     ):
@@ -499,11 +415,11 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        # n_gpu_layers=35,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
-        model='stablelm-2-zephyr-1_6b-Q5_K_M.gguf',
+        model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
         ctx_size=2 * 1024,
-        stop=['<|user|>', '<|assistant|>', '<|endoftext|>'],
+        stop=["<|system|>", "<|user|>", "<|assistant|>", "<|endoftext|>"],
         messages=[
             {'role': 'system', 'content': f'{SYSTEM_TEXT}. You like to ask questions back.'},
             {'role': 'user', 'content': 'Lets have a conversation. I want to know more about you.'},
@@ -522,15 +438,12 @@ if __name__ == '__main__':
     # sync_demo_candle_stable_lm()
     # sync_demo_candle_stable_lm_quantized()
     # sync_demo_candle_quantized_orca_text()
+    
     # sync_demo_llama_cpp_main_llama_text()
     # sync_demo_llama_cpp_main_llama_chat()
-    # sync_demo_llama_cpp_main_yarn_llama_2_128k_text()
-    # sync_demo_llama_cpp_main_yarn_llama_2_128k_chat()
     # sync_demo_llama_cpp_main_mistral_text()
     # sync_demo_llama_cpp_main_mistral_chat()
-    # sync_demo_llama_cpp_main_stablelm_text()
-    # sync_demo_llama_cpp_main_stablelm_chat()
-    # sync_demo_llama_cpp_main_meditron_text()
-    # sync_demo_llama_cpp_main_meditron_chat()
+    # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
+    # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
     sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
