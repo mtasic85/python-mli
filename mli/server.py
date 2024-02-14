@@ -64,13 +64,13 @@ class MLIServer:
             model: str = kwargs['model']
             model_id: str | None = kwargs.get('model_id')
             chatml: bool | None = bool(kwargs.get('chatml', False))
-            n_predict: int = int(kwargs.get('n_predict', '-2'))
-            ctx_size: int = int(kwargs.get('ctx_size', '2048'))
-            batch_size: int = int(kwargs.get('batch_size', '512'))
-            temp: float = float(kwargs.get('temp', '0.8'))
-            n_gpu_layers: int = int(kwargs.get('n_gpu_layers', '0'))
-            top_k: int = int(kwargs.get('top_k', '40'))
-            top_p: float = float(kwargs.get('top_p', '0.9'))
+            n_predict: int = int(kwargs.get('n_predict', -2))
+            ctx_size: int = int(kwargs.get('ctx_size', 2048))
+            batch_size: int = int(kwargs.get('batch_size', 512))
+            temp: float = float(kwargs.get('temp', 0.8))
+            n_gpu_layers: int = int(kwargs.get('n_gpu_layers', 0))
+            top_k: int = int(kwargs.get('top_k', 40))
+            top_p: float = float(kwargs.get('top_p', 0.9))
             no_display_prompt: float = float(kwargs.get('no_display_prompt', True))
             split_mode: str | None = kwargs.get('split_mode')
             tensor_split: str | None = kwargs.get('tensor_split')
@@ -141,9 +141,9 @@ class MLIServer:
             prompt: str = kwargs['prompt']
             model: str = kwargs['model']
             cpu: bool = bool(kwargs.get('cpu', False))
-            temperature: int = float(kwargs.get('temperature', '0.8'))
-            top_p: int = float(kwargs.get('top_p', '0.9'))
-            sample_len: int = int(kwargs.get('sample_len', '100'))
+            temperature: int = float(kwargs.get('temperature', 0.8))
+            top_p: int = float(kwargs.get('top_p', 0.9))
+            sample_len: int = int(kwargs.get('sample_len', 100))
             quantized: bool = bool(kwargs.get('quantized', False))
 
             # shell_prompt
@@ -485,7 +485,7 @@ class MLIServer:
                     raise e
             
             proc = None
-            stderr = '...' + stderr.decode()[-1024:]
+            stderr = stderr.decode()
             print('[DEBUG] stderr:')
             print(stderr)
 
@@ -519,9 +519,8 @@ class MLIServer:
 
     async def _api_1_0_text_completions(self, ws: web.WebSocketResponse, msg: LLMParams):
         async for chunk in self._run_cmd(ws, msg):
-            if DEBUG:
-                print(f'chunk: {chunk!r}')
-
+            # if DEBUG:
+            #     print(f'chunk: {chunk!r}')
             msg: dict = {'chunk': chunk}
             await ws.send_json(msg)
 
@@ -541,9 +540,8 @@ class MLIServer:
         text: list[str] | str = []
 
         async for chunk in self._run_cmd(None, data):
-            if DEBUG:
-                print(f'chunk: {chunk!r}')
-
+            # if DEBUG:
+            #     print(f'chunk: {chunk!r}')
             text.append(chunk)
 
         text = ''.join(text)
@@ -561,9 +559,8 @@ class MLIServer:
         text: list[str] | str = []
 
         async for chunk in self._run_cmd(None, data):
-            if DEBUG:
-                print(f'chunk: {chunk!r}')
-
+            # if DEBUG:
+            #     print(f'chunk: {chunk!r}')
             text.append(chunk)
 
         text = ''.join(text)
@@ -683,8 +680,8 @@ if __name__ == '__main__':
     parser.add_argument('--host', help='http server host', default='0.0.0.0')
     parser.add_argument('--port', help='http server port', default=5000, type=float)
     parser.add_argument('--timeout', help='llama.cpp timeout in seconds', default=300.0, type=float)
-    parser.add_argument('--candle-path', help='candle directory path', default='~/candle')
-    parser.add_argument('--llama-cpp-path', help='llama.cpp directory path', default='~/llama.cpp')
+    parser.add_argument('--candle-path', help='candle directory path', default='candle')
+    parser.add_argument('--llama-cpp-path', help='llama.cpp directory path', default='llama.cpp')
     cli_args = parser.parse_args()
 
     server = MLIServer(

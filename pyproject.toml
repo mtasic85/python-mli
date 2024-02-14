@@ -12,7 +12,7 @@ packages = [{include = "mli"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 aiohttp = {extras = ["speedups"], version = "^3.9.1"}
-uvloop = "^0.19.0"
+uvloop = {version = "^0.19.0", optional = true}
 langchain = {version = "^0.1.2", optional = true}
 huggingface-hub = "^0.20.3"
 transformers = "^4.37.2"
@@ -22,6 +22,7 @@ protobuf = "^4.25.2"
 tiktoken = "^0.5.2"
 
 [tool.poetry.extras]
+uvloop = ["uvloop"]
 langchain = ["langchain"]
 
 [build-system]

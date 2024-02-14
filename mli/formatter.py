@@ -2,11 +2,17 @@ __all__ = ['format_messages']
 
 from copy import deepcopy
 
-from transformers import AutoTokenizer, Qwen2Tokenizer
+from transformers import AutoTokenizer
 
 
-_tokenizer = AutoTokenizer.from_pretrained('Qwen/Qwen1.5-0.5B-Chat', trust_remote_code=True, use_fast=True)
-CHATML_CHAT_TEMPLATE = _tokenizer.default_chat_template
+CHATML_CHAT_TEMPLATE = (
+    "{% for message in messages %}"
+    "{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}"
+    "{% endfor %}"
+    "{% if add_generation_prompt %}"
+    "{{ '<|im_start|>assistant\n' }}"
+    "{% endif %}"
+)
 
 
 def create_alternate_messages(model_id: str, messages: list[dict], convert_system_to_user: bool=False) -> list[dict]:
@@ -42,7 +48,21 @@ def format_messages(model_id: str, messages: list[dict]) -> str:
     elif model_id in ('microsoft/Orca-2-7b',):
         messages = create_alternate_messages(model_id, messages)
     elif model_id == 'GeneZC/MiniChat-2-3B':
-        tokenizer.chat_template = '''{% for message in messages %}{% if message['role'] == 'system' %}{{ bos_token + message['content'] + eos_token }}{% elif message['role'] == 'user' %}{{ bos_token + '[|User|] ' + message['content'] + eos_token }}{% elif message['role'] == 'assistant' %}{{ bos_token + '[|Assistant|] '  + message['content'] }}{% if not loop.last %}{{ eos_token }}{% endif %}{% endif %}{% endfor %}{{ '<s>[|Assistant|] ' }}'''
+        tokenizer.chat_template = (
+            "{% for message in messages %}"
+                "{% if message['role'] == 'system' %}"
+                    "{{ bos_token + message['content'] + eos_token }}"
+                "{% elif message['role'] == 'user' %}"
+                    "{{ bos_token + '[|User|] ' + message['content'] + eos_token }}"
+                "{% elif message['role'] == 'assistant' %}"
+                    "{{ bos_token + '[|Assistant|] '  + message['content'] }}"
+                    "{% if not loop.last %}"
+                        "{{ eos_token }}"
+                    "{% endif %}"
+                "{% endif %}"
+            "{% endfor %}"
+            "{{ '<s>[|Assistant|] ' }}"
+        )
     
     text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     return text

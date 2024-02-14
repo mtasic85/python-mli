@@ -4,7 +4,11 @@
 
 Changed:
     - params: `kind` is not `executable`.
-    - `langchain` package is optional now.
+    - `langchain` package is optional now, client code is move to `langchain_client.py`.
+    - `uvloop` package is optional now.
+
+Fixed:
+    - Formatting of chat messages (role-based) using `transformers.AutoTokenizer.apply_chat_template`.
 
 ## v0.1.21
 
