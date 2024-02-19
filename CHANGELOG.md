@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.23
+
+Fixed:
+    - Supported old `kind` paramater which can be used for `executable`.
+
 ## v0.1.22
 
 Changed:

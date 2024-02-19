@@ -492,7 +492,7 @@ class MLIServer:
 
     def _run_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams) -> AsyncIterator[str]:
         engine: str = msg['engine']
-        executable: str = msg['executable']
+        executable: str = msg.get('executable', msg.get('kind'))
         cmd: str = self._format_cmd(msg)
         res: AsyncIterator[str]
         assert engine in ('llama.cpp', 'candle')
