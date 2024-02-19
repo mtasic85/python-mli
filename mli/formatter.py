@@ -41,7 +41,23 @@ def create_alternate_messages(model_id: str, messages: list[dict], convert_syste
 def format_messages(model_id: str, messages: list[dict]) -> str:
     tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True, use_fast=True)
 
-    if model_id in ('cognitivecomputations/dolphin-2.6-mistral-7b', 'microsoft/Orca-2-7b', 'mtgv/MobileLLaMA-1.4B-Chat'):
+    if model_id is None:
+        tokenizer.chat_template = (
+            "{% for message in messages %}"
+                "{% if message['role'] == 'system' %}"
+                    "{{ message['content'] + '\n\n' }}"
+                "{% elif message['role'] == 'user' %}"
+                    "{{ 'User: ' + message['content'] + '\n\n' }}"
+                "{% elif message['role'] == 'assistant' %}"
+                    "{{ 'Assistant: '  + message['content'] }}"
+                    "{% if not loop.last %}"
+                        "{{ '\n\n' }}"
+                    "{% endif %}"
+                "{% endif %}"
+            "{% endfor %}"
+            "{{ 'Assistant: ' }}"
+        )
+    elif model_id in ('cognitivecomputations/dolphin-2.6-mistral-7b', 'microsoft/Orca-2-7b', 'mtgv/MobileLLaMA-1.4B-Chat'):
         tokenizer.chat_template = CHATML_CHAT_TEMPLATE
     elif model_id in ('mistralai/Mistral-7B-Instruct-v0.2',):
         messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)

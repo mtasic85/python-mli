@@ -1,9 +1,18 @@
 # CHANGELOG
 
+## v0.1.25
+
+Changed:
+    - `format_messages` using `creator_model_id`
+
+Fixed:
+    - Formatter will use `creator_model_id` if `model_id` is misssing.
+    - New "simple" default/fallback formatting if `model_id`/`creator_model_id` is missing.
+
 ## v0.1.24
 
-    Fixed:
-        - `executable` was not patched in `msg`.
+Fixed:
+    - `executable` was not patched in `msg`.
 
 ## v0.1.23
 

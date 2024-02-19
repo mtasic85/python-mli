@@ -530,8 +530,9 @@ class MLIServer:
 
     def _convert_chat_to_text_message(self, msg: LLMParams) -> LLMParams:
         model_id: str = msg['model_id']
+        creator_model_id: str = msg.get('creator_model_id', msg.get('model_id'))
         messages: list[Message] = msg['messages']
-        prompt: str = format_messages(model_id, messages)
+        prompt: str = format_messages(creator_model_id, messages)
         chat_msg: LLMParams = {**msg, 'prompt': prompt}
         return chat_msg
 

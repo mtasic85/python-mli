@@ -16,7 +16,8 @@ class Message(TypedDict):
 class LlamaCppParams(TypedDict):
     engine: str                             # 'llama.cpp'
     executable: Optional[str]               # 'main'
-    model_id: Optional[str]                 # creator of model
+    model_id: str                           # creator of model
+    creator_model_id: str                   # creator of model
     model: Optional[str]                    # model name
     chatml: Optional[bool]                  # False
     n_predict: Optional[int]                # -2
@@ -38,7 +39,8 @@ class LlamaCppParams(TypedDict):
 class CandleParams(TypedDict):
     engine: str                             # 'candle'
     executable: Optional[str]               # 'phi', 'stable-lm', 'llama', 'mistral', 'quantized'
-    model_id: Optional[str]
+    model_id: str
+    creator_model_id: str
     model: Optional[str]
     cpu: Optional[bool]                     # False
     temperature: Optional[int]              # 0.8

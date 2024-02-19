@@ -7,6 +7,9 @@ STABLE_LM_SYSTEM_TEXT = 'You are a helpful assistant.'
 MD_SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest Doctor of Medicine.'
 
 
+#
+# candle
+#
 def sync_demo_candle_codellama():
     sync_client = SyncMLIClient(ENDPOINT)
 
@@ -228,19 +231,11 @@ def sync_demo_candle_quantized_orca_text():
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_llama_cpp_main_llama_text():
+#
+# llama.cpp
+#
+def sync_demo_llama_cpp_main_orca2_text():
     sync_client = SyncMLIClient(ENDPOINT)
-
-    for chunk in sync_client.iter_text(
-        engine='llama.cpp',
-        executable='main',
-        n_gpu_layers=35,
-        model_id='TheBloke/Llama-2-7B-GGUF',
-        model='llama-2-7b.Q4_K_M.gguf',
-        ctx_size=4 * 1024,
-        prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
-    ):
-        print(chunk, sep='', end='', flush=True)
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
@@ -248,32 +243,15 @@ def sync_demo_llama_cpp_main_llama_text():
         n_gpu_layers=35,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
+        creator_model_id='microsoft/Orca-2-7b',
         ctx_size=4 * 1024,
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
     ):
         print(chunk, sep='', end='', flush=True)
 
 
-def sync_demo_llama_cpp_main_llama_chat():
+def sync_demo_llama_cpp_main_orca2_chat():
     sync_client = SyncMLIClient(ENDPOINT)
-
-    for chunk in sync_client.iter_chat(
-        engine='llama.cpp',
-        executable='main',
-        n_gpu_layers=35,
-        model_id='TheBloke/Llama-2-7B-Chat-GGUF',
-        model='llama-2-7b-chat.Q4_K_M.gguf',
-        ctx_size=4 * 1024,
-        stop=['Assistant:', 'User:'],
-        messages=[
-            {'role': 'system', 'content': SYSTEM_TEXT},
-            {'role': 'user', 'content': 'I need help building a website.'},
-            {'role': 'assistant', 'content': 'Sure, let me know what and how do you need it built.'},
-            {'role': 'user', 'content': 'Building a perfect e-commerce website in 10 simple steps. Explain step by step.'},
-        ],
-        # messages_syntax='llama',
-    ):
-        print(chunk, sep='', end='', flush=True)
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
@@ -281,6 +259,7 @@ def sync_demo_llama_cpp_main_llama_chat():
         n_gpu_layers=35,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
+        creator_model_id='microsoft/Orca-2-7b',
         ctx_size=4 * 1024,
         stop=['Assistant:', 'User:'],
         messages=[
@@ -301,8 +280,9 @@ def sync_demo_llama_cpp_main_mistral_text():
         engine='llama.cpp',
         executable='main',
         n_gpu_layers=35,
-        model_id='TheBloke/zephyr-7B-beta-GGUF',
-        model='zephyr-7b-beta.Q4_K_M.gguf',
+        model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
+        model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
+        creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
         ctx_size=4 * 1024,
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
     ):
@@ -312,8 +292,9 @@ def sync_demo_llama_cpp_main_mistral_text():
         engine='llama.cpp',
         executable='main',
         n_gpu_layers=35,
-        model_id='TheBloke/zephyr-7B-beta-GGUF',
-        model='zephyr-7b-beta.Q4_K_M.gguf',
+        model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
+        model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
+        creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
         ctx_size=4 * 1024,
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
     ))
@@ -326,8 +307,9 @@ def sync_demo_llama_cpp_main_mistral_chat():
         engine='llama.cpp',
         executable='main',
         n_gpu_layers=35,
-        model_id='TheBloke/Mistral-7B-Instruct-v0.1-GGUF',
-        model='mistral-7b-instruct-v0.1.Q4_K_M.gguf',
+        model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
+        model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
+        creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
         ctx_size=4 * 1024,
         stop=['Assistant:', 'User:'],
         messages=[
@@ -346,6 +328,7 @@ def sync_demo_llama_cpp_main_mistral_chat():
         n_gpu_layers=35,
         model_id='TheBloke/zephyr-7B-beta-GGUF',
         model='zephyr-7b-beta.Q4_K_M.gguf',
+        creator_model_id='mistralai/Mistral-7B-v0.2',
         ctx_size=4 * 1024,
         stop=['</s>'],
         messages=[
@@ -368,6 +351,7 @@ def sync_demo_llama_cpp_main_stablelm_zephyr_3b_text():
         n_gpu_layers=35,
         model_id='TheBloke/stablelm-zephyr-3b-GGUF',
         model='stablelm-zephyr-3b.Q4_K_M.gguf',
+        creator_model_id='stabilityai/stablelm-zephyr-3b',
         ctx_size=3 * 1024,
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
     ):
@@ -383,6 +367,7 @@ def sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat():
         n_gpu_layers=35,
         model_id='TheBloke/stablelm-zephyr-3b-GGUF',
         model='stablelm-zephyr-3b.Q4_K_M.gguf',
+        creator_model_id='stabilityai/stablelm-zephyr-3b',
         ctx_size=3 * 1024,
         stop=["<|system|>", "<|user|>", "<|assistant|>", "<|endoftext|>"],
         messages=[
@@ -403,6 +388,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
         # n_gpu_layers=35,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
+        creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
         ctx_size=2 * 1024,
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
     ):
@@ -418,6 +404,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
         # n_gpu_layers=35,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
+        creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
         ctx_size=2 * 1024,
         stop=["<|system|>", "<|user|>", "<|assistant|>", "<|endoftext|>"],
         messages=[
@@ -439,8 +426,8 @@ if __name__ == '__main__':
     # sync_demo_candle_stable_lm_quantized()
     # sync_demo_candle_quantized_orca_text()
     
-    # sync_demo_llama_cpp_main_llama_text()
-    # sync_demo_llama_cpp_main_llama_chat()
+    # sync_demo_llama_cpp_main_orca2_text()
+    # sync_demo_llama_cpp_main_orca2_chat()
     # sync_demo_llama_cpp_main_mistral_text()
     # sync_demo_llama_cpp_main_mistral_chat()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
