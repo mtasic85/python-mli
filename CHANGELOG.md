@@ -2,8 +2,8 @@
 
 ## v0.1.24
 
-Fixed:
-    - `executable` was not patched in `msg`.
+    Fixed:
+        - `executable` was not patched in `msg`.
 
 ## v0.1.23
 
