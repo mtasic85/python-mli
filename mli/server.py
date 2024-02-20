@@ -115,12 +115,16 @@ class MLIServer:
                     '--main-gpu', main_gpu,
                 ])
 
+            if n_gpu_layers:
+                cmd.extend([
+                    '--n-gpu-layers', n_gpu_layers,
+                ])
+
             cmd.extend([
                 '--n-predict', n_predict,
                 '--ctx-size', ctx_size,
                 '--batch-size', batch_size,
                 '--temp', temp,
-                '--n-gpu-layers', n_gpu_layers,
                 '--top-k', top_k,
                 '--top-p', top_p,
                 '--simple-io',
@@ -530,7 +534,7 @@ class MLIServer:
 
     def _convert_chat_to_text_message(self, msg: LLMParams) -> LLMParams:
         model_id: str = msg['model_id']
-        creator_model_id: str = msg.get('creator_model_id', msg.get('model_id'))
+        creator_model_id: str = msg.get('creator_model_id', model_id)
         messages: list[Message] = msg['messages']
         prompt: str = format_messages(creator_model_id, messages)
         chat_msg: LLMParams = {**msg, 'prompt': prompt}

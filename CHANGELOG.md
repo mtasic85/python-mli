@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.26
+
+Added:
+    - `pyproject.toml` initial support for `torch` (WIP).
+
+Fixed:
+    - `examples/sync_demo.py` now uses correct models for `llama.cpp`.
+
 ## v0.1.25
 
 Changed:

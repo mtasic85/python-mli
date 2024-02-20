@@ -432,5 +432,5 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_mistral_chat()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
     sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
