@@ -6,6 +6,18 @@ SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest assistant.
 STABLE_LM_SYSTEM_TEXT = 'You are a helpful assistant.'
 MD_SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest Doctor of Medicine.'
 
+CAR_TEXT = '''
+Car details:
+name: Maruti 800 AC
+year: 2007
+selling_price: 60000
+km_driven: 70000
+fuel: Petrol
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+'''
+
 CARS_TEXT = '''
 Car details:
 name: Maruti 800 AC
@@ -16,7 +28,6 @@ fuel: Petrol
 seller_type: Individual
 transmission: Manual
 owner: First Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Maruti Wagon R LXI Minor
@@ -27,7 +38,6 @@ fuel: Petrol
 seller_type: Individual
 transmission: Manual
 owner: First Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Hyundai Verna 1.6 SX
@@ -38,7 +48,6 @@ fuel: Diesel
 seller_type: Individual
 transmission: Manual
 owner: First Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Datsun RediGO T Option
@@ -49,7 +58,6 @@ fuel: Petrol
 seller_type: Individual
 transmission: Manual
 owner: First Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Honda Amaze VX i-DTEC
@@ -60,7 +68,6 @@ fuel: Diesel
 seller_type: Individual
 transmission: Manual
 owner: Second Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Maruti Alto LX BSIII
@@ -71,7 +78,6 @@ fuel: Petrol
 seller_type: Individual
 transmission: Manual
 owner: First Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Hyundai Xcent 1.2 Kappa S
@@ -82,7 +88,6 @@ fuel: Petrol
 seller_type: Individual
 transmission: Manual
 owner: First Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Tata Indigo Grand Petrol
@@ -93,7 +98,6 @@ fuel: Petrol
 seller_type: Individual
 transmission: Manual
 owner: Second Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Hyundai Creta 1.6 VTVT S
@@ -104,7 +108,6 @@ fuel: Petrol
 seller_type: Individual
 transmission: Manual
 owner: First Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 
 Car details:
 name: Maruti Celerio Green VXI
@@ -115,7 +118,6 @@ fuel: CNG
 seller_type: Individual
 transmission: Manual
 owner: First Owner
-Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
 '''
 
 JSON_ARRAY_GRAMMAR = r'''
@@ -175,7 +177,8 @@ string ::=
 
 number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
 
-ws ::= ([ \t\n] ws)?'''
+ws ::= ([ \t\n] ws)?
+'''
 
 #
 # candle
@@ -609,11 +612,90 @@ def sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar():
         engine='llama.cpp',
         executable='main',
         # n_gpu_layers=35,
-        model_id='Qwen/Qwen1.5-1.8B-Chat-GGUF',
-        model='qwen1_5-1_8b-chat-q4_k_m.gguf',
-        creator_model_id='Qwen/Qwen1.5-1.8B-Chat',
+        model_id='Qwen/Qwen1.5-0.5B-Chat-GGUF',
+        model='qwen1_5-0_5b-chat-q4_k_m.gguf',
+        creator_model_id='Qwen/Qwen1.5-0.5B-Chat',
         # temp=0.1,
-        prompt=f'Parse as JSON array:\n{CARS_TEXT}',
+        top_k=100,
+        prompt=f'Parse text as object:\n```{CAR_TEXT}```\nJSON: ',
+        grammar=JSON_OBJECT_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        # n_gpu_layers=35,
+        model_id='Qwen/Qwen1.5-0.5B-Chat-GGUF',
+        model='qwen1_5-0_5b-chat-q4_k_m.gguf',
+        creator_model_id='Qwen/Qwen1.5-0.5B-Chat',
+        # temp=0.1,
+        top_k=100,
+        prompt=f'Parse text as array or objects:\n```{CARS_TEXT}```\nJSON: ',
+        grammar=JSON_ARRAY_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_llama_cpp_main_phi_1_5_grammar():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        # n_gpu_layers=35,
+        model_id='TKDKid1000/phi-1_5-GGUF',
+        model='phi-1_5-Q4_K_M.gguf',
+        creator_model_id='microsoft/phi-1_5',
+        # temp=0.1,
+        top_k=100,
+        prompt=f'Parse text as object:\n```{CAR_TEXT}```\nJSON: ',
+        grammar=JSON_OBJECT_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        # n_gpu_layers=35,
+        model_id='TKDKid1000/phi-1_5-GGUF',
+        model='phi-1_5-Q4_K_M.gguf',
+        creator_model_id='microsoft/phi-1_5',
+        # temp=0.1,
+        top_k=100,
+        prompt=f'Parse text as array or objects:\n```{CARS_TEXT}```\nJSON: ',
+        grammar=JSON_ARRAY_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        # n_gpu_layers=35,
+        model_id='TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF',
+        model='tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf',
+        creator_model_id='TinyLlama/TinyLlama-1.1B-Chat-v1.0',
+        # temp=0.1,
+        top_k=100,
+        prompt=f'Parse text as object:\n```{CAR_TEXT}```\nJSON: ',
+        grammar=JSON_OBJECT_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        # n_gpu_layers=35,
+        model_id='TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF',
+        model='tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf',
+        creator_model_id='TinyLlama/TinyLlama-1.1B-Chat-v1.0',
+        # temp=0.1,
+        top_k=100,
+        prompt=f'Parse text as array or objects:\n```{CARS_TEXT}```\nJSON: ',
         grammar=JSON_ARRAY_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
@@ -637,5 +719,7 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar()
     # sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar()
+    # sync_demo_llama_cpp_main_phi_1_5_grammar()
+    sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar()
