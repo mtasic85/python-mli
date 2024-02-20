@@ -21,8 +21,8 @@ class LlamaCppParams(TypedDict):
     model: Optional[str]                    # model name
     chatml: Optional[bool]                  # False
     n_predict: Optional[int]                # -2
-    ctx_size: Optional[int]                 # 2048
-    batch_size: Optional[int]               # 512
+    ctx_size: Optional[int]                 # size of the prompt context (default: 512, 0 = loaded from model)
+    batch_size: Optional[int]               # 0 (load from model)
     temp: Optional[float]                   # 0.8
     n_gpu_layers: Optional[int]             # 0 (max usually 35)
     top_k: Optional[int]                    # 40
@@ -34,6 +34,17 @@ class LlamaCppParams(TypedDict):
     split_mode: Optional[str]               # 'none', 'layer' (default), 'row'
     tensor_split: Optional[str]             # None, e.g. '3,1'
     main_gpu: Optional[int]                 # None, e.g. 0 (default)
+    seed: Optional[int]                     # -1 (default)
+    threads: Optional[int]                  # 16 (default)
+    grammar: Optional[str]                  # BNF-like grammar to constrain generations (see samples in grammars/ dir)
+    grammar_file: Optional[str]             # file to read grammar from
+    cfg_negative_prompt: Optional[str]      # negative prompt to use for guidance. (default: empty)
+    cfg_scale: Optional[float]              # strength of guidance (default: 1.000000, 1.0 = disable)
+    rope_scaling: Optional[str]             # none,linear,yarn
+    rope_scale: Optional[int | float]       # RoPE context scaling factor, expands context by a factor of N
+    rope_freq_base: Optional[int | float]   # RoPE base frequency, used by NTK-aware scaling (default: loaded from model)
+    rope_freq_scale: Optional[int | float]  # RoPE frequency scaling factor, expands context by a factor of 1/N
+    cont_batching: Optional[bool]           # enable continuous batching (a.k.a dynamic batching) (default: disabled)
 
 
 class CandleParams(TypedDict):

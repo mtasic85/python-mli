@@ -6,6 +6,176 @@ SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest assistant.
 STABLE_LM_SYSTEM_TEXT = 'You are a helpful assistant.'
 MD_SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest Doctor of Medicine.'
 
+CARS_TEXT = '''
+Car details:
+name: Maruti 800 AC
+year: 2007
+selling_price: 60000
+km_driven: 70000
+fuel: Petrol
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Maruti Wagon R LXI Minor
+year: 2007
+selling_price: 135000
+km_driven: 50000
+fuel: Petrol
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Hyundai Verna 1.6 SX
+year: 2012
+selling_price: 600000
+km_driven: 100000
+fuel: Diesel
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Datsun RediGO T Option
+year: 2017
+selling_price: 250000
+km_driven: 46000
+fuel: Petrol
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Honda Amaze VX i-DTEC
+year: 2014
+selling_price: 450000
+km_driven: 141000
+fuel: Diesel
+seller_type: Individual
+transmission: Manual
+owner: Second Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Maruti Alto LX BSIII
+year: 2007
+selling_price: 140000
+km_driven: 125000
+fuel: Petrol
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Hyundai Xcent 1.2 Kappa S
+year: 2016
+selling_price: 550000
+km_driven: 25000
+fuel: Petrol
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Tata Indigo Grand Petrol
+year: 2014
+selling_price: 240000
+km_driven: 60000
+fuel: Petrol
+seller_type: Individual
+transmission: Manual
+owner: Second Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Hyundai Creta 1.6 VTVT S
+year: 2015
+selling_price: 850000
+km_driven: 25000
+fuel: Petrol
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+
+Car details:
+name: Maruti Celerio Green VXI
+year: 2017
+selling_price: 365000
+km_driven: 78000
+fuel: CNG
+seller_type: Individual
+transmission: Manual
+owner: First Owner
+Parse as JSON with fields: "name", "year", "selling_price", "km_driven", "fuel".
+'''
+
+JSON_ARRAY_GRAMMAR = r'''
+root   ::= arr
+value  ::= object | array | string | number | ("true" | "false" | "null") ws
+
+arr  ::=
+  "[\n" ws (
+            value
+    (",\n" ws value)*
+  )? "]"
+
+object ::=
+  "{" ws (
+            string ":" ws value
+    ("," ws string ":" ws value)*
+  )? "}" ws
+
+array  ::=
+  "[" ws (
+            value
+    ("," ws value)*
+  )? "]" ws
+
+string ::=
+  "\"" (
+    [^"\\] |
+    "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]) # escapes
+  )* "\"" ws
+
+number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
+
+ws ::= ([ \t\n] ws)?
+'''
+
+JSON_OBJECT_GRAMMAR = r'''
+root   ::= object
+value  ::= object | array | string | number | ("true" | "false" | "null") ws
+
+object ::=
+  "{" ws (
+            string ":" ws value
+    ("," ws string ":" ws value)*
+  )? "}" ws
+
+array  ::=
+  "[" ws (
+            value
+    ("," ws value)*
+  )? "]" ws
+
+string ::=
+  "\"" (
+    [^"\\] |
+    "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]) # escapes
+  )* "\"" ws
+
+number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
+
+ws ::= ([ \t\n] ws)?'''
 
 #
 # candle
@@ -405,13 +575,46 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
         creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
-        ctx_size=2 * 1024,
         stop=["<|system|>", "<|user|>", "<|assistant|>", "<|endoftext|>"],
         messages=[
             {'role': 'system', 'content': f'{SYSTEM_TEXT}. You like to ask questions back.'},
             {'role': 'user', 'content': 'Lets have a conversation. I want to know more about you.'},
         ],
         messages_syntax='stablelm-2-zephyr-1_6b',
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        # n_gpu_layers=35,
+        model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
+        creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        # temp=0.1,
+        prompt=f'Parse as JSON array:\n{CARS_TEXT}',
+        grammar=JSON_ARRAY_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
+def sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        # n_gpu_layers=35,
+        model_id='Qwen/Qwen1.5-1.8B-Chat-GGUF',
+        model='qwen1_5-1_8b-chat-q4_k_m.gguf',
+        creator_model_id='Qwen/Qwen1.5-1.8B-Chat',
+        # temp=0.1,
+        prompt=f'Parse as JSON array:\n{CARS_TEXT}',
+        grammar=JSON_ARRAY_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
 
@@ -433,4 +636,6 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar()
+    # sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar()

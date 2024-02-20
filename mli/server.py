@@ -65,20 +65,28 @@ class MLIServer:
             model_id: str | None = kwargs.get('model_id')
             chatml: bool | None = bool(kwargs.get('chatml', False))
             n_predict: int = int(kwargs.get('n_predict', -2))
-            ctx_size: int = int(kwargs.get('ctx_size', 2048))
+            ctx_size: int = int(kwargs.get('ctx_size', 0))
             batch_size: int = int(kwargs.get('batch_size', 512))
             temp: float = float(kwargs.get('temp', 0.8))
-            n_gpu_layers: int = int(kwargs.get('n_gpu_layers', 0))
+            n_gpu_layers: int = kwargs.get('n_gpu_layers')
             top_k: int = int(kwargs.get('top_k', 40))
             top_p: float = float(kwargs.get('top_p', 0.9))
             no_display_prompt: float = float(kwargs.get('no_display_prompt', True))
             split_mode: str | None = kwargs.get('split_mode')
             tensor_split: str | None = kwargs.get('tensor_split')
             main_gpu: int | None = kwargs.get('main_gpu')
+            seed: int | None = kwargs.get('seed')
+            threads: int | None = kwargs.get('threads')
+            grammar: str | None = kwargs.get('grammar')
+            grammar_file: str | None = kwargs.get('grammar_file')
+            cfg_negative_prompt: str | None = kwargs.get('cfg_negative_prompt')
+            cfg_scale: float | None = kwargs.get('cfg_scale')
+            rope_scaling: str | None = kwargs.get('rope_scaling')
+            rope_scale: int | float | None = kwargs.get('rope_scale')
+            rope_freq_base: int | float | None = kwargs.get('rope_freq_base')
+            rope_freq_scale: int | float | None = kwargs.get('rope_freq_scale')
+            cont_batching: bool | None = kwargs.get('cont_batching', False)
             
-            # shell_prompt
-            shell_prompt: str = shlex.quote(prompt)
-
             # model_path
             if model_id:
                 model_path = try_to_load_from_cache(repo_id=model_id, filename=model)
@@ -115,10 +123,72 @@ class MLIServer:
                     '--main-gpu', main_gpu,
                 ])
 
-            if n_gpu_layers:
+            if n_gpu_layers is not None:
                 cmd.extend([
                     '--n-gpu-layers', n_gpu_layers,
                 ])
+
+            if seed is not None:
+                cmd.extend([
+                    '--seed', seed,
+                ])
+            
+            if threads is not None:
+                cmd.extend([
+                    '--threads', threads,
+                ])
+
+            if grammar is not None:
+                shell_grammar: str = shlex.quote(grammar)
+
+                cmd.extend([
+                    '--grammar', shell_grammar,
+                ])
+            
+            if grammar_file is not None:
+                cmd.extend([
+                    '--grammar-file', grammar_file,
+                ])
+
+            if cfg_negative_prompt is not None:
+                shell_cfg_negative_prompt: str = shlex.quote(cfg_negative_prompt)
+
+                cmd.extend([
+                    '--cfg-negative-prompt', shell_cfg_negative_prompt,
+                ])
+            
+            if cfg_scale is not None:
+                cmd.extend([
+                    '--cfg-scale', cfg_scale,
+                ])
+
+            if rope_scaling is not None:
+                cmd.extend([
+                    '--rope-scaling', rope_scaling,
+                ])
+
+            if rope_scale is not None:
+                cmd.extend([
+                    '--rope-scale', rope_scale,
+                ])
+
+            if rope_freq_base is not None:
+                cmd.extend([
+                    '--rope-freq-base', rope_freq_base,
+                ])
+
+            if rope_freq_scale is not None:
+                cmd.extend([
+                    '--rope-freq-scale', rope_freq_scale,
+                ])
+
+            if cont_batching is not None:
+                cmd.extend([
+                    '--cont-batching',
+                ])
+
+            # shell_prompt
+            shell_prompt: str = shlex.quote(prompt)
 
             cmd.extend([
                 '--n-predict', n_predict,

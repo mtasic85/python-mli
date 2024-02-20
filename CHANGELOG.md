@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.27
+
+Added:
+    - added `llama.cpp` parameters: `seed`, `threads`, `grammar`, `grammar_file`, `cfg_negative_prompt`, `cfg_scale`, `rope_scaling`, `rope_scale`, `rope_freq_base`, `rope_freq_scale`, `cont_batching`.
+
+Changed:
+    - `ctx_size` is not `0`, size of the prompt context (default: 512, 0 = loaded from model)
+
 ## v0.1.26
 
 Added:
