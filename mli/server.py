@@ -68,7 +68,7 @@ class MLIServer:
             ctx_size: int = int(kwargs.get('ctx_size', 0))
             batch_size: int = int(kwargs.get('batch_size', 512))
             temp: float = float(kwargs.get('temp', 0.8))
-            n_gpu_layers: int = kwargs.get('n_gpu_layers')
+            n_gpu_layers: int | None = kwargs.get('n_gpu_layers')
             top_k: int = int(kwargs.get('top_k', 40))
             top_p: float = float(kwargs.get('top_p', 0.9))
             no_display_prompt: float = float(kwargs.get('no_display_prompt', True))
@@ -581,12 +581,14 @@ class MLIServer:
                 model_path = try_to_load_from_cache(repo_id=model_id, filename=model)
 
                 if not isinstance(model_path, str):
-                    raise ValueError(f'Model missing: {model_path}')
+                    raise ValueError(f'Unknown model: {model_path!r}')
                 else:
-                    print(f'[INFO] found model: {model_path}')
+                    print(f'[INFO] found model: {model_path!r}')
             else:
                 # FIXME: check if model exists
                 model_path = model
+        else:
+            raise ValueError(f'Unknown engine: {engine!r}')
 
         res = self._run_shell_cmd(ws, msg, cmd)
         return res
@@ -660,6 +662,26 @@ class MLIServer:
                         await ws.pong(msg.data)
                     elif msg.type == WSMsgType.TEXT:
                         data: LLMParams = json.loads(msg.data)
+
+                        # quick model check
+                        engine = data['engine']
+                        model_id = data.get('model_id')
+                        model = data.get('model')
+                        
+                        if engine not in ('llama.cpp', 'candle'):
+                            print(f'[ERROR] Unknown engine: {engine!r}, skipping')
+                            break
+
+                        if engine == 'llama.cpp':
+                            if not model:
+                                print(f'[ERROR] Unknown model: {model!r}, skipping')
+                                break
+                        elif engine == 'candle':
+                            if not model_id or not model:
+                                print(f'[ERROR] Unknown model_id {model_id!r} and model {model!r}, skipping')
+                                break
+
+                        # text completion
                         coro = self._api_1_0_text_completions(ws, data)
                         task = tg.create_task(coro)
                     elif msg.type == WSMsgType.ERROR:

@@ -1,6 +1,8 @@
+import os
 from mli import SyncMLIClient
 
 
+NGL = os.getenv('NGL')
 ENDPOINT = 'http://127.0.0.1:5000/api/1.0'
 SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest assistant.'
 STABLE_LM_SYSTEM_TEXT = 'You are a helpful assistant.'
@@ -120,64 +122,52 @@ transmission: Manual
 owner: First Owner
 '''
 
-JSON_ARRAY_GRAMMAR = r'''
-root   ::= arr
-value  ::= object | array | string | number | ("true" | "false" | "null") ws
-
-arr  ::=
-  "[\n" ws (
-            value
-    (",\n" ws value)*
-  )? "]"
-
-object ::=
-  "{" ws (
-            string ":" ws value
-    ("," ws string ":" ws value)*
-  )? "}" ws
+JSON_FLAT_ARRAY_GRAMMAR = r'''
+root   ::= array
+value  ::= string | number | ("true" | "false" | "null")
 
 array  ::=
-  "[" ws (
-            value
-    ("," ws value)*
-  )? "]" ws
+  "[" (
+    object
+    ("," ws object)*
+  ) "]"
+
+object ::=
+  "{" (
+    string ":" ws value
+    ("," ws string ":" ws value)*
+  ) "}"
 
 string ::=
   "\"" (
     [^"\\] |
     "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]) # escapes
-  )* "\"" ws
+  )* "\""
 
-number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
+number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)?
 
-ws ::= ([ \t\n] ws)?
+ws ::= [ ]
 '''
 
-JSON_OBJECT_GRAMMAR = r'''
+JSON_FLAT_OBJECT_GRAMMAR = r'''
 root   ::= object
-value  ::= object | array | string | number | ("true" | "false" | "null") ws
+value  ::= string | number | ("true" | "false" | "null")
 
 object ::=
-  "{" ws (
-            string ":" ws value
+  "{" (
+    string ":" ws value
     ("," ws string ":" ws value)*
-  )? "}" ws
-
-array  ::=
-  "[" ws (
-            value
-    ("," ws value)*
-  )? "]" ws
+  ) "}"
 
 string ::=
   "\"" (
     [^"\\] |
     "\\" (["\\/bfnrt] | "u" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]) # escapes
-  )* "\"" ws
+  )* "\""
 
-number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)? ws
+number ::= ("-"? ([0-9] | [1-9] [0-9]*)) ("." [0-9]+)? ([eE] [-+]? [0-9]+)?
 
-ws ::= ([ \t\n] ws)?
+ws ::= [ ]
 '''
 
 #
@@ -413,7 +403,7 @@ def sync_demo_llama_cpp_main_orca2_text():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
         creator_model_id='microsoft/Orca-2-7b',
@@ -429,7 +419,7 @@ def sync_demo_llama_cpp_main_orca2_chat():
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
         creator_model_id='microsoft/Orca-2-7b',
@@ -452,7 +442,7 @@ def sync_demo_llama_cpp_main_mistral_text():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
         creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
@@ -464,7 +454,7 @@ def sync_demo_llama_cpp_main_mistral_text():
     print(sync_client.text(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
         creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
@@ -479,7 +469,7 @@ def sync_demo_llama_cpp_main_mistral_chat():
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
         creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
@@ -495,10 +485,12 @@ def sync_demo_llama_cpp_main_mistral_chat():
     ):
         print(chunk, sep='', end='', flush=True)
 
+    print()
+
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/zephyr-7B-beta-GGUF',
         model='zephyr-7b-beta.Q4_K_M.gguf',
         creator_model_id='mistralai/Mistral-7B-v0.2',
@@ -514,6 +506,8 @@ def sync_demo_llama_cpp_main_mistral_chat():
     ):
         print(chunk, sep='', end='', flush=True)
 
+    print()
+
 
 def sync_demo_llama_cpp_main_stablelm_zephyr_3b_text():
     sync_client = SyncMLIClient(ENDPOINT)
@@ -521,7 +515,7 @@ def sync_demo_llama_cpp_main_stablelm_zephyr_3b_text():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/stablelm-zephyr-3b-GGUF',
         model='stablelm-zephyr-3b.Q4_K_M.gguf',
         creator_model_id='stabilityai/stablelm-zephyr-3b',
@@ -530,6 +524,8 @@ def sync_demo_llama_cpp_main_stablelm_zephyr_3b_text():
     ):
         print(chunk, sep='', end='', flush=True)
 
+    print()
+
 
 def sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat():
     sync_client = SyncMLIClient(ENDPOINT)
@@ -537,7 +533,7 @@ def sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat():
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         executable='main',
-        n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/stablelm-zephyr-3b-GGUF',
         model='stablelm-zephyr-3b.Q4_K_M.gguf',
         creator_model_id='stabilityai/stablelm-zephyr-3b',
@@ -551,6 +547,8 @@ def sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat():
     ):
         print(chunk, sep='', end='', flush=True)
 
+    print()
+
 
 def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
     sync_client = SyncMLIClient(ENDPOINT)
@@ -558,7 +556,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
         creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
@@ -567,6 +565,8 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
     ):
         print(chunk, sep='', end='', flush=True)
 
+    print()
+
 
 def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
     sync_client = SyncMLIClient(ENDPOINT)
@@ -574,7 +574,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
         creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
@@ -587,6 +587,44 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
     ):
         print(chunk, sep='', end='', flush=True)
 
+    print()
+
+
+def sync_demo_llama_cpp_main_mistral_grammar():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
+        model='mistral-7b-instruct-v0.2.Q2_K.gguf',
+        creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
+        # temp=0.1,
+        # top_k=10,
+        prompt=f'Parse text as object:\n```{CAR_TEXT}```\nJSON: ',
+        grammar=JSON_FLAT_OBJECT_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
+        model='mistral-7b-instruct-v0.2.Q2_K.gguf',
+        creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
+        # temp=0.1,
+        # top_k=10,
+        prompt=f'Parse text as array or objects:\n```{CARS_TEXT}```\nJSON: ',
+        grammar=JSON_FLAT_ARRAY_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
+
 
 def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar():
     sync_client = SyncMLIClient(ENDPOINT)
@@ -594,15 +632,34 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
         creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
         # temp=0.1,
-        prompt=f'Parse as JSON array:\n{CARS_TEXT}',
-        grammar=JSON_ARRAY_GRAMMAR,
+        # top_k=10,
+        prompt=f'Parse text as object:\n```{CAR_TEXT}```\nJSON: ',
+        grammar=JSON_FLAT_OBJECT_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print()
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
+        creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        # temp=0.1,
+        # top_k=10,
+        prompt=f'Parse text as array or objects:\n```{CARS_TEXT}```\nJSON: ',
+        grammar=JSON_FLAT_ARRAY_GRAMMAR,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
 
 
 def sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar():
@@ -611,30 +668,34 @@ def sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='Qwen/Qwen1.5-0.5B-Chat-GGUF',
         model='qwen1_5-0_5b-chat-q4_k_m.gguf',
         creator_model_id='Qwen/Qwen1.5-0.5B-Chat',
-        # temp=0.1,
-        top_k=100,
+        # temp=0.5,
+        # top_k=200,
         prompt=f'Parse text as object:\n```{CAR_TEXT}```\nJSON: ',
-        grammar=JSON_OBJECT_GRAMMAR,
+        grammar=JSON_FLAT_OBJECT_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print()
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='Qwen/Qwen1.5-0.5B-Chat-GGUF',
         model='qwen1_5-0_5b-chat-q4_k_m.gguf',
         creator_model_id='Qwen/Qwen1.5-0.5B-Chat',
-        # temp=0.1,
-        top_k=100,
+        # temp=0.5,
+        # top_k=200,
         prompt=f'Parse text as array or objects:\n```{CARS_TEXT}```\nJSON: ',
-        grammar=JSON_ARRAY_GRAMMAR,
+        grammar=JSON_FLAT_ARRAY_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print()
 
 
 def sync_demo_llama_cpp_main_phi_1_5_grammar():
@@ -643,30 +704,34 @@ def sync_demo_llama_cpp_main_phi_1_5_grammar():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TKDKid1000/phi-1_5-GGUF',
         model='phi-1_5-Q4_K_M.gguf',
         creator_model_id='microsoft/phi-1_5',
         # temp=0.1,
-        top_k=100,
+        # top_k=10,
         prompt=f'Parse text as object:\n```{CAR_TEXT}```\nJSON: ',
-        grammar=JSON_OBJECT_GRAMMAR,
+        grammar=JSON_FLAT_OBJECT_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print()
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TKDKid1000/phi-1_5-GGUF',
         model='phi-1_5-Q4_K_M.gguf',
         creator_model_id='microsoft/phi-1_5',
         # temp=0.1,
-        top_k=100,
+        # top_k=10,
         prompt=f'Parse text as array or objects:\n```{CARS_TEXT}```\nJSON: ',
-        grammar=JSON_ARRAY_GRAMMAR,
+        grammar=JSON_FLAT_ARRAY_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print()
 
 
 def sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar():
@@ -675,30 +740,34 @@ def sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar():
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF',
         model='tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf',
         creator_model_id='TinyLlama/TinyLlama-1.1B-Chat-v1.0',
         # temp=0.1,
-        top_k=100,
+        # top_k=200,
         prompt=f'Parse text as object:\n```{CAR_TEXT}```\nJSON: ',
-        grammar=JSON_OBJECT_GRAMMAR,
+        grammar=JSON_FLAT_OBJECT_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print()
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
         executable='main',
-        # n_gpu_layers=35,
+        n_gpu_layers=NGL,
         model_id='TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF',
         model='tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf',
         creator_model_id='TinyLlama/TinyLlama-1.1B-Chat-v1.0',
         # temp=0.1,
-        top_k=100,
+        # top_k=200,
         prompt=f'Parse text as array or objects:\n```{CARS_TEXT}```\nJSON: ',
-        grammar=JSON_ARRAY_GRAMMAR,
+        grammar=JSON_FLAT_ARRAY_GRAMMAR,
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print()
 
 
 if __name__ == '__main__':
@@ -719,7 +788,8 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
+    sync_demo_llama_cpp_main_mistral_grammar()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar()
     # sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar()
     # sync_demo_llama_cpp_main_phi_1_5_grammar()
-    sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar()
+    # sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar()

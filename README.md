@@ -141,6 +141,10 @@ Download one of popular models to try them:
 # NOTE: login in case you need to accept terms and conditions for some models
 # huggingface-cli login
 
+# gemma
+huggingface-cli download second-state/Gemma-2b-it-GGUF gemma-2b-it-Q4_K_M.gguf
+huggingface-cli download second-state/Gemma-7b-it-GGUF gemma-7b-it-Q4_K_M.gguf
+
 # qwen
 huggingface-cli download Qwen/Qwen1.5-0.5B-Chat-GGUF qwen1_5-0_5b-chat-q4_k_m.gguf
 huggingface-cli download Qwen/Qwen1.5-1.8B-Chat-GGUF qwen1_5-1_8b-chat-q4_k_m.gguf
@@ -150,14 +154,16 @@ huggingface-cli download Qwen/Qwen1.5-14B-Chat-GGUF qwen1_5-14b-chat-q4_k_m.gguf
 
 # mistral ai
 huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q3_K_M.gguf
-# huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q4_K_M.gguf
+huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q4_K_M.gguf
 huggingface-cli download TheBloke/dolphin-2.6-mistral-7B-GGUF dolphin-2.6-mistral-7b.Q4_K_M.gguf
+huggingface-cli download second-state/MistralLite-7B-GGUF MistralLite-Q4_K_M.gguf
+huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q2_K.gguf
 huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q4_K_M.gguf
 huggingface-cli download TheBloke/zephyr-7B-beta-GGUF zephyr-7b-beta.Q4_K_M.gguf
 huggingface-cli download TheBloke/openchat-3.5-0106-GGUF openchat-3.5-0106.Q4_K_M.gguf
 
 # stability ai
-# huggingface-cli download lmz/candle-stablelm
+huggingface-cli download lmz/candle-stablelm
 huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b stablelm-2-zephyr-1_6b-Q4_1.gguf
 huggingface-cli download TheBloke/stablelm-zephyr-3b-GGUF stablelm-zephyr-3b.Q4_K_M.gguf
 huggingface-cli download stabilityai/stable-code-3b stable-code-3b-Q5_K_M.gguf
@@ -173,10 +179,10 @@ huggingface-cli download azarovalex/MobileLLaMA-1.4B-Chat-GGUF MobileLLaMA-1.4B-
 huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
 
 # microsoft phi
-# huggingface-cli download microsoft/phi-2
-# huggingface-cli download microsoft/phi-1_5
-# huggingface-cli download Open-Orca/oo-phi-1_5
-# huggingface-cli download lmz/candle-quantized-phi
+huggingface-cli download microsoft/phi-2
+huggingface-cli download microsoft/phi-1_5
+huggingface-cli download Open-Orca/oo-phi-1_5
+huggingface-cli download lmz/candle-quantized-phi
 huggingface-cli download TheBloke/dolphin-2_6-phi-2-GGUF dolphin-2_6-phi-2.Q4_K_M.gguf
 huggingface-cli download TheBloke/phi-2-GGUF phi-2.Q4_K_M.gguf
 huggingface-cli download TKDKid1000/phi-1_5-GGUF phi-1_5-Q4_K_M.gguf
@@ -190,6 +196,14 @@ python -B -m mli.server
 
 
 # Run Examples
+
+Using GPU:
+
+```bash
+NGL=99 python -B examples/sync_demo.py
+```
+
+Using CPU:
 
 ```bash
 python -B examples/sync_demo.py
