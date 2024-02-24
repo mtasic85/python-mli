@@ -2,8 +2,13 @@
 
 ## v0.1.28
 
-Changed:
-    - Added back `candle` moddels in `README.md`.
+Added:
+    - `amazon/MistralLite` 7B model demos.
+    - `google/gemma` 7B and 2B models demos.
+
+Deprecated:
+    - `candle` models in `README.md`.
+    - `candle` instructions in `README.md`.
 
 Fixed:
     - `llama.cpp`/`candle` engine does not handle wrong/missing model.

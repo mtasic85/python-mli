@@ -14,8 +14,14 @@
 
 Pure **Python**-based **Machine Learning Interface** for multiple engines with multi-modal support.
 
+<!--
 Python HTTP Server/Client (including WebSocket streaming support) for:
 - [candle](https://github.com/huggingface/candle)
+- [llama.cpp](https://github.com/ggerganov/llama.cpp)
+- [LangChain](https://python.langchain.com)
+-->
+
+Python HTTP Server/Client (including WebSocket streaming support) for:
 - [llama.cpp](https://github.com/ggerganov/llama.cpp)
 - [LangChain](https://python.langchain.com)
 
@@ -29,7 +35,7 @@ sudo apt update -y
 sudo apt install build-essential git curl libssl-dev libffi-dev pkg-config
 ```
 
-
+<!--
 ### Rust
 
 1) Using latest system repository:
@@ -45,7 +51,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
 rustup default stable
 ```
-
+-->
 
 ### Python
 
@@ -62,6 +68,7 @@ sudo apt install python3.11 python3.11-dev python3.11-venv
 ```
 
 
+<!--
 ## Arch/Manjaro
 
 ### Rust
@@ -80,12 +87,13 @@ rustup default stable
 
 ## macOS
 
+
 ```bash
 brew update
 brew install rustup
 rustup default stable
 ```
-
+-->
 
 # llama.cpp
 
@@ -93,10 +101,11 @@ rustup default stable
 cd ~
 git clone https://github.com/ggerganov/llama.cpp.git
 cd llama.cpp
-make
+make -j
 ```
 
 
+<!--
 # candle
 
 ```bash
@@ -120,6 +129,8 @@ GPU / CUDA:
 ```bash
 cargo build --features cuda -r --bins --examples
 ```
+-->
+
 
 # Run Development Server
 
@@ -132,6 +143,7 @@ cd mlipy
 python3.11 -m venv venv
 source venv/bin/activate
 pip install poetry
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 poetry install
 ```
 
@@ -163,10 +175,10 @@ huggingface-cli download TheBloke/zephyr-7B-beta-GGUF zephyr-7b-beta.Q4_K_M.gguf
 huggingface-cli download TheBloke/openchat-3.5-0106-GGUF openchat-3.5-0106.Q4_K_M.gguf
 
 # stability ai
-huggingface-cli download lmz/candle-stablelm
+# huggingface-cli download lmz/candle-stablelm
 huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b stablelm-2-zephyr-1_6b-Q4_1.gguf
 huggingface-cli download TheBloke/stablelm-zephyr-3b-GGUF stablelm-zephyr-3b.Q4_K_M.gguf
-huggingface-cli download stabilityai/stable-code-3b stable-code-3b-Q5_K_M.gguf
+huggingface-cli download TheBloke/stable-code-3b-GGUF stable-code-3b.Q4_K_M.gguf
 
 # technology innovation institute (tii)
 huggingface-cli download maddes8cht/tiiuae-falcon-40b-instruct-gguf tiiuae-falcon-40b-instruct-Q3_K_M.gguf
@@ -182,7 +194,7 @@ huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-c
 huggingface-cli download microsoft/phi-2
 huggingface-cli download microsoft/phi-1_5
 huggingface-cli download Open-Orca/oo-phi-1_5
-huggingface-cli download lmz/candle-quantized-phi
+# huggingface-cli download lmz/candle-quantized-phi
 huggingface-cli download TheBloke/dolphin-2_6-phi-2-GGUF dolphin-2_6-phi-2.Q4_K_M.gguf
 huggingface-cli download TheBloke/phi-2-GGUF phi-2.Q4_K_M.gguf
 huggingface-cli download TKDKid1000/phi-1_5-GGUF phi-1_5-Q4_K_M.gguf
@@ -191,7 +203,7 @@ huggingface-cli download TKDKid1000/phi-1_5-GGUF phi-1_5-Q4_K_M.gguf
 Run server:
 
 ```bash
-python -B -m mli.server
+python -B -m mli.server --llama-cpp-path='~/llama.cpp'
 ```
 
 
