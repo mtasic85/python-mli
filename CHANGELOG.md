@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.31
+
+Added:
+    - Detect `AMD` and `NVIDIA` GPUs because `llama.cpp` needs to know valid arguments.
+
 ## v0.1.30
 
 Changed:

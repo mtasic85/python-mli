@@ -15,6 +15,7 @@ import json
 import shlex
 import argparse
 import traceback
+import subprocess
 from weakref import WeakKeyDictionary
 from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 
@@ -27,6 +28,13 @@ from .formatter import format_messages
 
 
 DEBUG = int(os.getenv('DEBUG', 0))
+
+# TODO: improve
+VGA = '\n'.join([n for n in subprocess.run(['lspci'], check=True, stdout=subprocess.PIPE).stdout.decode().splitlines() if 'VGA' in n])
+IS_AMD = 'AMD' in VGA
+IS_NVIDIA = not IS_AMD
+print(f'{IS_AMD = }')
+print(f'{IS_NVIDIA = }')
 
 
 class MLIServer:
@@ -108,17 +116,17 @@ class MLIServer:
                     '--no-display-prompt',
                 ])
 
-            if split_mode is not None:
+            if IS_NVIDIA and split_mode is not None:
                 cmd.extend([
                     '--split-mode', split_mode,
                 ])
 
-            if tensor_split is not None:
+            if IS_NVIDIA and tensor_split is not None:
                 cmd.extend([
                     '--tensor-split', tensor_split,
                 ])
 
-            if main_gpu is not None:
+            if IS_NVIDIA and main_gpu is not None:
                 cmd.extend([
                     '--main-gpu', main_gpu,
                 ])
