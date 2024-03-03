@@ -27,6 +27,7 @@ from .formatter import format_messages
 
 
 DEBUG = int(os.getenv('DEBUG', 0))
+routes = web.RouteTableDef()
 
 
 class MLIServer:
@@ -613,6 +614,7 @@ class MLIServer:
         return chat_msg
 
 
+    @routes.post('/api/1.0/text/completions')
     async def post_api_1_0_text_completions(self, request):
         data: LLMParams = await request.json()
         text: list[str] | str = []
@@ -631,6 +633,7 @@ class MLIServer:
         return web.json_response(res)
 
 
+    @routes.post('/api/1.0/chat/completions')
     async def post_api_1_0_chat_completions(self, request):
         data: LLMParams = await request.json()
         data = self._convert_chat_to_text_message(data)
@@ -650,6 +653,7 @@ class MLIServer:
         return web.json_response(res)
 
 
+    @routes.get('/api/1.0/text/completions')
     async def get_api_1_0_text_completions(self, request):
         ws = web.WebSocketResponse()
         await ws.prepare(request)
@@ -713,6 +717,7 @@ class MLIServer:
         return ws
 
 
+    @routes.get('/api/1.0/chat/completions')
     async def get_api_1_0_chat_completions(self, request):
         ws = web.WebSocketResponse()
         await ws.prepare(request)
@@ -758,17 +763,7 @@ class MLIServer:
         return ws
 
 
-    def get_routes(self):
-        return [
-            web.post('/api/1.0/text/completions', self.post_api_1_0_text_completions),
-            web.post('/api/1.0/chat/completions', self.post_api_1_0_chat_completions),
-            web.get('/api/1.0/text/completions', self.get_api_1_0_text_completions),
-            web.get('/api/1.0/chat/completions', self.get_api_1_0_chat_completions),
-        ]
-
-
     def run(self):
-        routes = self.get_routes()
         self.app.add_routes(routes)
         web.run_app(self.app, host=self.host, port=self.port)
 

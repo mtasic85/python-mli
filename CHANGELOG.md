@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.1.29
+
+Added:
+    - `client` special `model_id='echo/echo'` which returns same text back without going to server.
+    - examples/defs.py has new grammar templates.
+
+Changed:
+    - `server` uses `web.RouteTableDef` for defining routes.
+
 ## v0.1.28
 
 Added:

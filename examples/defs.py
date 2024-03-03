@@ -142,6 +142,8 @@ identifier ::= "\"" [a-zA-Z_] [a-zA-Z_0-9]* "\""
 ws ::= [ ]
 '''
 
+{"aaa": ["vvvv"], "bbbb": [1223]}
+
 JSON_FLAT_OBJECT_GRAMMAR = r'''
 root   ::= object
 value  ::= string | number | ("true" | "false" | "null")

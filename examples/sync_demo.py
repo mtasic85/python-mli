@@ -17,6 +17,32 @@ SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest assistant.
 #
 # candle
 #
+def sync_demo_candle_echo():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='candle',
+        executable='llama',
+        model_id='echo/echo',
+        sample_len=4 * 1024,
+        prompt='Lets write python web app for bookstore using aiohttp and pandas. Create dataframes for Users, Books, Rentals, Transactions and Ratings.'
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    for chunk in sync_client.iter_chat(
+        engine='candle',
+        executable='phi',
+        model_id='echo/echo',
+        messages=[
+            {'role': 'system', 'content': SYSTEM_TEXT},
+            {'role': 'user', 'content': 'I need help building a website.'},
+            {'role': 'assistant', 'content': 'Sure, let me know what and how do you need it built.'},
+            {'role': 'user', 'content': 'Building a perfect e-commerce website in 5 simple steps. Explain step by step.'},
+        ],
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+
 def sync_demo_candle_codellama():
     sync_client = SyncMLIClient(ENDPOINT)
 
@@ -241,6 +267,30 @@ def sync_demo_candle_quantized_orca_text():
 #
 # llama.cpp
 #
+def sync_demo_llama_cpp_main_echo():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        model_id='echo/echo',
+        prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        executable='main',
+        model_id='echo/echo',
+        messages=[
+            {'role': 'system', 'content': SYSTEM_TEXT},
+            {'role': 'user', 'content': 'I need help building a website.'},
+            {'role': 'assistant', 'content': 'Sure, let me know what and how do you need it built.'},
+            {'role': 'user', 'content': 'Building a perfect e-commerce website in 10 simple steps. Explain step by step.'},
+        ],
+    ):
+        print(chunk, sep='', end='', flush=True)
+
 def sync_demo_llama_cpp_main_orca2_text():
     sync_client = SyncMLIClient(ENDPOINT)
 
@@ -998,6 +1048,9 @@ Question: {question}'''
 
 
 if __name__ == '__main__':
+    sync_demo_candle_echo()
+    # sync_demo_llama_cpp_main_echo()
+
     # sync_demo_candle_codellama()
     # sync_demo_candle_llama()
     # sync_demo_candle_mistral()
@@ -1030,6 +1083,6 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_phi_2_0_grammar()
     # sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar()
 
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_react_0()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_react_0()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_react_1()
     # sync_demo_llama_cpp_main_mistral_7b_react_1()

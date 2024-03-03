@@ -120,6 +120,9 @@ class AsyncMLIClient(BaseMLIClient):
     async def text(self, **kwargs: Unpack[LLMParams]) -> str:
         url: str = f'{self.endpoint}/text/completions'
 
+        if kwargs.get('model_id') == 'echo/echo':
+            return {'output': kwargs.get('prompt', 'echo')}
+
         async with ClientSession() as session:
             async with session.post(url, json=kwargs, verify_ssl=False) as resp:
                 data = await resp.json()
@@ -130,6 +133,9 @@ class AsyncMLIClient(BaseMLIClient):
     async def chat(self, **kwargs: Unpack[LLMParams]) -> str:
         url: str = f'{self.endpoint}/chat/completions'
 
+        if kwargs.get('model_id') == 'echo/echo':
+            return {'output': 'echo'}
+
         async with ClientSession() as session:
             async with session.post(url, json=kwargs, verify_ssl=False) as resp:
                 data = await resp.json()
@@ -139,6 +145,10 @@ class AsyncMLIClient(BaseMLIClient):
 
     async def iter_text(self, **kwargs: Unpack[LLMParams]) -> AsyncIterator[str]:
         url: str = f'{self.ws_endpoint}/text/completions'
+
+        if kwargs.get('model_id') == 'echo/echo':
+            yield kwargs.get('prompt', 'echo')
+            return
         
         async with ClientSession() as session:
             async with session.ws_connect(url, verify_ssl=False) as ws:
@@ -157,6 +167,10 @@ class AsyncMLIClient(BaseMLIClient):
 
     async def iter_chat(self, **kwargs: Unpack[LLMParams]) -> AsyncIterator[str]:
         url: str = f'{self.ws_endpoint}/chat/completions'
+
+        if kwargs.get('model_id') == 'echo/echo':
+            yield 'echo'
+            return
         
         async with ClientSession() as session:
             async with session.ws_connect(url, verify_ssl=False) as ws:
