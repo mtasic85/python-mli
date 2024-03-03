@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.32
+
+Changed:
+    - Do not import `server.py` from package by default.
+
 ## v0.1.31
 
 Added:
