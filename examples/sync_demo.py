@@ -2,6 +2,8 @@ import os
 from mli import SyncMLIClient
 
 from defs import (
+    ENDPOINT,
+    SYSTEM_TEXT,
     CAR_TEXT,
     CARS_TEXT,
     JSON_FLAT_ARRAY_GRAMMAR,
@@ -10,8 +12,6 @@ from defs import (
 
 
 NGL = os.getenv('NGL')
-ENDPOINT = 'http://127.0.0.1:5000/api/1.0'
-SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest assistant.'
 
 
 #
@@ -29,6 +29,8 @@ def sync_demo_candle_echo():
     ):
         print(chunk, sep='', end='', flush=True)
 
+    print()
+
     for chunk in sync_client.iter_chat(
         engine='candle',
         executable='phi',
@@ -41,6 +43,8 @@ def sync_demo_candle_echo():
         ],
     ):
         print(chunk, sep='', end='', flush=True)
+    
+    print()
 
 
 def sync_demo_candle_codellama():
@@ -278,6 +282,8 @@ def sync_demo_llama_cpp_main_echo():
     ):
         print(chunk, sep='', end='', flush=True)
 
+    print()
+
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
         executable='main',
@@ -290,6 +296,9 @@ def sync_demo_llama_cpp_main_echo():
         ],
     ):
         print(chunk, sep='', end='', flush=True)
+    
+    print()
+
 
 def sync_demo_llama_cpp_main_orca2_text():
     sync_client = SyncMLIClient(ENDPOINT)
@@ -1068,8 +1077,8 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_mistrallite_7b_chat()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
-    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
-    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
     # sync_demo_llama_cpp_main_gemma_2b_text()
     # sync_demo_llama_cpp_main_gemma_2b_chat()
     # sync_demo_llama_cpp_main_gemma_7b_text()

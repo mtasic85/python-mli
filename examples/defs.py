@@ -1,3 +1,5 @@
+ENDPOINT = 'http://127.0.0.1:4000/api/1.0'
+SYSTEM_TEXT = 'You are an intelligent, helpful, respectful and honest assistant.'
 
 CAR_TEXT = '''
 Car details:

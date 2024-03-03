@@ -227,6 +227,16 @@ python -B examples/langchain_async_demo.py
 
 # Run Production Server
 
+## Generate self-signed SSL certificates
+
+```bash
+openssl req -x509 -nodes -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
+```
+
+
+
+## Run
+
 ```bash
 python3.11 -m venv venv
 source venv/bin/activate

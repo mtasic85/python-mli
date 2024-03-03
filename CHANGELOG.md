@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.30
+
+Changed:
+    - Default port is `4000` instead of `5000`.
+
 ## v0.1.29
 
 Added:

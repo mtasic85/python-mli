@@ -2,8 +2,14 @@ import asyncio
 
 from mli import AsyncMLIClient
 
-
-ENDPOINT = 'http://127.0.0.1:5000/api/1.0'
+from defs import (
+    ENDPOINT,
+    SYSTEM_TEXT,
+    CAR_TEXT,
+    CARS_TEXT,
+    JSON_FLAT_ARRAY_GRAMMAR,
+    JSON_FLAT_OBJECT_GRAMMAR,
+)
 
 
 async def async_demo_candle_stable_lm():

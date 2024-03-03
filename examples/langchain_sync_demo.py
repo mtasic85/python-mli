@@ -2,8 +2,7 @@ from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from mli import LangchainMLIClient
 
-
-ENDPOINT = 'http://127.0.0.1:5000/api/1.0'
+from defs import ENDPOINT
 
 
 def langchain_sync_demo():
