@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.33
+
+Fixed:
+    - Docker environment without GPUs.
+
 ## v0.1.32
 
 Changed:

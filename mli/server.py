@@ -30,9 +30,21 @@ from .formatter import format_messages
 DEBUG = int(os.getenv('DEBUG', 0))
 
 # TODO: improve
-VGA = '\n'.join([n for n in subprocess.run(['lspci'], check=True, stdout=subprocess.PIPE).stdout.decode().splitlines() if 'VGA' in n])
-IS_AMD = 'AMD' in VGA
-IS_NVIDIA = not IS_AMD
+IS_CPU = True
+IS_AMD = False
+IS_NVIDIA = False
+
+try:
+    VGA = '\n'.join([n for n in subprocess.run(['lspci'], check=True, stdout=subprocess.PIPE).stdout.decode().splitlines() if 'VGA' in n])
+    IS_CPU = False
+    IS_AMD = 'AMD' in VGA
+    IS_NVIDIA = not IS_AMD
+except FileNotFoundError:
+    IS_CPU = True
+    IS_AMD = False
+    IS_NVIDIA = False
+
+print(f'{IS_CPU = }')
 print(f'{IS_AMD = }')
 print(f'{IS_NVIDIA = }')
 
