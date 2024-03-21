@@ -13,6 +13,7 @@ except ImportError:
 import os
 import json
 import shlex
+import base64
 import argparse
 import traceback
 import subprocess
@@ -77,7 +78,9 @@ class MLIServer:
         self.ws_proc_map = WeakKeyDictionary()
 
 
-    def _format_llama_cpp_cmd(self, executable: str, **kwargs: Unpack[LlamaCppParams]) -> str:
+    # def _format_llama_cpp_cmd(self, executable: str, **kwargs: Unpack[LlamaCppParams]) -> str:
+    def _format_llama_cpp_cmd(self, kwargs: LlamaCppParams) -> str:
+        executable: str = kwargs['executable']
         cmd: list[str] | str = []
         
         if executable == 'main':
@@ -110,9 +113,8 @@ class MLIServer:
             rope_freq_base: int | float | None = kwargs.get('rope_freq_base')
             rope_freq_scale: int | float | None = kwargs.get('rope_freq_scale')
             cont_batching: bool | None = kwargs.get('cont_batching', False)
-            prompt_to_file: bool | None = kwargs.get('prompt_to_file')
-            messages_to_file: bool | None = kwargs.get('messages_to_file')
-            image_to_file: bool | None = kwargs.get('image_to_file')
+            prompt_to_file: bool = kwargs.get('prompt_to_file', False)
+            image_to_file: bool = kwargs.get('image_to_file', False)
             
             # model_path
             if model_id:
@@ -219,24 +221,24 @@ class MLIServer:
                     '--cont-batching',
                 ])
 
-            if prompt is not None and prompt_to_file is None:
+            if prompt and not prompt_to_file:
                 shell_prompt: str = shlex.quote(prompt)
 
                 cmd.extend([
                     '--prompt', shell_prompt,
                 ])
 
-            if file is not None and prompt_to_file is None:
+            if file and not prompt_to_file:
                 cmd.extend([
                     '--file', file,
                 ])
 
-            if image is not None and image_to_file is None:
+            if image and not image_to_file:
                 cmd.extend([
                     '--image', image,
                 ])
 
-            if prompt_to_file is not None:
+            if prompt_to_file:
                 with NamedTemporaryFile('w', suffix='.txt', delete=False) as f:
                     f.write(prompt)
                     f.flush()
@@ -245,7 +247,9 @@ class MLIServer:
                     '--file', f.name,
                 ])
 
-            if image_to_file is not None:
+                kwargs['file'] = f.name
+
+            if image_to_file:
                 image_content: bytes = base64.b64decode(image)
 
                 with NamedTemporaryFile('w+b', suffix='.jpg', delete=False) as f:
@@ -255,6 +259,8 @@ class MLIServer:
                 cmd.extend([
                     '--image', f.name,
                 ])
+
+                kwargs['image'] = f.name
 
             cmd.extend([
                 '--n-predict', n_predict,
@@ -273,7 +279,8 @@ class MLIServer:
         return cmd
 
 
-    def _format_candle_cmd(self, executable: str, **kwargs: Unpack[CandleParams]) -> str:
+    def _format_candle_cmd(self, kwargs: CandleParams) -> str:
+        executable: str = kwargs['executable']
         cmd: list[str] | str = []
         
         if executable == 'phi':
@@ -480,14 +487,14 @@ class MLIServer:
         return cmd
 
 
-    def _format_cmd(self, msg: LLMParams):
+    def _format_cmd(self, msg: LLMParams) -> str:
         engine: str = msg['engine']
         cmd: str
 
         if engine == 'llama.cpp':
-            cmd = self._format_llama_cpp_cmd(**msg)
+            cmd = self._format_llama_cpp_cmd(msg)
         elif engine == 'candle':
-            cmd = self._format_candle_cmd(**msg)
+            cmd = self._format_candle_cmd(msg)
         else:
             raise ValueError(f'Unknown engine: {engine}')
 
