@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.37
+
+Fixed:
+    - `llama.cpp` prompt/messages and image when saved in file remove `prompt`, `messages` and `image` from params.
+
 ## v0.1.36
 
 Fixed:

@@ -249,6 +249,12 @@ class MLIServer:
 
                 kwargs['file'] = f.name
 
+                if 'prompt' in kwargs:
+                    del kwargs['prompt']
+
+                if 'messages' in kwargs:
+                    del kwargs['messages']
+
             if image_to_file:
                 image_content: bytes = base64.b64decode(image)
 
@@ -261,6 +267,9 @@ class MLIServer:
                 ])
 
                 kwargs['image'] = f.name
+
+                if 'image' in kwargs:
+                    del kwargs['image']
 
             cmd.extend([
                 '--n-predict', n_predict,
