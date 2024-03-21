@@ -31,8 +31,8 @@ class LlamaCppParams(TypedDict):
     stop: Optional[list[str]]               # []
     prompt: Optional[str]                   # | prompt xor messages
     messages: Optional[list[Message]]       # |
-    file: Optional[str]                     # / text to be written in temp file
-    image: Optional[str]                    # base64 encoded image which will be saved in temp file
+    file: Optional[str]                     # / prompt file (path) to start generation
+    image: Optional[str]                    # path to an image file. use with multimodal models
     no_display_prompt: Optional[bool]       # True
     split_mode: Optional[str]               # 'none', 'layer' (default), 'row'
     tensor_split: Optional[str]             # None, e.g. '3,1'
@@ -48,6 +48,8 @@ class LlamaCppParams(TypedDict):
     rope_freq_base: Optional[int | float]   # RoPE base frequency, used by NTK-aware scaling (default: loaded from model)
     rope_freq_scale: Optional[int | float]  # RoPE frequency scaling factor, expands context by a factor of 1/N
     cont_batching: Optional[bool]           # enable continuous batching (a.k.a dynamic batching) (default: disabled)
+    prompt_to_file: Optional[bool]          # save prompt to file 
+    image_to_file: Optional[bool]           # base64 encoded image to be saved to file
 
 
 class CandleParams(TypedDict):

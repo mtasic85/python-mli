@@ -17,6 +17,7 @@ import argparse
 import traceback
 import subprocess
 from weakref import WeakKeyDictionary
+from tempfile import NamedTemporaryFile
 from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
 
 from aiohttp import web, WSMsgType
@@ -109,6 +110,9 @@ class MLIServer:
             rope_freq_base: int | float | None = kwargs.get('rope_freq_base')
             rope_freq_scale: int | float | None = kwargs.get('rope_freq_scale')
             cont_batching: bool | None = kwargs.get('cont_batching', False)
+            prompt_to_file: bool | None = kwargs.get('prompt_to_file')
+            messages_to_file: bool | None = kwargs.get('messages_to_file')
+            image_to_file: bool | None = kwargs.get('image_to_file')
             
             # model_path
             if model_id:
@@ -120,6 +124,11 @@ class MLIServer:
                 f'{self.llama_cpp_path}/{executable}',
                 '--model', model_path,
             ])
+
+            if mmproj is not None:
+                cmd.extend([
+                    '--mmproj', mmproj,
+                ])
 
             if chatml:
                 cmd.extend([
@@ -210,26 +219,41 @@ class MLIServer:
                     '--cont-batching',
                 ])
 
-            if prompt is not None:
+            if prompt is not None and prompt_to_file is None:
                 shell_prompt: str = shlex.quote(prompt)
 
                 cmd.extend([
                     '--prompt', shell_prompt,
                 ])
 
-            if file is not None:
+            if file is not None and prompt_to_file is None:
                 cmd.extend([
                     '--file', file,
                 ])
 
-            if image is not None:
+            if image is not None and image_to_file is None:
                 cmd.extend([
                     '--image', image,
                 ])
 
-            if mmproj is not None:
+            if prompt_to_file is not None:
+                with NamedTemporaryFile('w', suffix='.txt', delete=False) as f:
+                    f.write(prompt)
+                    f.flush()
+
                 cmd.extend([
-                    '--mmproj', mmproj,
+                    '--file', f.name,
+                ])
+
+            if image_to_file is not None:
+                image_content: bytes = base64.b64decode(image)
+
+                with NamedTemporaryFile('w+b', suffix='.jpg', delete=False) as f:
+                    f.write(image_content)
+                    f.flush()
+
+                cmd.extend([
+                    '--image', f.name,
                 ])
 
             cmd.extend([
@@ -471,10 +495,10 @@ class MLIServer:
 
 
     async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
-        # prompt: str = msg.get('prompt')
-        # file: str = msg.get('file')
-        # image: str = msg.get('image')
-        # mmproj: str = msg.get('mmproj')
+        file: str = msg.get('file')
+        image: str = msg.get('image')
+        prompt_to_file: str = msg.get('prompt_to_file', False)
+        image_to_file: str = msg.get('image_to_file', False)
         stop: str = msg.get('stop', [])
         stdout: bytes = b''
         stderr: bytes = b''
@@ -606,6 +630,12 @@ class MLIServer:
             stderr = stderr.decode()
             print('[DEBUG] stderr:')
             print(stderr)
+
+        if prompt_to_file:
+            os.remove(file)
+
+        if image_to_file:
+            os.remove(image)
 
 
     def _run_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams) -> AsyncIterator[str]:

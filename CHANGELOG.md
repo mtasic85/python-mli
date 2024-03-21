@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.35
+
+Added:
+    - `llama.cpp` prompt/messages and image written in temp file(s).
+
 ## v0.1.34
 
 Added:

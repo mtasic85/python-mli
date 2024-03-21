@@ -1,7 +1,6 @@
 import os
-from tempfile import NamedTemporaryFile
 
-from mli import SyncMLIClient
+from mli import SyncMLIClient, format_messages
 
 from defs import (
     ENDPOINT,
@@ -529,24 +528,18 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
 
 def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file():
     sync_client = SyncMLIClient(ENDPOINT)
-    text = 'Building a perfect e-commerce website in 5 simple steps:\nStep 1:'
 
-    with NamedTemporaryFile('w') as f:
-        f.write(text)
-        f.flush()
-        
-        print(f'{f.name = }')
-
-        for chunk in sync_client.iter_text(
-            engine='llama.cpp',
-            executable='main',
-            n_gpu_layers=NGL,
-            model_id='stabilityai/stablelm-2-zephyr-1_6b',
-            model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
-            creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
-            file=f.name,
-        ):
-            print(chunk, sep='', end='', flush=True)
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
+        creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
+        prompt_to_file=True,
+    ):
+        print(chunk, sep='', end='', flush=True)
 
     print()
 
@@ -566,6 +559,28 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
             {'role': 'system', 'content': f'{SYSTEM_TEXT}. You like to ask questions back.'},
             {'role': 'user', 'content': 'Lets have a conversation. I want to know more about you.'},
         ],
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
+
+
+def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
+        creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
+        stop=["<|system|>", "<|user|>", "<|assistant|>", "<|endoftext|>"],
+        messages=[
+            {'role': 'system', 'content': f'{SYSTEM_TEXT}. You like to ask questions back.'},
+            {'role': 'user', 'content': 'Lets have a conversation. I want to know more about you.'},
+        ],
+        prompt_to_file=True,
     ):
         print(chunk, sep='', end='', flush=True)
 
@@ -1106,6 +1121,7 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
     sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file()
     # sync_demo_llama_cpp_main_gemma_2b_text()
     # sync_demo_llama_cpp_main_gemma_2b_chat()
     # sync_demo_llama_cpp_main_gemma_7b_text()
