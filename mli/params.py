@@ -19,6 +19,7 @@ class LlamaCppParams(TypedDict):
     model_id: str                           # creator of model
     creator_model_id: str                   # creator of model
     model: Optional[str]                    # model name
+    mmproj: Optional[str]                   # path to a multimodal projector file for LLaVA. see examples/llava/README.md
     chatml: Optional[bool]                  # False
     n_predict: Optional[int]                # -2
     ctx_size: Optional[int]                 # size of the prompt context (default: 512, 0 = loaded from model)
@@ -29,7 +30,9 @@ class LlamaCppParams(TypedDict):
     top_p: Optional[float]                  # 0.9
     stop: Optional[list[str]]               # []
     prompt: Optional[str]                   # | prompt xor messages
-    messages: Optional[list[Message]]       # /
+    messages: Optional[list[Message]]       # |
+    file: Optional[str]                     # / text to be written in temp file
+    image: Optional[str]                    # base64 encoded image which will be saved in temp file
     no_display_prompt: Optional[bool]       # True
     split_mode: Optional[str]               # 'none', 'layer' (default), 'row'
     tensor_split: Optional[str]             # None, e.g. '3,1'

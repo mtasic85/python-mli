@@ -156,12 +156,14 @@ Download one of popular models to try them:
 # yi
 huggingface-cli download MarsupialAI/Yi-34B-200k-v2_GGUF Yi-34B-200k-v2_Q2.gguf
 huggingface-cli download MarsupialAI/Yi-34B-200k-v2_GGUF Yi-34B-200k-v2_Q3km.gguf
-huggingface-cli download MarsupialAI/Yi-6B-200k-v2_GGUF Yi-6B-200k-v2_Q3km.gguf
-huggingface-cli download MarsupialAI/Yi-6B-200k-v2_GGUF Yi-6B-200k-v2_Q4km.gguf
-huggingface-cli download MarsupialAI/Yi-6B-200k-v2_GGUF Yi-6B-200k-v2_Q5km.gguf
-huggingface-cli download MaziyarPanahi/Yi-9B-GGUF Yi-9B.Q3_K_M.gguf
-huggingface-cli download MaziyarPanahi/Yi-9B-GGUF Yi-9B.Q4_K_M.gguf
-huggingface-cli download MaziyarPanahi/Yi-9B-GGUF Yi-9B.Q5_K_M.gguf
+huggingface-cli download LoneStriker/Yi-9B-200K-GGUF Yi-9B-200K-Q4_K_M.gguf
+huggingface-cli download LoneStriker/Yi-9B-200K-GGUF Yi-9B-200K-Q5_K_M.gguf
+huggingface-cli download LoneStriker/Yi-9B-200K-GGUF Yi-9B-200K-Q8_0.gguf
+huggingface-cli download LoneStriker/Yi-6B-200K-GGUF Yi-6B-200K-Q4_K_M.gguf
+huggingface-cli download LoneStriker/Yi-6B-200K-GGUF Yi-6B-200K-Q5_K_M.gguf
+huggingface-cli download LoneStriker/Yi-6B-200K-GGUF Yi-6B-200K-Q8_0.gguf
+huggingface-cli download TheBloke/dolphin-2.2-yi-34b-200k-GGUF dolphin-2.2-yi-34b-200k.Q2_K.gguf
+huggingface-cli download TheBloke/dolphin-2.2-yi-34b-200k-GGUF dolphin-2.2-yi-34b-200k.Q3_K_M.gguf
 
 # gemma
 huggingface-cli download second-state/Gemma-2b-it-GGUF gemma-2b-it-Q4_K_M.gguf
@@ -184,12 +186,19 @@ huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixt
 huggingface-cli download TheBloke/dolphin-2.6-mistral-7B-GGUF dolphin-2.6-mistral-7b.Q4_K_M.gguf
 huggingface-cli download second-state/MistralLite-7B-GGUF MistralLite-Q4_K_M.gguf
 huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q2_K.gguf
+huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q3_K_M.gguf
 huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q4_K_M.gguf
+huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q5_K_M.gguf
 huggingface-cli download TheBloke/zephyr-7B-beta-GGUF zephyr-7b-beta.Q4_K_M.gguf
 huggingface-cli download TheBloke/openchat-3.5-0106-GGUF openchat-3.5-0106.Q4_K_M.gguf
+huggingface-cli download TheBloke/Yarn-Mistral-7B-128k-GGUF yarn-mistral-7b-128k.Q3_K_M.gguf
 huggingface-cli download TheBloke/Yarn-Mistral-7B-128k-GGUF yarn-mistral-7b-128k.Q4_K_M.gguf
+huggingface-cli download TheBloke/Yarn-Mistral-7B-128k-GGUF yarn-mistral-7b-128k.Q5_K_M.gguf
+huggingface-cli download NousResearch/Hermes-2-Pro-Mistral-7B-GGUF Hermes-2-Pro-Mistral-7B.Q3_K_M.gguf
 huggingface-cli download NousResearch/Hermes-2-Pro-Mistral-7B-GGUF Hermes-2-Pro-Mistral-7B.Q4_K_M.gguf
+huggingface-cli download NousResearch/Hermes-2-Pro-Mistral-7B-GGUF Hermes-2-Pro-Mistral-7B.Q5_K_M.gguf
 huggingface-cli download NousResearch/Hermes-2-Pro-Mistral-7B-GGUF Hermes-2-Pro-Mistral-7B.Q8_0.gguf
+huggingface-cli download MaziyarPanahi/Calme-4x7B-MoE-v0.2-GGUF Calme-4x7B-MoE-v0.2.Q4_K_M.gguf
 
 # stability ai
 # huggingface-cli download lmz/candle-stablelm
@@ -208,6 +217,8 @@ huggingface-cli download TheBloke/Orca-2-7B-GGUF orca-2-7b.Q4_K_M.gguf
 huggingface-cli download afrideva/MiniChat-2-3B-GGUF minichat-2-3b.q4_k_m.gguf
 huggingface-cli download azarovalex/MobileLLaMA-1.4B-Chat-GGUF MobileLLaMA-1.4B-Chat-Q4_K.gguf
 huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
+huggingface-cli download s3nh/TinyDolphin-2.8-1.1b-GGUF tinydolphin-2.8-1.1b.Q4_K_M.gguf
+huggingface-cli download s3nh/TinyDolphin-2.8-1.1b-GGUF tinydolphin-2.8-1.1b.Q8_0.gguf
 
 # microsoft phi
 huggingface-cli download microsoft/phi-2
@@ -217,6 +228,7 @@ huggingface-cli download lmz/candle-quantized-phi
 huggingface-cli download TheBloke/dolphin-2_6-phi-2-GGUF dolphin-2_6-phi-2.Q4_K_M.gguf
 huggingface-cli download TheBloke/phi-2-GGUF phi-2.Q4_K_M.gguf
 huggingface-cli download TKDKid1000/phi-1_5-GGUF phi-1_5-Q4_K_M.gguf
+huggingface-cli download MaziyarPanahi/phi-2-super-GGUF phi-2-super.Q4_K_M.gguf
 ```
 
 Run server:

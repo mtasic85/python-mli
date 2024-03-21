@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v0.1.34
+
+Added:
+    - `LlamaCppParams.file` Prompt go to temp prompt file because of CLI argument limit in terminal/shell.
+    - `LlamaCppParams.image` Prompt image go to temp prompt file.
+    - `LlamaCppParams.mmproj` Path to a multimodal projector file for LLaVA.
+
 ## v0.1.33
 
 Fixed:

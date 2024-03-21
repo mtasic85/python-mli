@@ -80,9 +80,12 @@ class MLIServer:
         cmd: list[str] | str = []
         
         if executable == 'main':
-            prompt: str = kwargs['prompt']
+            prompt: str = kwargs.get('prompt')
+            file: str = kwargs.get('file')
+            image: str = kwargs.get('image')
             model: str = kwargs['model']
             model_id: str | None = kwargs.get('model_id')
+            mmproj: str = kwargs.get('mmproj')
             chatml: bool | None = bool(kwargs.get('chatml', False))
             n_predict: int = int(kwargs.get('n_predict', -2))
             ctx_size: int = int(kwargs.get('ctx_size', 0))
@@ -207,8 +210,27 @@ class MLIServer:
                     '--cont-batching',
                 ])
 
-            # shell_prompt
-            shell_prompt: str = shlex.quote(prompt)
+            if prompt is not None:
+                shell_prompt: str = shlex.quote(prompt)
+
+                cmd.extend([
+                    '--prompt', shell_prompt,
+                ])
+
+            if file is not None:
+                cmd.extend([
+                    '--file', file,
+                ])
+
+            if image is not None:
+                cmd.extend([
+                    '--image', image,
+                ])
+
+            if mmproj is not None:
+                cmd.extend([
+                    '--mmproj', mmproj,
+                ])
 
             cmd.extend([
                 '--n-predict', n_predict,
@@ -219,7 +241,6 @@ class MLIServer:
                 '--top-p', top_p,
                 '--simple-io',
                 '--log-disable',
-                '--prompt', shell_prompt,
             ])
         else:
             raise ValueError(f'Unsupported executable: {executable}')
@@ -450,7 +471,10 @@ class MLIServer:
 
 
     async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
-        prompt: str = msg['prompt']
+        # prompt: str = msg.get('prompt')
+        # file: str = msg.get('file')
+        # image: str = msg.get('image')
+        # mmproj: str = msg.get('mmproj')
         stop: str = msg.get('stop', [])
         stdout: bytes = b''
         stderr: bytes = b''

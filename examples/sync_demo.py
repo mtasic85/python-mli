@@ -1,4 +1,6 @@
 import os
+from tempfile import NamedTemporaryFile
+
 from mli import SyncMLIClient
 
 from defs import (
@@ -521,6 +523,30 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
         prompt='Building a perfect e-commerce website in 5 simple steps:\nStep 1:',
     ):
         print(chunk, sep='', end='', flush=True)
+
+    print()
+
+
+def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file():
+    sync_client = SyncMLIClient(ENDPOINT)
+    text = 'Building a perfect e-commerce website in 5 simple steps:\nStep 1:'
+
+    with NamedTemporaryFile('w') as f:
+        f.write(text)
+        f.flush()
+        
+        print(f'{f.name = }')
+
+        for chunk in sync_client.iter_text(
+            engine='llama.cpp',
+            executable='main',
+            n_gpu_layers=NGL,
+            model_id='stabilityai/stablelm-2-zephyr-1_6b',
+            model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
+            creator_model_id='stabilityai/stablelm-2-zephyr-1_6b',
+            file=f.name,
+        ):
+            print(chunk, sep='', end='', flush=True)
 
     print()
 
@@ -1057,7 +1083,7 @@ Question: {question}'''
 
 
 if __name__ == '__main__':
-    sync_demo_candle_echo()
+    # sync_demo_candle_echo()
     # sync_demo_llama_cpp_main_echo()
 
     # sync_demo_candle_codellama()
@@ -1077,8 +1103,9 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_mistrallite_7b_chat()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
     # sync_demo_llama_cpp_main_gemma_2b_text()
     # sync_demo_llama_cpp_main_gemma_2b_chat()
     # sync_demo_llama_cpp_main_gemma_7b_text()
@@ -1095,3 +1122,4 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_react_0()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_react_1()
     # sync_demo_llama_cpp_main_mistral_7b_react_1()
+    

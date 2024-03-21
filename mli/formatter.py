@@ -103,8 +103,8 @@ def format_messages(model_id: str, messages: list[dict]) -> str:
 
     if model_id in ('cognitivecomputations/dolphin-2.6-mistral-7b', 'microsoft/Orca-2-7b', 'mtgv/MobileLLaMA-1.4B-Chat', 'NousResearch/Hermes-2-Pro-Mistral-7B'):
         tokenizer.chat_template = CHATML_CHAT_TEMPLATE
-    elif model_id in ('mistralai/Mistral-7B-Instruct-v0.2',):
-        messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
+    # elif model_id in ('mistralai/Mistral-7B-Instruct-v0.2', 'NousResearch/Yarn-Mistral-7b-128k'):
+    #     messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
     elif model_id in ('microsoft/Orca-2-7b',):
         messages = create_alternate_messages(model_id, messages)
     elif model_id == 'GeneZC/MiniChat-2-3B':
@@ -140,7 +140,7 @@ def _format_all_models_messages():
         # 'Qwen/Qwen1.5-0.5B-Chat',
         # 'cognitivecomputations/dolphin-2.7-mixtral-8x7b',
         # 'cognitivecomputations/dolphin-2.6-mistral-7b',
-        # 'mistralai/Mistral-7B-Instruct-v0.2', # no sys, no alt
+        'mistralai/Mistral-7B-Instruct-v0.2', # no sys, no alt
         # 'HuggingFaceH4/zephyr-7b-beta',
         # 'openchat/openchat-3.5-0106',
         # 'stabilityai/stablelm-2-zephyr-1_6b',
@@ -158,6 +158,7 @@ def _format_all_models_messages():
         # 'google/gemma-2b-it', # gemma, no alt
         # 'google/gemma-7b-it', # gemma, no alt
         'NousResearch/Hermes-2-Pro-Mistral-7B',
+        'NousResearch/Yarn-Mistral-7b-128k',
     ]
 
     for model_id in models:
