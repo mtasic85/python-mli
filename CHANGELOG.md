@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.38
+
+Changed:
+    - Renamed `LLMParams` to `ModelParams`.
+
 ## v0.1.37
 
 Fixed:

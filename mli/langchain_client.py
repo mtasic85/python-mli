@@ -8,7 +8,7 @@ from langchain.llms.utils import enforce_stop_tokens
 from langchain.schema.output import GenerationChunk
 
 from .client import SyncMLIClient, AsyncMLIClient
-from .params import LLMParams
+from .params import ModelParams
 
 
 class LangchainMLIClient(LLM):
@@ -35,7 +35,7 @@ class LangchainMLIClient(LLM):
         prompt: str,
         stop: Optional[list[str]] = None,
         run_manager: Optional[CallbackManagerForLLMRun] = None,
-        **kwargs: Unpack[LLMParams],
+        **kwargs: Unpack[ModelParams],
     ) -> str:
         """Run the LLM on the given prompt and input."""
         # print('_call', self)
@@ -69,7 +69,7 @@ class LangchainMLIClient(LLM):
         prompt: str,
         stop: Optional[list[str]] = None,
         run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
-        **kwargs: Unpack[LLMParams],
+        **kwargs: Unpack[ModelParams],
     ) -> str:
         """Run the LLM on the given prompt and input."""
         # print('_acall', self)
@@ -102,7 +102,7 @@ class LangchainMLIClient(LLM):
         prompt: str,
         stop: Optional[list[str]] = None,
         run_manager: Optional[CallbackManagerForLLMRun] = None,
-        **kwargs: Unpack[LLMParams],
+        **kwargs: Unpack[ModelParams],
     ) -> Iterator[GenerationChunk]:
         """Yields results objects as they are generated in real time.
 
@@ -134,7 +134,7 @@ class LangchainMLIClient(LLM):
         prompt: str,
         stop: Optional[list[str]] = None,
         run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
-        **kwargs: Unpack[LLMParams],
+        **kwargs: Unpack[ModelParams],
     ) -> AsyncIterator[GenerationChunk]:
         """Yields results objects as they are generated in real time.
 

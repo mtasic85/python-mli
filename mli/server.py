@@ -25,7 +25,7 @@ from aiohttp import web, WSMsgType
 from transformers import AutoTokenizer
 from huggingface_hub import try_to_load_from_cache
 
-from .params import Message, LLMParams, LlamaCppParams, CandleParams
+from .params import Message, ModelParams, LlamaCppParams, CandleParams
 from .formatter import format_messages
 
 
@@ -496,7 +496,7 @@ class MLIServer:
         return cmd
 
 
-    def _format_cmd(self, msg: LLMParams) -> str:
+    def _format_cmd(self, msg: ModelParams) -> str:
         engine: str = msg['engine']
         cmd: str
 
@@ -510,7 +510,7 @@ class MLIServer:
         return cmd
 
 
-    async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams, cmd: str) -> AsyncIterator[str]:
+    async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: ModelParams, cmd: str) -> AsyncIterator[str]:
         file: str = msg.get('file')
         image: str = msg.get('image')
         prompt_to_file: str = msg.get('prompt_to_file', False)
@@ -654,7 +654,7 @@ class MLIServer:
             os.remove(image)
 
 
-    def _run_cmd(self, ws: web.WebSocketResponse | None, msg: LLMParams) -> AsyncIterator[str]:
+    def _run_cmd(self, ws: web.WebSocketResponse | None, msg: ModelParams) -> AsyncIterator[str]:
         engine: str = msg['engine']
         executable: str = msg.get('executable', msg.get('kind'))
         msg['executable'] = executable
@@ -684,7 +684,7 @@ class MLIServer:
         return res
 
 
-    async def _api_1_0_text_completions(self, ws: web.WebSocketResponse, msg: LLMParams):
+    async def _api_1_0_text_completions(self, ws: web.WebSocketResponse, msg: ModelParams):
         async for chunk in self._run_cmd(ws, msg):
             # if DEBUG:
             #     print(f'chunk: {chunk!r}')
@@ -694,17 +694,17 @@ class MLIServer:
         await ws.close()
 
 
-    def _convert_chat_to_text_message(self, msg: LLMParams) -> LLMParams:
+    def _convert_chat_to_text_message(self, msg: ModelParams) -> ModelParams:
         model_id: str = msg['model_id']
         creator_model_id: str = msg.get('creator_model_id', model_id)
         messages: list[Message] = msg['messages']
         prompt: str = format_messages(creator_model_id, messages)
-        chat_msg: LLMParams = {**msg, 'prompt': prompt}
+        chat_msg: ModelParams = {**msg, 'prompt': prompt}
         return chat_msg
 
 
     async def post_api_1_0_text_completions(self, request):
-        data: LLMParams = await request.json()
+        data: ModelParams = await request.json()
         text: list[str] | str = []
 
         async for chunk in self._run_cmd(None, data):
@@ -722,7 +722,7 @@ class MLIServer:
 
 
     async def post_api_1_0_chat_completions(self, request):
-        data: LLMParams = await request.json()
+        data: ModelParams = await request.json()
         data = self._convert_chat_to_text_message(data)
         text: list[str] | str = []
 
@@ -751,7 +751,7 @@ class MLIServer:
                     if msg.type == WSMsgType.PING:
                         await ws.pong(msg.data)
                     elif msg.type == WSMsgType.TEXT:
-                        data: LLMParams = json.loads(msg.data)
+                        data: ModelParams = json.loads(msg.data)
 
                         # quick model check
                         engine = data['engine']
@@ -814,7 +814,7 @@ class MLIServer:
                     if msg.type == WSMsgType.PING:
                         await ws.pong(msg.data)
                     elif msg.type == WSMsgType.TEXT:
-                        data: LLMParams = json.loads(msg.data)
+                        data: ModelParams = json.loads(msg.data)
                         data = self._convert_chat_to_text_message(data)
                         coro = self._api_1_0_text_completions(ws, data)
                         task = tg.create_task(coro)

@@ -16,7 +16,7 @@ from typing import Iterator, AsyncIterator, Any, Unpack, Callable
 
 from aiohttp import ClientSession, WSMsgType
 
-from .params import LlamaCppParams, CandleParams, LLMParams
+from .params import LlamaCppParams, CandleParams, ModelParams
 
 
 DEBUG = int(os.getenv('DEBUG', 0))
@@ -96,28 +96,28 @@ class SyncMLIClient(BaseMLIClient):
         self.async_client = AsyncMLIClient(endpoint, ws_endpoint)
 
 
-    def text(self, **kwargs: Unpack[LLMParams]) -> str:
+    def text(self, **kwargs: Unpack[ModelParams]) -> str:
         data = asyncio.run(self.async_client.text(**kwargs))
         return data
 
 
-    def chat(self, **kwargs: Unpack[LLMParams]) -> str:
+    def chat(self, **kwargs: Unpack[ModelParams]) -> str:
         data = asyncio.run(self.async_client.chat(**kwargs))
         return data
 
 
-    def iter_text(self, **kwargs: Unpack[LLMParams]) -> Iterator[str]:
+    def iter_text(self, **kwargs: Unpack[ModelParams]) -> Iterator[str]:
         for chunk in async_to_sync_iter(self.async_client.iter_text(**kwargs)):
             yield chunk
 
 
-    def iter_chat(self, **kwargs: Unpack[LLMParams]) -> Iterator[str]:
+    def iter_chat(self, **kwargs: Unpack[ModelParams]) -> Iterator[str]:
         for chunk in async_to_sync_iter(self.async_client.iter_chat(**kwargs)):
             yield chunk
 
 
 class AsyncMLIClient(BaseMLIClient):
-    async def text(self, **kwargs: Unpack[LLMParams]) -> str:
+    async def text(self, **kwargs: Unpack[ModelParams]) -> str:
         url: str = f'{self.endpoint}/text/completions'
 
         if kwargs.get('model_id') == 'echo/echo':
@@ -130,7 +130,7 @@ class AsyncMLIClient(BaseMLIClient):
         return data
 
 
-    async def chat(self, **kwargs: Unpack[LLMParams]) -> str:
+    async def chat(self, **kwargs: Unpack[ModelParams]) -> str:
         url: str = f'{self.endpoint}/chat/completions'
 
         if kwargs.get('model_id') == 'echo/echo':
@@ -143,7 +143,7 @@ class AsyncMLIClient(BaseMLIClient):
         return data
 
 
-    async def iter_text(self, **kwargs: Unpack[LLMParams]) -> AsyncIterator[str]:
+    async def iter_text(self, **kwargs: Unpack[ModelParams]) -> AsyncIterator[str]:
         url: str = f'{self.ws_endpoint}/text/completions'
 
         if kwargs.get('model_id') == 'echo/echo':
@@ -165,7 +165,7 @@ class AsyncMLIClient(BaseMLIClient):
                         break
 
 
-    async def iter_chat(self, **kwargs: Unpack[LLMParams]) -> AsyncIterator[str]:
+    async def iter_chat(self, **kwargs: Unpack[ModelParams]) -> AsyncIterator[str]:
         url: str = f'{self.ws_endpoint}/chat/completions'
 
         if kwargs.get('model_id') == 'echo/echo':

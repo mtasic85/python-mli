@@ -2,7 +2,7 @@ __all__ = [
     'Message',
     'LlamaCppParams',
     'CandleParams',
-    'LLMParams',
+    'ModelParams',
 ]
 
 from typing import TypedDict, Optional, Required
@@ -69,4 +69,4 @@ class CandleParams(TypedDict):
     messages: Optional[list[Message]]       # /
 
 
-LLMParams: type = LlamaCppParams | CandleParams
+ModelParams: type = LlamaCppParams | CandleParams
