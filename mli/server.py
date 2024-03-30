@@ -619,33 +619,36 @@ class MLIServer:
 
                         await asyncio.sleep(0.2)
 
+                    # read stderr at once
+                    stderr = await proc.stderr.read()
+
                     if stopped:
                         print(f'[INFO] stop word, trying to kill proc: {proc}')
 
                         try:
                             proc.kill()
                             # await proc.wait()
-                            kill_stdout, kill_stderr = await proc.communicate()
+                            # kill_stdout, kill_stderr = await proc.communicate()
                             print('[INFO] proc kill [stop]')
                         except Exception as e:
                             print(f'[INFO] proc kill [stop]: {e}')
-                    
-                    # read stderr at once
-                    stderr = await proc.stderr.read()
             except asyncio.TimeoutError as e:
                 print(f'[ERROR] timeout, trying to kill proc: {proc}')
+
+                # read stderr at once
+                stderr = await proc.stderr.read()
 
                 try:
                     proc.kill()
                     # await proc.wait()
-                    kill_stdout, kill_stderr = await proc.communicate()
+                    # kill_stdout, kill_stderr = await proc.communicate()
                     print('[INFO] proc kill [timeout]')
                 except Exception as e:
                     print(f'[INFO] proc kill [timeout]: {e}')
                     raise e
-            
+
             proc = None
-            stderr = stderr.decode()
+            stderr = stderr.decode() if stderr else ''
             print('[DEBUG] stderr:')
             print(stderr)
 
@@ -785,19 +788,19 @@ class MLIServer:
             traceback.print_exc()
             print(f'[ERROR] TaskGroup Exception: {e}')
 
-        if ws in self.ws_proc_map:
-            proc = self.ws_proc_map.pop(ws)
-            print(f'[INFO] proc: {proc}')
-
-            try:
-                proc.kill()
-                # await proc.wait()
-                kill_stdout, kill_stderr = await proc.communicate()
-                print('[INFO] proc kill [TaskGroup]')
-            except Exception as e:
-                print(f'[WARN] proc kill [TaskGroup]: {e}')
-            finally:
-                proc = None
+        # if ws in self.ws_proc_map:
+        #     proc = self.ws_proc_map.pop(ws)
+        #     print(f'[INFO] proc: {proc}')
+        #
+        #     try:
+        #         proc.kill()
+        #         await proc.wait()
+        #         # kill_stdout, kill_stderr = await proc.communicate()
+        #         print('[INFO] proc kill [TaskGroup]')
+        #     except Exception as e:
+        #         print(f'[WARN] proc kill [TaskGroup]: {e}')
+        #     finally:
+        #         proc = None
 
         # close ws
         await ws.close()
@@ -831,19 +834,19 @@ class MLIServer:
             traceback.print_exc()
             print(f'[ERROR] TaskGroup Exception: {e}')
 
-        if ws in self.ws_proc_map:
-            proc = self.ws_proc_map.pop(ws)
-            print(f'[INFO] proc: {proc}')
-
-            try:
-                proc.kill()
-                # await proc.wait()
-                kill_stdout, kill_stderr = await proc.communicate()
-                print('[INFO] proc kill [TaskGroup]')
-            except Exception as e:
-                print(f'[WARN] proc kill [TaskGroup]: {e}')
-            finally:
-                proc = None
+        # if ws in self.ws_proc_map:
+        #     proc = self.ws_proc_map.pop(ws)
+        #     print(f'[INFO] proc: {proc}')
+        #
+        #     try:
+        #         proc.kill()
+        #         await proc.wait()
+        #         # kill_stdout, kill_stderr = await proc.communicate()
+        #         print('[INFO] proc kill [TaskGroup]')
+        #     except Exception as e:
+        #         print(f'[WARN] proc kill [TaskGroup]: {e}')
+        #     finally:
+        #         proc = None
 
         # close ws
         await ws.close()
