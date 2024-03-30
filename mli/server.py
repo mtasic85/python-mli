@@ -240,6 +240,7 @@ class MLIServer:
 
             if prompt_to_file:
                 with NamedTemporaryFile('w', suffix='.txt', delete=False) as f:
+                    print(prompt)
                     f.write(prompt)
                     f.flush()
 
@@ -544,7 +545,7 @@ class MLIServer:
                     proc = await asyncio.create_subprocess_shell(
                         cmd,
                         stdout=asyncio.subprocess.PIPE,
-                        stderr=asyncio.subprocess.DEVNULL,
+                        stderr=asyncio.subprocess.PIPE,
                     )
 
                     # associate ws with proc
@@ -624,32 +625,42 @@ class MLIServer:
 
                     if stopped:
                         print(f'[INFO] stop word, trying to kill proc: {proc}')
+                        # os.system(f'kill {proc.pid}')
+                        # os.system(f'killall -9 {msg["executable"]}')
 
-                        try:
-                            proc.kill()
-                            # await proc.wait()
-                            print('[INFO] proc kill [stop]')
-                        except Exception as e:
-                            print(f'[INFO] proc kill [stop]: {e}')
-                        finally:
-                            os.system(f'killall -9 {msg["executable"]}')
+                        # try:
+                        #     proc.kill()
+                        #     # await proc.wait()
+                        #     print('[INFO] proc kill [stop]')
+                        # except Exception as e:
+                        #     print('Exception', e)
+                        #     print(f'[INFO] proc kill [stop]: {e}')
+                        # finally:
+                        #     os.system(f'killall -9 {msg["executable"]}')
             except asyncio.TimeoutError as e:
                 print(f'[ERROR] timeout, trying to kill proc: {proc}')
 
                 # read stderr at once
                 # stderr = await proc.stderr.read()
 
-                try:
-                    proc.kill()
-                    # await proc.wait()
-                    print('[INFO] proc kill [timeout]')
-                except Exception as e:
-                    print(f'[INFO] proc kill [timeout]: {e}')
-                    raise e
-                finally:
-                    os.system(f'killall -9 {msg["executable"]}')
+                # os.system(f'kill {proc.pid}')
+                # os.system(f'killall -9 {msg["executable"]}')
 
-            proc = None
+                # try:
+                #     proc.kill()
+                #     # await proc.wait()
+                #     print('[INFO] proc kill [timeout]')
+                # except Exception as e:
+                #     print('Exception', e)
+                #     print(f'[INFO] proc kill [timeout]: {e}')
+                #     raise e
+                # finally:
+                #     os.system(f'killall -9 {msg["executable"]}')
+            finally:
+                os.system(f'kill {proc.pid}')
+                os.system(f'killall -9 {msg["executable"]}')                    
+                proc = None
+
             stderr = stderr.decode()
             print('[DEBUG] stderr:')
             print(stderr)
@@ -793,17 +804,22 @@ class MLIServer:
 
         if ws in self.ws_proc_map:
             proc = self.ws_proc_map.pop(ws)
-            print(f'[INFO] proc: {proc}')
+            print(f'[INFO] freed proc: {proc}')
         
-            try:
-                proc.kill()
-                # await proc.wait()
-                print('[INFO] proc kill [TaskGroup]')
-            except Exception as e:
-                print(f'[WARN] proc kill [TaskGroup]: {e}')
-            finally:
-                os.system(f'killall -9 {data["executable"]}')
-                proc = None
+            # try:
+            #     proc.kill()
+            #     # await proc.wait()
+            #     print('[INFO] proc kill [TaskGroup]')
+            # except Exception as e:
+            #     print('Exception', e)
+            #     print(f'[WARN] proc kill [TaskGroup]: {e}')
+            #     raise e
+            # finally:
+            #     os.system(f'killall -9 {data["executable"]}')
+            #     proc = None
+
+            os.system(f'kill {proc.pid}')
+            os.system(f'killall -9 {data["executable"]}')   
 
         # close ws
         await ws.close()
@@ -840,17 +856,22 @@ class MLIServer:
 
         if ws in self.ws_proc_map:
             proc = self.ws_proc_map.pop(ws)
-            print(f'[INFO] proc: {proc}')
-        
-            try:
-                proc.kill()
-                # await proc.wait()
-                print('[INFO] proc kill [TaskGroup]')
-            except Exception as e:
-                print(f'[WARN] proc kill [TaskGroup]: {e}')
-            finally:
-                os.system(f'killall -9 {data["executable"]}')
-                proc = None
+            print(f'[INFO] freed proc: {proc}')
+            
+            # try:
+            #     proc.kill()
+            #     # await proc.wait()
+            #     print('[INFO] proc kill [TaskGroup]')
+            # except Exception as e:
+            #     print('Exception', e)
+            #     print(f'[WARN] proc kill [TaskGroup]: {e}')
+            #     raise e
+            # finally:
+            #     os.system(f'killall -9 {data["executable"]}')
+            #     proc = None
+
+            os.system(f'kill {proc.pid}')
+            os.system(f'killall -9 {data["executable"]}')   
 
         # close ws
         await ws.close()

@@ -587,6 +587,88 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file():
     print()
 
 
+def sync_demo_llama_cpp_main_yi_6b_200k_text_file():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='LoneStriker/Yi-6B-200K-GGUF',
+        model='Yi-6B-200K-Q4_K_M.gguf',
+        creator_model_id='01-ai/Yi-6B-200K',
+        stop=["<|im_start|>", "<|im_end|>", "User:", "Assistant:"],
+        prompt='User: Help me build a website.\nAssistant: Ok.\nUser: Building a perfect e-commerce website in 5 simple steps.\nAssistant: Here are steps:\nStep 1:',
+        prompt_to_file=True,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
+
+
+def sync_demo_llama_cpp_main_yi_6b_200k_chat_file():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='LoneStriker/Yi-6B-200K-GGUF',
+        model='Yi-6B-200K-Q4_K_M.gguf',
+        creator_model_id='01-ai/Yi-6B-200K',
+        stop=["<|im_start|>", "<|im_end|>", "User:", "Assistant:"],
+        messages=[
+            {'role': 'system', 'content': SYSTEM_TEXT},
+            {'role': 'user', 'content': 'Building a perfect e-commerce website in 5 simple steps.'},
+        ],
+        prompt_to_file=True,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
+
+
+def sync_demo_llama_cpp_main_qwen1_5_4b_text_file():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_text(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='Qwen/Qwen1.5-4B-Chat-GGUF',
+        model='qwen1_5-4b-chat-q4_k_m.gguf',
+        creator_model_id='Qwen/Qwen1.5-4B-Chat',
+        stop=["<|im_start|>", "<|im_end|>", "User:", "Assistant:"],
+        prompt='User: Help me build a website.\nAssistant: Ok.\nUser: Building a perfect e-commerce website in 5 simple steps.\nAssistant: Here are steps:\nStep 1:',
+        prompt_to_file=True,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
+
+
+def sync_demo_llama_cpp_main_qwen1_5_4b_chat_file():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='Qwen/Qwen1.5-4B-Chat-GGUF',
+        model='qwen1_5-4b-chat-q4_k_m.gguf',
+        creator_model_id='Qwen/Qwen1.5-4B-Chat',
+        stop=["<|im_start|>", "<|im_end|>", "User:", "Assistant:"],
+        messages=[
+            {'role': 'system', 'content': SYSTEM_TEXT},
+            {'role': 'user', 'content': 'Building a perfect e-commerce website in 5 simple steps.'},
+        ],
+        prompt_to_file=True,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
+
+
 def sync_demo_llama_cpp_main_gemma_2b_text():
     sync_client = SyncMLIClient(ENDPOINT)
 
@@ -1119,9 +1201,13 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file()
+    # sync_demo_llama_cpp_main_yi_6b_200k_text_file()
+    # sync_demo_llama_cpp_main_yi_6b_200k_chat_file()
+    sync_demo_llama_cpp_main_qwen1_5_4b_text_file()
+    sync_demo_llama_cpp_main_qwen1_5_4b_chat_file()
     # sync_demo_llama_cpp_main_gemma_2b_text()
     # sync_demo_llama_cpp_main_gemma_2b_chat()
     # sync_demo_llama_cpp_main_gemma_7b_text()

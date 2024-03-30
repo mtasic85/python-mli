@@ -115,8 +115,11 @@ def format_messages(model_id: str, messages: list[dict]) -> str:
     elif model_id in ('google/gemma-2b', 'google/gemma-2b-it', 'google/gemma-7b', 'google/gemma-7b-it'):
         messages = create_alternate_messages(model_id, messages)
         tokenizer.chat_template = GEMMA_CHAT_TEMPLATE
-    else:
+    elif model_id in ('01-ai/Yi-9B-200K', '01-ai/Yi-6B-200K'):
         tokenizer.chat_template = FALLBACK_CHAT_TEMPLATE
+    else:
+        if not tokenizer.chat_template:
+            tokenizer.chat_template = FALLBACK_CHAT_TEMPLATE
     
     text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     return text
