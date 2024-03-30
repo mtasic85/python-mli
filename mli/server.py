@@ -627,6 +627,7 @@ class MLIServer:
 
                         try:
                             proc.kill()
+                            os.system(f'kill {proc.pid}')
                             await proc.wait()
                             print('[INFO] proc kill [stop]')
                         except Exception as e:
@@ -639,6 +640,7 @@ class MLIServer:
 
                 try:
                     proc.kill()
+                    os.system(f'kill {proc.pid}')
                     await proc.wait()
                     print('[INFO] proc kill [timeout]')
                 except Exception as e:
@@ -792,6 +794,7 @@ class MLIServer:
         
             try:
                 proc.kill()
+                os.system(f'kill {proc.pid}')
                 await proc.wait()
                 print('[INFO] proc kill [TaskGroup]')
             except Exception as e:
@@ -837,6 +840,7 @@ class MLIServer:
         
             try:
                 proc.kill()
+                os.system(f'kill {proc.pid}')
                 await proc.wait()
                 print('[INFO] proc kill [TaskGroup]')
             except Exception as e:
