@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.42
+
+Fixed:
+    - The forth approach to terminate `proc` subprocess.
+
 ## v0.1.41
 
 Fixed:
