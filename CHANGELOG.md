@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.41
+
+Fixed:
+    - The third approach to terminate `proc` subprocess.
+
 ## v0.1.40
 
 Fixed:

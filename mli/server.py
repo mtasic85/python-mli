@@ -544,7 +544,7 @@ class MLIServer:
                     proc = await asyncio.create_subprocess_shell(
                         cmd,
                         stdout=asyncio.subprocess.PIPE,
-                        stderr=asyncio.subprocess.PIPE,
+                        stderr=asyncio.subprocess.DEVNULL,
                     )
 
                     # associate ws with proc
@@ -620,15 +620,14 @@ class MLIServer:
                         await asyncio.sleep(0.2)
 
                     # read stderr at once
-                    stderr = await proc.stderr.read()
+                    # stderr = await proc.stderr.read()
 
                     if stopped:
                         print(f'[INFO] stop word, trying to kill proc: {proc}')
 
                         try:
                             proc.kill()
-                            # await proc.wait()
-                            # kill_stdout, kill_stderr = await proc.communicate()
+                            await proc.wait()
                             print('[INFO] proc kill [stop]')
                         except Exception as e:
                             print(f'[INFO] proc kill [stop]: {e}')
@@ -636,19 +635,18 @@ class MLIServer:
                 print(f'[ERROR] timeout, trying to kill proc: {proc}')
 
                 # read stderr at once
-                stderr = await proc.stderr.read()
+                # stderr = await proc.stderr.read()
 
                 try:
                     proc.kill()
-                    # await proc.wait()
-                    # kill_stdout, kill_stderr = await proc.communicate()
+                    await proc.wait()
                     print('[INFO] proc kill [timeout]')
                 except Exception as e:
                     print(f'[INFO] proc kill [timeout]: {e}')
                     raise e
 
             proc = None
-            stderr = stderr.decode() if stderr else ''
+            stderr = stderr.decode()
             print('[DEBUG] stderr:')
             print(stderr)
 
