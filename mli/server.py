@@ -627,11 +627,12 @@ class MLIServer:
 
                         try:
                             proc.kill()
-                            os.system(f'kill {proc.pid}')
-                            await proc.wait()
+                            # await proc.wait()
                             print('[INFO] proc kill [stop]')
                         except Exception as e:
                             print(f'[INFO] proc kill [stop]: {e}')
+                        finally:
+                            os.system(f'kill {proc.pid}')
             except asyncio.TimeoutError as e:
                 print(f'[ERROR] timeout, trying to kill proc: {proc}')
 
@@ -640,12 +641,13 @@ class MLIServer:
 
                 try:
                     proc.kill()
-                    os.system(f'kill {proc.pid}')
-                    await proc.wait()
+                    # await proc.wait()
                     print('[INFO] proc kill [timeout]')
                 except Exception as e:
                     print(f'[INFO] proc kill [timeout]: {e}')
                     raise e
+                finally:
+                    os.system(f'kill {proc.pid}')
 
             proc = None
             stderr = stderr.decode()
@@ -794,12 +796,12 @@ class MLIServer:
         
             try:
                 proc.kill()
-                os.system(f'kill {proc.pid}')
-                await proc.wait()
+                # await proc.wait()
                 print('[INFO] proc kill [TaskGroup]')
             except Exception as e:
                 print(f'[WARN] proc kill [TaskGroup]: {e}')
             finally:
+                os.system(f'kill {proc.pid}')
                 proc = None
 
         # close ws
@@ -840,12 +842,12 @@ class MLIServer:
         
             try:
                 proc.kill()
-                os.system(f'kill {proc.pid}')
-                await proc.wait()
+                # await proc.wait()
                 print('[INFO] proc kill [TaskGroup]')
             except Exception as e:
                 print(f'[WARN] proc kill [TaskGroup]: {e}')
             finally:
+                os.system(f'kill {proc.pid}')
                 proc = None
 
         # close ws
