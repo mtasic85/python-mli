@@ -624,7 +624,8 @@ class MLIServer:
 
                         try:
                             proc.kill()
-                            await proc.wait()
+                            # await proc.wait()
+                            kill_stdout, kill_stderr = await proc.communicate()
                             print('[INFO] proc kill [stop]')
                         except Exception as e:
                             print(f'[INFO] proc kill [stop]: {e}')
@@ -636,7 +637,8 @@ class MLIServer:
 
                 try:
                     proc.kill()
-                    await proc.wait()
+                    # await proc.wait()
+                    kill_stdout, kill_stderr = await proc.communicate()
                     print('[INFO] proc kill [timeout]')
                 except Exception as e:
                     print(f'[INFO] proc kill [timeout]: {e}')
@@ -789,7 +791,8 @@ class MLIServer:
 
             try:
                 proc.kill()
-                await proc.wait()
+                # await proc.wait()
+                kill_stdout, kill_stderr = await proc.communicate()
                 print('[INFO] proc kill [TaskGroup]')
             except Exception as e:
                 print(f'[WARN] proc kill [TaskGroup]: {e}')
@@ -834,7 +837,8 @@ class MLIServer:
 
             try:
                 proc.kill()
-                await proc.wait()
+                # await proc.wait()
+                kill_stdout, kill_stderr = await proc.communicate()
                 print('[INFO] proc kill [TaskGroup]')
             except Exception as e:
                 print(f'[WARN] proc kill [TaskGroup]: {e}')

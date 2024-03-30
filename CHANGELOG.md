@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.39
+
+Fixed:
+    - Fixed terminating `proc` subprocess.
+
 ## v0.1.38
 
 Changed:
