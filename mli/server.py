@@ -632,7 +632,7 @@ class MLIServer:
                         except Exception as e:
                             print(f'[INFO] proc kill [stop]: {e}')
                         finally:
-                            os.system(f'kill {proc.pid}')
+                            os.system(f'killall -9 {msg["executable"]}')
             except asyncio.TimeoutError as e:
                 print(f'[ERROR] timeout, trying to kill proc: {proc}')
 
@@ -647,7 +647,7 @@ class MLIServer:
                     print(f'[INFO] proc kill [timeout]: {e}')
                     raise e
                 finally:
-                    os.system(f'kill {proc.pid}')
+                    os.system(f'killall -9 {msg["executable"]}')
 
             proc = None
             stderr = stderr.decode()
@@ -751,14 +751,15 @@ class MLIServer:
         ws = web.WebSocketResponse()
         await ws.prepare(request)
         print(f'[INFO] websocket openned: {ws}')
-        
+        data: ModelParams
+
         try:
             async with asyncio.TaskGroup() as tg:
                 async for msg in ws:
                     if msg.type == WSMsgType.PING:
                         await ws.pong(msg.data)
                     elif msg.type == WSMsgType.TEXT:
-                        data: ModelParams = json.loads(msg.data)
+                        data = json.loads(msg.data)
 
                         # quick model check
                         engine = data['engine']
@@ -801,7 +802,7 @@ class MLIServer:
             except Exception as e:
                 print(f'[WARN] proc kill [TaskGroup]: {e}')
             finally:
-                os.system(f'kill {proc.pid}')
+                os.system(f'killall -9 {data["executable"]}')
                 proc = None
 
         # close ws
@@ -815,14 +816,15 @@ class MLIServer:
         ws = web.WebSocketResponse()
         await ws.prepare(request)
         print(f'[INFO] websocket openned: {ws}')
-        
+        data: ModelParams
+
         try:
             async with asyncio.TaskGroup() as tg:
                 async for msg in ws:
                     if msg.type == WSMsgType.PING:
                         await ws.pong(msg.data)
                     elif msg.type == WSMsgType.TEXT:
-                        data: ModelParams = json.loads(msg.data)
+                        data = json.loads(msg.data)
                         data = self._convert_chat_to_text_message(data)
                         coro = self._api_1_0_text_completions(ws, data)
                         task = tg.create_task(coro)
@@ -847,7 +849,7 @@ class MLIServer:
             except Exception as e:
                 print(f'[WARN] proc kill [TaskGroup]: {e}')
             finally:
-                os.system(f'kill {proc.pid}')
+                os.system(f'killall -9 {data["executable"]}')
                 proc = None
 
         # close ws
