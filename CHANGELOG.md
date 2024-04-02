@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.1.48
+
+Changed:
+    - Added back `sentencepiece` as dependencies because `transformers` exception:
+        - Cannot instantiate this tokenizer from a slow version. If it's based on sentencepiece, make sure you have sentencepiece installed.
+
 ## v0.1.47
 
 Changed:

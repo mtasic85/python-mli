@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlipy"
-version = "0.1.47"
+version = "0.1.48"
 description = "Python-based Machine Learning Interface"
 homepage = "https://github.com/tangledgroup/mlipy"
 repository = "https://github.com/tangledgroup/mlipy"
@@ -19,6 +19,7 @@ transformers = "^4.39.3"
 jinja2 = "^3.1.3"
 protobuf = "^5.26.1"
 tiktoken = "^0.6.0"
+sentencepiece = "^0.2.0"
 
 [tool.poetry.extras]
 uvloop = ["uvloop"]
