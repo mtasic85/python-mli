@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.1.47
+
+Changed:
+    - Updated all dependencies. 
+    - Removed `sentencepiece` as dependencies.
+
 ## v0.1.46
 
 Fixed:
