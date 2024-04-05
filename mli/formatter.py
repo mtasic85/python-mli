@@ -5,6 +5,8 @@ from copy import deepcopy
 from transformers import AutoTokenizer
 
 
+FALLBACK_MODEL_ID = 'TinyLlama/TinyLlama-1.1B-Chat-v1.0'
+
 FALLBACK_CHAT_TEMPLATE = (
     "{% for message in messages %}"
         "{% if message['role'] == 'system' %}"
@@ -99,7 +101,10 @@ def create_alternate_messages(model_id: str, messages: list[dict], convert_syste
 
 
 def format_messages(model_id: str, messages: list[dict]) -> str:
-    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True, use_fast=True)
+    if model_id == 'echo/echo':
+        tokenizer = AutoTokenizer.from_pretrained(FALLBACK_MODEL_ID, trust_remote_code=True, use_fast=True)
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True, use_fast=True)
 
     if model_id in ('cognitivecomputations/dolphin-2.6-mistral-7b', 'NousResearch/Hermes-2-Pro-Mistral-7B', 'mtgv/MobileLLaMA-1.4B-Chat'):
         tokenizer.chat_template = CHATML_CHAT_TEMPLATE
@@ -118,10 +123,12 @@ def format_messages(model_id: str, messages: list[dict]) -> str:
     elif model_id == 'abacaj/phi-2-super':
         messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
     elif model_id in ('google/gemma-2b', 'google/gemma-2b-it', 'google/gemma-7b', 'google/gemma-7b-it'):
-        messages = create_alternate_messages(model_id, messages)
-        tokenizer.chat_template = GEMMA_CHAT_TEMPLATE
-    elif model_id in ('01-ai/Yi-9B-200K', '01-ai/Yi-6B-200K'):
+        messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
+        # tokenizer.chat_template = GEMMA_CHAT_TEMPLATE
+    elif model_id == '01-ai/Yi-9B-200K':
         tokenizer.chat_template = CHATML_CHAT_TEMPLATE
+    elif model_id == '01-ai/Yi-6B-200K':
+        tokenizer.chat_template = FALLBACK_CHAT_TEMPLATE
     else:
         if not tokenizer.chat_template:
             tokenizer.chat_template = FALLBACK_CHAT_TEMPLATE

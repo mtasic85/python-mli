@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.51
+
+Added:
+    - `min_p`, `repeat_last_n`, `repeat_penalty`, `penalize_nl`
+
 ## v0.1.50
 
 Fixed:
