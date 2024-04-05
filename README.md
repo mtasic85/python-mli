@@ -154,16 +154,20 @@ Download one of popular models to try them:
 # huggingface-cli login
 
 # internlm2
+huggingface-cli download nold/internlm2-chat-20b-GGUF internlm2-chat-20b_Q3_K_M.gguf
 huggingface-cli download nold/internlm2-chat-20b-GGUF internlm2-chat-20b_Q4_K_M.gguf
+huggingface-cli download izumi04/InternLM2-Chat-7B-GGUF internlm2-chat-7b-Q3_K_M.gguf
+huggingface-cli download izumi04/InternLM2-Chat-7B-GGUF internlm2-chat-7b-Q4_K_M.gguf
 
 # yi
 huggingface-cli download LoneStriker/Yi-9B-200K-GGUF Yi-9B-200K-Q4_K_M.gguf
 huggingface-cli download LoneStriker/Yi-6B-200K-GGUF Yi-6B-200K-Q4_K_M.gguf
 
 # gemma
-# huggingface-cli download second-state/Gemma-2b-it-GGUF gemma-2b-it-Q4_K_M.gguf
-# huggingface-cli download second-state/Gemma-7b-it-GGUF gemma-7b-it-Q4_K_M.gguf
+huggingface-cli download second-state/Gemma-7b-it-GGUF gemma-7b-it-Q4_K_M.gguf
 huggingface-cli download pabloce/dolphin-2.8-gemma-2b-GGUF dolphin-2.8-gemma-2b.Q4_K_M.gguf
+huggingface-cli download pabloce/dolphin-2.8-gemma-2b-GGUF dolphin-2.8-gemma-2b.Q8_0.gguf
+huggingface-cli download second-state/Gemma-2b-it-GGUF gemma-2b-it-Q4_K_M.gguf
 
 # qwen
 huggingface-cli download Qwen/Qwen1.5-14B-Chat-GGUF qwen1_5-14b-chat-q4_k_m.gguf
@@ -174,7 +178,10 @@ huggingface-cli download Qwen/Qwen1.5-0.5B-Chat-GGUF qwen1_5-0_5b-chat-q4_k_m.gg
 
 # mistral ai
 huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q3_K_M.gguf
+huggingface-cli download mradermacher/Mixtral-8x7B-Instruct-v0.1-i1-GGUF Mixtral-8x7B-Instruct-v0.1.i1-IQ1_S.gguf
 huggingface-cli download mradermacher/Mixtral-8x7B-Instruct-v0.1-i1-GGUF Mixtral-8x7B-Instruct-v0.1.i1-IQ2_XXS.gguf
+huggingface-cli download mradermacher/Mixtral-8x7B-Instruct-v0.1-i1-GGUF Mixtral-8x7B-Instruct-v0.1.i1-IQ2_M.gguf
+huggingface-cli download mradermacher/Mixtral-8x7B-Instruct-v0.1-i1-GGUF Mixtral-8x7B-Instruct-v0.1.i1-Q3_K_M.gguf
 huggingface-cli download bartowski/dolphin-2.8-mistral-7b-v02-GGUF dolphin-2.8-mistral-7b-v02-Q4_K_M.gguf
 huggingface-cli download TheBloke/dolphin-2.6-mistral-7B-GGUF dolphin-2.6-mistral-7b.Q4_K_M.gguf
 huggingface-cli download NousResearch/Hermes-2-Pro-Mistral-7B-GGUF Hermes-2-Pro-Mistral-7B.Q4_K_M.gguf

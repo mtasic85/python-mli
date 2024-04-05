@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.49
+
+Fixed:
+    - Formatter: fixed Mistral and Yi model templates.
+
 ## v0.1.48
 
 Changed:

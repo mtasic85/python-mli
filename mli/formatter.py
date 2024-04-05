@@ -101,22 +101,28 @@ def create_alternate_messages(model_id: str, messages: list[dict], convert_syste
 def format_messages(model_id: str, messages: list[dict]) -> str:
     tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True, use_fast=True)
 
-    if model_id in ('cognitivecomputations/dolphin-2.6-mistral-7b', 'microsoft/Orca-2-7b', 'mtgv/MobileLLaMA-1.4B-Chat', 'NousResearch/Hermes-2-Pro-Mistral-7B'):
+    if model_id in ('cognitivecomputations/dolphin-2.6-mistral-7b', 'NousResearch/Hermes-2-Pro-Mistral-7B', 'mtgv/MobileLLaMA-1.4B-Chat'):
         tokenizer.chat_template = CHATML_CHAT_TEMPLATE
-    # elif model_id in ('mistralai/Mistral-7B-Instruct-v0.2', 'NousResearch/Yarn-Mistral-7b-128k'):
-    #     messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
-    elif model_id in ('microsoft/Orca-2-7b',):
-        messages = create_alternate_messages(model_id, messages)
-    elif model_id == 'GeneZC/MiniChat-2-3B':
-        tokenizer.chat_template = MINICHAT_CHAT_TEMPLATE
+    elif model_id in ('mistralai/Mistral-7B-Instruct-v0.2', 'NousResearch/Yarn-Mistral-7b-128k'):
+        messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
+    elif model_id == 'mistralai/Mixtral-8x7B-Instruct-v0.1':
+        messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
     elif model_id == 'amazon/MistralLite':
         messages = create_alternate_messages(model_id, messages)
         tokenizer.chat_template = MISTRALLITE_CHAT_TEMPLATE
+    elif model_id in ('microsoft/Orca-2-7b',):
+        messages = create_alternate_messages(model_id, messages)
+        tokenizer.chat_template = CHATML_CHAT_TEMPLATE
+    elif model_id == 'GeneZC/MiniChat-2-3B':
+        tokenizer.chat_template = MINICHAT_CHAT_TEMPLATE
+    elif model_id == 'abacaj/phi-2-super':
+        messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
     elif model_id in ('google/gemma-2b', 'google/gemma-2b-it', 'google/gemma-7b', 'google/gemma-7b-it'):
         messages = create_alternate_messages(model_id, messages)
         tokenizer.chat_template = GEMMA_CHAT_TEMPLATE
     elif model_id in ('01-ai/Yi-9B-200K', '01-ai/Yi-6B-200K'):
-        tokenizer.chat_template = FALLBACK_CHAT_TEMPLATE
+        # tokenizer.chat_template = FALLBACK_CHAT_TEMPLATE
+        tokenizer.chat_template = CHATML_CHAT_TEMPLATE
     else:
         if not tokenizer.chat_template:
             tokenizer.chat_template = FALLBACK_CHAT_TEMPLATE
