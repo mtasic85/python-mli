@@ -121,7 +121,6 @@ def format_messages(model_id: str, messages: list[dict]) -> str:
         messages = create_alternate_messages(model_id, messages)
         tokenizer.chat_template = GEMMA_CHAT_TEMPLATE
     elif model_id in ('01-ai/Yi-9B-200K', '01-ai/Yi-6B-200K'):
-        # tokenizer.chat_template = FALLBACK_CHAT_TEMPLATE
         tokenizer.chat_template = CHATML_CHAT_TEMPLATE
     else:
         if not tokenizer.chat_template:

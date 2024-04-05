@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.50
+
+Fixed:
+    - Formatter: fixed Yi model templates.
+
 ## v0.1.49
 
 Fixed:

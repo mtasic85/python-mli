@@ -597,6 +597,7 @@ def sync_demo_llama_cpp_main_yi_6b_200k_text_file():
         model_id='LoneStriker/Yi-6B-200K-GGUF',
         model='Yi-6B-200K-Q4_K_M.gguf',
         creator_model_id='01-ai/Yi-6B-200K',
+        batch_size=8,
         stop=["<|im_start|>", "<|im_end|>", "User:", "Assistant:"],
         prompt='User: Help me build a website.\nAssistant: Ok.\nUser: Building a perfect e-commerce website in 5 simple steps.\nAssistant: Here are steps:\nStep 1:',
         prompt_to_file=True,
@@ -616,10 +617,13 @@ def sync_demo_llama_cpp_main_yi_6b_200k_chat_file():
         model_id='LoneStriker/Yi-6B-200K-GGUF',
         model='Yi-6B-200K-Q4_K_M.gguf',
         creator_model_id='01-ai/Yi-6B-200K',
+        batch_size=8,
         stop=["<|im_start|>", "<|im_end|>", "User:", "Assistant:"],
         messages=[
             {'role': 'system', 'content': SYSTEM_TEXT},
-            {'role': 'user', 'content': 'Building a perfect e-commerce website in 5 simple steps.'},
+            {'role': 'user', 'content': 'I need you assistance and help.'},
+            {'role': 'assistant', 'content': 'Sure, how can I help?'},
+            {'role': 'user', 'content': 'Building e-commerce website in 5 steps. Be verbose.'},
         ],
         prompt_to_file=True,
     ):
@@ -1205,9 +1209,9 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file()
     # sync_demo_llama_cpp_main_yi_6b_200k_text_file()
-    # sync_demo_llama_cpp_main_yi_6b_200k_chat_file()
-    sync_demo_llama_cpp_main_qwen1_5_4b_text_file()
-    sync_demo_llama_cpp_main_qwen1_5_4b_chat_file()
+    sync_demo_llama_cpp_main_yi_6b_200k_chat_file()
+    # sync_demo_llama_cpp_main_qwen1_5_4b_text_file()
+    # sync_demo_llama_cpp_main_qwen1_5_4b_chat_file()
     # sync_demo_llama_cpp_main_gemma_2b_text()
     # sync_demo_llama_cpp_main_gemma_2b_chat()
     # sync_demo_llama_cpp_main_gemma_7b_text()
