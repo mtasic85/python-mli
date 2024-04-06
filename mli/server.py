@@ -573,18 +573,19 @@ class MLIServer:
                     if engine == 'echo':
                         class FakePipeStream:
                             def __init__(self, contenet: bytes):
-                                self.contenet
+                                self.contenet = contenet
                                 self.i = 0
 
                             
                             def at_eof(self) -> bool:
-                                return i >= len(self.contenet)
+                                return self.i >= len(self.contenet)
 
 
                             async def read(self, size: int) -> bytes:
                                 s = randint(1, 10)
-                                data = self.contenet[i:i+s]
+                                data: bytes = self.contenet[self.i:self.i + s]
                                 self.i += s
+                                await asyncio.sleep(0.01)
                                 return data
 
 
@@ -599,7 +600,6 @@ class MLIServer:
                             stdout_contenet=prompt.encode(),
                             stderr_contenet=b'',
                         )
-
                     else:
                         proc = await asyncio.create_subprocess_shell(
                             cmd,
@@ -615,13 +615,13 @@ class MLIServer:
                     
                     # read rest of tokens
                     text_buf = b''
-                    text: str = text_buf.decode()
+                    text: str = ''
                     buf = b''
                     stopped: bool = False
                     prev_stdout_text_len: int = 0
 
                     while not proc.stdout.at_eof():
-                        # make sure `text_buf` can be decoded {
+                        # make sure `text_buf` can be decoded
                         buf = await proc.stdout.read(256)
                         text_buf += buf
                         stdout += buf
@@ -634,8 +634,6 @@ class MLIServer:
 
                         prev_stdout_text_len = len(stdout_text)
                         stdout_text += text
-                        text_buf = b''
-                        # }
 
                         # find stop ngram positions
                         stop_ngrams_positions: list[tuple[int, int]] = []
@@ -654,7 +652,15 @@ class MLIServer:
                         # print(f'{stop_ngrams_positions = }')
 
                         # filter only complete stop words
-                        stop_positions = [(b, e, n) for b, e, n in stop_ngrams_positions if n in stop]
+                        stop_positions: list[tuple[int, int, str]] = []
+
+                        # if stop_ngrams_positions:
+                        #     stop_positions = [(b, e, n) for b, e, n in stop_ngrams_positions if n in stop]
+                        #
+                        #     if not stop_positions:
+                        #         continue
+
+                        text_buf = b''
 
                         if stop_positions:
                             s = 0
@@ -678,7 +684,7 @@ class MLIServer:
                         if stopped:
                             break
 
-                        await asyncio.sleep(0.2)
+                        await asyncio.sleep(0.1)
 
                     if stopped:
                         print(f'[INFO] stop word, trying to kill proc: {proc}')
@@ -687,9 +693,8 @@ class MLIServer:
             finally:
                 # read stderr at once
                 # stderr = await proc.stderr.read()
+                _, stderr = await proc.communicate()
 
-                # os.system(f'kill {proc.pid}')
-                # os.system(f'killall -9 {msg["executable"]}')                    
                 os.system(f'pkill -TERM -P {proc.pid}')
                 proc = None
 
@@ -838,9 +843,6 @@ class MLIServer:
         if ws in self.ws_proc_map:
             proc = self.ws_proc_map.pop(ws)
             print(f'[INFO] freed proc: {proc}')
-
-            # os.system(f'kill {proc.pid}')
-            # os.system(f'killall -9 {data["executable"]}')   
             os.system(f'pkill -TERM -P {proc.pid}')
 
         # close ws
@@ -879,9 +881,6 @@ class MLIServer:
         if ws in self.ws_proc_map:
             proc = self.ws_proc_map.pop(ws)
             print(f'[INFO] freed proc: {proc}')
-            
-            # os.system(f'kill {proc.pid}')
-            # os.system(f'killall -9 {data["executable"]}')   
             os.system(f'pkill -TERM -P {proc.pid}')
 
         # close ws

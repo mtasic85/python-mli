@@ -11,6 +11,16 @@ SYSTEM_TEXT = (
 )
 
 PROMPT = f'{SYSTEM_TEXT} You are software developed, web programmer and web designer. Building an e-commerce website in 5 steps:\n'
+
+PROMPT_2 = (
+  'You are software developed, web programmer and web designer. Building an e-commerce website in 5 steps:\n'
+  'Step 1: Step 1 for website.\n'
+  'Step 2: Step 2 for website.\n'
+  'Step 3: Step 3 for website.\n'
+  'Step 4: Step 4 for website.\n'
+  'Step 5: Step 5 for website.'
+)
+
 ROLE_PROMPT = 'User: Help me build a website.\nAssistant: Ok.\nUser: Building a perfect e-commerce website in 5 simple steps.\nAssistant: Here are steps:\nStep 1:'
 CODE_PROMPT = 'Lets write python web app for bookstore using aiohttp and pandas. Create dataframes for Users, Books, Rentals, Transactions and Ratings.'
 
@@ -118,7 +128,7 @@ Question: Who is and how old is current president of the Republic of Serbia, but
 '''
 
 MESSAGES = [
-    {'role': 'system', 'content': f'{SYSTEM_TEXT}. You are software developed, web programmer and web designer.'},
+    {'role': 'system', 'content': f'{SYSTEM_TEXT} You are software developed, web programmer and web designer.'},
     {'role': 'user', 'content': 'I need you assistance and help.'},
     {'role': 'assistant', 'content': 'Sure, how can I help?'},
     {'role': 'user', 'content': 'Building e-commerce website in 5 steps. Ask me follow-up questions.'},

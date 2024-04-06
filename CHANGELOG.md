@@ -3,7 +3,12 @@
 ## v0.1.51
 
 Added:
-    - `min_p`, `repeat_last_n`, `repeat_penalty`, `penalize_nl`
+    - New `echo` engine with util classes `FakePipeStream` and `FakeProc`.
+    - New parameters for `llama.cpp`: `min_p`, `repeat_last_n`, `repeat_penalty`, `penalize_nl`.
+
+Changed:
+    - Improved stop word detection.
+    - `stderr` is now read.
 
 ## v0.1.50
 

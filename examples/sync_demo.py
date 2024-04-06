@@ -6,6 +6,7 @@ from defs import (
     ENDPOINT,
     SYSTEM_TEXT,
     PROMPT,
+    PROMPT_2,
     ROLE_PROMPT,
     CODE_PROMPT,
     REACT_PROMPT_0,
@@ -52,17 +53,17 @@ def sync_demo_echo_0():
     print()
 
 
-def sync_demo_echo_dolphin_mistral_7b_chat():
+def sync_demo_echo_dolphin_mistral_7b_text():
     sync_client = SyncMLIClient(ENDPOINT)
 
-    for chunk in sync_client.iter_chat(
+    for chunk in sync_client.iter_text(
         engine='echo',
         executable='echo',
         model_id='TheBloke/dolphin-2.6-mistral-7B-GGUF',
         model='dolphin-2.6-mistral-7b.Q4_K_M.gguf',
         creator_model_id='cognitivecomputations/dolphin-2.6-mistral-7b',
         stop=['<|im_end|>', 'User:', 'Assistant:'],
-        messages=MESSAGES,
+        prompt=PROMPT_2 + '<|im_end|>\n' + '<|im_start|>user\n' + PROMPT_2 + '<|im_end|>\n',
     ):
         print(chunk, sep='', end='', flush=True)
     
@@ -1029,7 +1030,7 @@ def sync_demo_llama_cpp_main_mistral_7b_react_1():
 
 if __name__ == '__main__':
     # sync_demo_echo_0()
-    sync_demo_echo_dolphin_mistral_7b_chat()
+    # sync_demo_echo_dolphin_mistral_7b_text()
 
     # sync_demo_candle_echo()
     # sync_demo_llama_cpp_main_echo()
@@ -1046,7 +1047,7 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_orca2_text()
     # sync_demo_llama_cpp_main_orca2_chat()
     # sync_demo_llama_cpp_main_mistral_7b_text()
-    # sync_demo_llama_cpp_main_mistral_7b_chat()
+    sync_demo_llama_cpp_main_mistral_7b_chat()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
