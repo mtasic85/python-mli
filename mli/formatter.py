@@ -122,7 +122,7 @@ def format_messages(model_id: str, messages: list[dict]) -> str:
         tokenizer.chat_template = MINICHAT_CHAT_TEMPLATE
     elif model_id == 'abacaj/phi-2-super':
         messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
-    elif model_id in ('google/gemma-2b', 'google/gemma-2b-it', 'google/gemma-7b', 'google/gemma-7b-it'):
+    elif model_id in ('google/gemma-2b', 'google/gemma-2b-it', 'google/gemma-7b', 'google/gemma-7b-it', 'google/gemma-1.1-2b-it', 'google/gemma-1.1-7b-it'):
         messages = create_alternate_messages(model_id, messages, convert_system_to_user=True)
         # tokenizer.chat_template = GEMMA_CHAT_TEMPLATE
     elif model_id == '01-ai/Yi-9B-200K':

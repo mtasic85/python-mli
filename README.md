@@ -164,10 +164,8 @@ huggingface-cli download LoneStriker/Yi-9B-200K-GGUF Yi-9B-200K-Q4_K_M.gguf
 huggingface-cli download LoneStriker/Yi-6B-200K-GGUF Yi-6B-200K-Q4_K_M.gguf
 
 # gemma
-huggingface-cli download second-state/Gemma-7b-it-GGUF gemma-7b-it-Q4_K_M.gguf
-huggingface-cli download pabloce/dolphin-2.8-gemma-2b-GGUF dolphin-2.8-gemma-2b.Q4_K_M.gguf
-huggingface-cli download pabloce/dolphin-2.8-gemma-2b-GGUF dolphin-2.8-gemma-2b.Q8_0.gguf
-huggingface-cli download second-state/Gemma-2b-it-GGUF gemma-2b-it-Q4_K_M.gguf
+huggingface-cli download bartowski/gemma-1.1-7b-it-GGUF gemma-1.1-7b-it-Q4_K_M.gguf
+huggingface-cli download bartowski/gemma-1.1-2b-it-GGUF gemma-1.1-2b-it-Q4_K_M.gguf
 
 # qwen
 huggingface-cli download Qwen/Qwen1.5-14B-Chat-GGUF qwen1_5-14b-chat-q4_k_m.gguf

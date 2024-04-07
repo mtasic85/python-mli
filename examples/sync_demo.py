@@ -62,8 +62,10 @@ def sync_demo_echo_dolphin_mistral_7b_text():
         model_id='TheBloke/dolphin-2.6-mistral-7B-GGUF',
         model='dolphin-2.6-mistral-7b.Q4_K_M.gguf',
         creator_model_id='cognitivecomputations/dolphin-2.6-mistral-7b',
-        stop=['<|im_end|>', 'User:', 'Assistant:'],
-        prompt=PROMPT_2 + '<|im_end|>\n' + '<|im_start|>user\n' + PROMPT_2 + '<|im_end|>\n',
+        # stop=['<|im_end|>', 'User:', 'Assistant:'],
+        stop=['<|im_start|>', '<|im_end|>', 'User:', 'Assistant:'],
+        # prompt=PROMPT_2 + '<|im_end|>\n' + '<|im_start|>user\n' + PROMPT_2 + '<|im_end|>\n',
+        prompt=PROMPT_2 + '\n<|im_start|>user\n' + PROMPT_2 + '<|im_end|>\n',
     ):
         print(chunk, sep='', end='', flush=True)
     
@@ -386,7 +388,7 @@ def sync_demo_llama_cpp_main_mistral_7b_chat():
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
         creator_model_id='mistralai/Mistral-7B-Instruct-v0.2',
-        stop=['Assistant:', 'User:', '<s>'],
+        stop=['Assistant:', 'User:'],
         messages=MESSAGES,
     ):
         print(chunk, sep='', end='', flush=True)
@@ -640,9 +642,9 @@ def sync_demo_llama_cpp_main_gemma_2b_text():
         engine='llama.cpp',
         executable='main',
         n_gpu_layers=NGL,
-        model_id='second-state/Gemma-2b-it-GGUF',
-        model='gemma-2b-it-Q4_K_M.gguf',
-        creator_model_id='google/gemma-2b-it',
+        model_id='bartowski/gemma-1.1-2b-it-GGUF',
+        model='gemma-1.1-2b-it-Q4_K_M.gguf',
+        creator_model_id='google/gemma-1.1-2b-it',
         prompt=PROMPT,
     ):
         print(chunk, sep='', end='', flush=True)
@@ -655,9 +657,9 @@ def sync_demo_llama_cpp_main_gemma_2b_chat():
         engine='llama.cpp',
         executable='main',
         # n_gpu_layers=NGL,
-        model_id='second-state/Gemma-2b-it-GGUF',
-        model='gemma-2b-it-Q4_K_M.gguf',
-        creator_model_id='google/gemma-2b-it',
+        model_id='bartowski/gemma-1.1-2b-it-GGUF',
+        model='gemma-1.1-2b-it-Q4_K_M.gguf',
+        creator_model_id='google/gemma-1.1-2b-it',
         stop=['<start_of_turn>', '<end_of_turn>'],
         messages=MESSAGES,
     ):
@@ -671,9 +673,9 @@ def sync_demo_llama_cpp_main_gemma_7b_text():
         engine='llama.cpp',
         executable='main',
         n_gpu_layers=NGL,
-        model_id='second-state/Gemma-7b-it-GGUF',
-        model='gemma-7b-it-Q4_K_M.gguf',
-        creator_model_id='google/gemma-7b-it',
+        model_id='bartowski/gemma-1.1-7b-it-GGUF',
+        model='gemma-1.1-7b-it-Q4_K_M.gguf',
+        creator_model_id='google/gemma-1.1-7b-it',
         prompt=PROMPT,
     ):
         print(chunk, sep='', end='', flush=True)
@@ -686,9 +688,9 @@ def sync_demo_llama_cpp_main_gemma_7b_chat():
         engine='llama.cpp',
         executable='main',
         n_gpu_layers=NGL,
-        model_id='second-state/Gemma-7b-it-GGUF',
-        model='gemma-7b-it-Q4_K_M.gguf',
-        creator_model_id='google/gemma-7b-it',
+        model_id='bartowski/gemma-1.1-7b-it-GGUF',
+        model='gemma-1.1-7b-it-Q4_K_M.gguf',
+        creator_model_id='google/gemma-1.1-7b-it',
         stop=['<start_of_turn>', '<end_of_turn>'],
         messages=MESSAGES,
     ):
@@ -1047,13 +1049,13 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_orca2_text()
     # sync_demo_llama_cpp_main_orca2_chat()
     # sync_demo_llama_cpp_main_mistral_7b_text()
-    sync_demo_llama_cpp_main_mistral_7b_chat()
-    # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
-    # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
-    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
-    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file()
-    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
-    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file()
+    # sync_demo_llama_cpp_main_mistral_7b_chat()
+    sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
+    sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
+    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file()
     # sync_demo_llama_cpp_main_yi_9b_200k_text_file()
     # sync_demo_llama_cpp_main_yi_9b_200k_chat_file()
     # sync_demo_llama_cpp_main_yi_6b_200k_text_file()

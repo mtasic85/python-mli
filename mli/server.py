@@ -11,13 +11,13 @@ except ImportError:
     pass
 
 import os
+import re
 import json
 import shlex
 import base64
 import argparse
 import traceback
 import subprocess
-from random import randint
 from weakref import WeakKeyDictionary
 from tempfile import NamedTemporaryFile
 from typing import AsyncIterator, TypedDict, Optional, Required, Unpack
@@ -26,6 +26,7 @@ from aiohttp import web, WSMsgType
 from transformers import AutoTokenizer
 from huggingface_hub import try_to_load_from_cache
 
+from .fake_proc import FakeProc
 from .params import Message, ModelParams, LlamaCppParams, CandleParams
 from .formatter import format_messages
 
@@ -528,32 +529,16 @@ class MLIServer:
         return cmd
 
 
-    async def _run_echo(self, ws: web.WebSocketResponse | None, msg: ModelParams, cmd: str) -> AsyncIterator[str]:
-        prompt: str = msg['prompt']
-        i = 0
-
-        while i < len(prompt):
-            n = randint(1, 10)
-            text = prompt[i:i + n]
-            yield text
-            i += n
-            await asyncio.sleep(0.05)
-
-
     async def _run_shell_cmd(self, ws: web.WebSocketResponse | None, msg: ModelParams, cmd: str) -> AsyncIterator[str]:
+        print(f'[DEBUG] _run_shell_cmd {ws} {msg} {cmd}')
         engine: str = msg['engine']
-        prompt: str = msg['prompt']
         file: str = msg.get('file')
         image: str = msg.get('image')
         prompt_to_file: str = msg.get('prompt_to_file', False)
         image_to_file: str = msg.get('image_to_file', False)
         stop: str = msg.get('stop', [])
         stdout: bytes = b''
-        stdout_text: str = ''
         stderr: bytes = b''
-        prev_buf: bytes
-        buf: bytes
-        print(f'[DEBUG] _run_shell_cmd {ws} {msg} {cmd}')
 
         # build stop ngrams
         stop_ngrams: list[str] = []
@@ -563,38 +548,18 @@ class MLIServer:
                 ngram = n[:i]
                 stop_ngrams.append(ngram)
 
+        max_stop_len = max(len(n) for n in stop)
+
         print(f'{stop = }')
         print(f'{stop_ngrams = }')
+        print(f'{max_stop_len = }')
 
         async with self.lock:
             try:
                 async with asyncio.timeout(self.timeout):
                     # create new proc for model
                     if engine == 'echo':
-                        class FakePipeStream:
-                            def __init__(self, contenet: bytes):
-                                self.contenet = contenet
-                                self.i = 0
-
-                            
-                            def at_eof(self) -> bool:
-                                return self.i >= len(self.contenet)
-
-
-                            async def read(self, size: int) -> bytes:
-                                s = randint(1, 10)
-                                data: bytes = self.contenet[self.i:self.i + s]
-                                self.i += s
-                                await asyncio.sleep(0.01)
-                                return data
-
-
-                        class FakeProc:
-                            def __init__(self, stdout_contenet: bytes, stderr_contenet: bytes):
-                                self.stdout = FakePipeStream(stdout_contenet)
-                                self.stderr = FakePipeStream(stderr_contenet)
-                                self.pid = 2 ** 32 - 1
-
+                        prompt: str = msg['prompt']
 
                         proc = FakeProc(
                             stdout_contenet=prompt.encode(),
@@ -614,69 +579,46 @@ class MLIServer:
                         self.ws_proc_map[ws] = proc
                     
                     # read rest of tokens
-                    text_buf = b''
-                    text: str = ''
-                    buf = b''
+                    chunk = b''
+                    buffer = b''
+                    text = ''
                     stopped: bool = False
-                    prev_stdout_text_len: int = 0
 
                     while not proc.stdout.at_eof():
-                        # make sure `text_buf` can be decoded
-                        buf = await proc.stdout.read(256)
-                        text_buf += buf
-                        stdout += buf
+                        # make sure `text` can be decoded
+                        chunk = await proc.stdout.read(256)
+                        buffer += chunk
+                        stdout += chunk
 
                         try:
-                            text = text_buf.decode()
+                            text = buffer.decode()
                         except UnicodeDecodeError as e:
                             print(f'[ERROR] buf.decode() exception: {e}')
                             continue
 
-                        prev_stdout_text_len = len(stdout_text)
-                        stdout_text += text
-
-                        # find stop ngram positions
-                        stop_ngrams_positions: list[tuple[int, int]] = []
-                        b = 0
+                        # check stopwords
+                        found_stop_ngram: str | None = None
+                        found_stop: str | None = None
 
                         for n in stop_ngrams:
-                            new_b = stdout_text.find(n, b)
+                            if n in text:
+                                print(f'stop_ngram {n = }')
+                                found_stop_ngram = n
 
-                            if new_b == -1:
-                                continue
+                                for m in stop:
+                                    if m in text:
+                                        found_stop = m
+                                        print(f'stop {n = } {m = }')
+                                        break
 
-                            b = new_b
-                            e = b + len(n)
-                            stop_ngrams_positions.append((b, e, n))
-
-                        # print(f'{stop_ngrams_positions = }')
-
-                        # filter only complete stop words
-                        stop_positions: list[tuple[int, int, str]] = []
-
-                        # if stop_ngrams_positions:
-                        #     stop_positions = [(b, e, n) for b, e, n in stop_ngrams_positions if n in stop]
-                        #
-                        #     if not stop_positions:
-                        #         continue
-
-                        text_buf = b''
-
-                        if stop_positions:
-                            s = 0
-
-                            for n in stop:
-                                new_s = stdout_text.find(n, s)
-
-                                if new_s == -1:
+                        if found_stop_ngram:
+                            if len(text) <= max_stop_len:
+                                if found_stop:
+                                    i = text.index(found_stop)
+                                    text = text[:i]
+                                    stopped = True
+                                else:
                                     continue
-
-                                s = new_s
-                                break
-
-                            print(f'found stop word: {stop_positions = } {prev_stdout_text_len = } {len(stdout_text) = } {s = }')
-                            text = stdout_text[prev_stdout_text_len:s]
-                            stopped = True
 
                         # yield unicode text chunk
                         yield text
@@ -684,19 +626,30 @@ class MLIServer:
                         if stopped:
                             break
 
+                        buffer = b''
                         await asyncio.sleep(0.1)
 
                     if stopped:
                         print(f'[INFO] stop word, trying to kill proc: {proc}')
             except asyncio.TimeoutError as e:
-                print(f'[ERROR] timeout, trying to kill proc: {proc}')
+                print(f'[ERROR] timeout, trying to kill proc: {proc}, {e}')
             finally:
-                # read stderr at once
+                ## read stderr at once
                 # stderr = await proc.stderr.read()
-                _, stderr = await proc.communicate()
+                #
+                try:
+                    async with asyncio.timeout(1.0):
+                        _, stderr = await proc.communicate()
+                except TimeoutError:
+                    stderr = b''
 
-                os.system(f'pkill -TERM -P {proc.pid}')
-                proc = None
+            try:
+                proc.kill()
+            except ProcessLookupError:
+                pass
+
+            os.system(f'pkill -9 -P {proc.pid}')
+            proc = None
 
             stderr = stderr.decode()
             print('[DEBUG] stderr:')
@@ -843,7 +796,14 @@ class MLIServer:
         if ws in self.ws_proc_map:
             proc = self.ws_proc_map.pop(ws)
             print(f'[INFO] freed proc: {proc}')
-            os.system(f'pkill -TERM -P {proc.pid}')
+            
+            try:
+                proc.kill()
+            except ProcessLookupError:
+                pass
+
+            os.system(f'pkill -9 -P {proc.pid}')
+            proc = None
 
         # close ws
         await ws.close()
@@ -881,7 +841,14 @@ class MLIServer:
         if ws in self.ws_proc_map:
             proc = self.ws_proc_map.pop(ws)
             print(f'[INFO] freed proc: {proc}')
-            os.system(f'pkill -TERM -P {proc.pid}')
+            
+            try:
+                proc.kill()
+            except ProcessLookupError:
+                pass
+            
+            os.system(f'pkill -9 -P {proc.pid}')
+            proc = None
 
         # close ws
         await ws.close()

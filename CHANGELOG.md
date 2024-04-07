@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.1.52
+
+Fixed:
+    - Stop word detection.
+    - `stderr` has max `1.0` second to finish after process is killed/terminated.
+    - Fixed exception `KeyError: 'prompt'` in `prompt: str = msg['prompt']`.
+    - Fixed killing subprocess with its child process.
+
 ## v0.1.51
 
 Added:
