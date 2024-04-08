@@ -7,12 +7,13 @@ from defs import (
     SYSTEM_TEXT,
     PROMPT,
     PROMPT_2,
+    MESSAGES,
+    MESSAGES_2,
     ROLE_PROMPT,
     CODE_PROMPT,
     REACT_PROMPT_0,
     REACT_PROMPT_1,
     REACT_PROMPT_2,
-    MESSAGES,
     CAR_TEXT,
     CARS_TEXT,
     JSON_FLAT_ARRAY_GRAMMAR,
@@ -404,6 +405,24 @@ def sync_demo_llama_cpp_main_mistral_7b_chat():
         creator_model_id='HuggingFaceH4/zephyr-7b-beta',
         stop=['<|system|>', '<|user|>', '<|assistant|>', '</s>', 'User:', 'Assistant:'],
         messages=MESSAGES,
+    ):
+        print(chunk, sep='', end='', flush=True)
+
+    print()
+
+
+def sync_demo_llama_cpp_main_hermes_2_pro_mistral_7b_chat():
+    sync_client = SyncMLIClient(ENDPOINT)
+
+    for chunk in sync_client.iter_chat(
+        engine='llama.cpp',
+        executable='main',
+        n_gpu_layers=NGL,
+        model_id='NousResearch/Hermes-2-Pro-Mistral-7B-GGUF',
+        model='Hermes-2-Pro-Mistral-7B.Q4_K_M.gguf',
+        creator_model_id='NousResearch/Hermes-2-Pro-Mistral-7B',
+        stop=["<|im_start|>", "<|im_end|>", "User:", "Assistant:"],
+        messages=MESSAGES_2,
     ):
         print(chunk, sep='', end='', flush=True)
 
@@ -1050,12 +1069,13 @@ if __name__ == '__main__':
     # sync_demo_llama_cpp_main_orca2_chat()
     # sync_demo_llama_cpp_main_mistral_7b_text()
     # sync_demo_llama_cpp_main_mistral_7b_chat()
-    sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
-    sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
-    sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file()
+    sync_demo_llama_cpp_main_hermes_2_pro_mistral_7b_chat()
+    # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
+    # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat()
+    # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file()
     # sync_demo_llama_cpp_main_yi_9b_200k_text_file()
     # sync_demo_llama_cpp_main_yi_9b_200k_chat_file()
     # sync_demo_llama_cpp_main_yi_6b_200k_text_file()

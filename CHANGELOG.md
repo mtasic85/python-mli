@@ -3,6 +3,11 @@
 ## v0.1.52
 
 Fixed:
+    - Stop word detection on slow stream reads.
+
+## v0.1.52
+
+Fixed:
     - Stop word detection.
     - `stderr` has max `1.0` second to finish after process is killed/terminated.
     - Fixed exception `KeyError: 'prompt'` in `prompt: str = msg['prompt']`.

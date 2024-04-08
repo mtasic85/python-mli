@@ -612,13 +612,21 @@ class MLIServer:
                                         break
 
                         if found_stop_ngram:
-                            if len(text) <= max_stop_len:
-                                if found_stop:
+                            if found_stop:
+                                if len(text) <= max_stop_len:
                                     i = text.index(found_stop)
                                     text = text[:i]
                                     stopped = True
-                                else:
-                                    continue
+                            else:
+                                continue
+
+                        for m in stop:
+                            if m in text:
+                                print(f'stop {m = }')
+                                i = text.index(m)
+                                text = text[:i]
+                                stopped = True
+                                break
 
                         # yield unicode text chunk
                         yield text

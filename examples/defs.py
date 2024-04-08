@@ -21,6 +21,20 @@ PROMPT_2 = (
   'Step 5: Step 5 for website.'
 )
 
+MESSAGES = [
+    {'role': 'system', 'content': f'{SYSTEM_TEXT} You are software developed, web programmer and web designer.'},
+    {'role': 'user', 'content': 'I need you assistance and help.'},
+    {'role': 'assistant', 'content': 'Sure, how can I help?'},
+    {'role': 'user', 'content': 'Building e-commerce website in 5 steps. Ask me follow-up questions.'},
+]
+
+MESSAGES_2 = [
+    {'role': 'system', 'content': SYSTEM_TEXT},
+    {'role': 'user', 'content': 'I need you assistance and help.'},
+    {'role': 'assistant', 'content': 'Sure, how can I help?'},
+    {'role': 'user', 'content': 'hello'},
+]
+
 ROLE_PROMPT = 'User: Help me build a website.\nAssistant: Ok.\nUser: Building a perfect e-commerce website in 5 simple steps.\nAssistant: Here are steps:\nStep 1:'
 CODE_PROMPT = 'Lets write python web app for bookstore using aiohttp and pandas. Create dataframes for Users, Books, Rentals, Transactions and Ratings.'
 
@@ -126,13 +140,6 @@ Action: Finish[Arthur’s Magazine]
 
 Question: Who is and how old is current president of the Republic of Serbia, but have in mind that current year is 2024?
 '''
-
-MESSAGES = [
-    {'role': 'system', 'content': f'{SYSTEM_TEXT} You are software developed, web programmer and web designer.'},
-    {'role': 'user', 'content': 'I need you assistance and help.'},
-    {'role': 'assistant', 'content': 'Sure, how can I help?'},
-    {'role': 'user', 'content': 'Building e-commerce website in 5 steps. Ask me follow-up questions.'},
-]
 
 CAR_TEXT = '''
 Car details:
