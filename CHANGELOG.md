@@ -1,6 +1,11 @@
 # CHANGELOG
 
-## v0.1.52
+## v0.1.54
+
+Fixed:
+    - Memory leak fixed by killing/terminating `llama.cpp` process called `main`.
+
+## v0.1.53
 
 Fixed:
     - Stop word detection on slow stream reads.

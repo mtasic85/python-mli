@@ -188,6 +188,7 @@ huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instr
 # stability ai
 huggingface-cli download lmz/candle-stablelm
 huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b stablelm-2-zephyr-1_6b-Q4_1.gguf
+huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b stablelm-2-zephyr-1_6b-Q8_0.gguf
 huggingface-cli download TheBloke/stablelm-zephyr-3b-GGUF stablelm-zephyr-3b.Q4_K_M.gguf
 huggingface-cli download TheBloke/stable-code-3b-GGUF stable-code-3b.Q4_K_M.gguf
 
@@ -200,7 +201,8 @@ huggingface-cli download TheBloke/Orca-2-7B-GGUF orca-2-7b.Q4_K_M.gguf
 huggingface-cli download afrideva/MiniChat-2-3B-GGUF minichat-2-3b.q4_k_m.gguf
 huggingface-cli download azarovalex/MobileLLaMA-1.4B-Chat-GGUF MobileLLaMA-1.4B-Chat-Q4_K.gguf
 huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
-huggingface-cli download thephimart/tinyllama-4x1.1b-moe.Q5_K_M.gguf  tinyllama-4x1.1b-moe.Q5_K_M.gguf
+huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-chat-v1.0.Q8_0.gguf
+huggingface-cli download thephimart/tinyllama-4x1.1b-moe.Q5_K_M.gguf tinyllama-4x1.1b-moe.Q5_K_M.gguf
 huggingface-cli download s3nh/TinyDolphin-2.8-1.1b-GGUF tinydolphin-2.8-1.1b.Q4_K_M.gguf
 huggingface-cli download s3nh/TinyDolphin-2.8-1.1b-GGUF tinydolphin-2.8-1.1b.Q8_0.gguf
 

@@ -657,6 +657,7 @@ class MLIServer:
                 pass
 
             os.system(f'pkill -9 -P {proc.pid}')
+            os.system(f'killall -9 main') # TODO
             proc = None
 
             stderr = stderr.decode()
@@ -811,6 +812,7 @@ class MLIServer:
                 pass
 
             os.system(f'pkill -9 -P {proc.pid}')
+            os.system(f'killall -9 main') # TODO
             proc = None
 
         # close ws
@@ -856,6 +858,7 @@ class MLIServer:
                 pass
             
             os.system(f'pkill -9 -P {proc.pid}')
+            os.system(f'killall -9 main') # TODO
             proc = None
 
         # close ws
