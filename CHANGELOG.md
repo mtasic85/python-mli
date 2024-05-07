@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.55
+
+Added:
+    - `llama.cpp` supports: `flash_attn`, `grp_attn_n`, `grp_attn_w`
+
 ## v0.1.54
 
 Fixed:

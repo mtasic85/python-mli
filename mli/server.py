@@ -106,6 +106,8 @@ class MLIServer:
             repeat_penalty: float = float(kwargs.get('repeat_penalty', 1.0))
             penalize_nl: bool | None = kwargs.get('penalize_nl')
             no_display_prompt: float = float(kwargs.get('no_display_prompt', True))
+            grp_attn_n: int = int(kwargs.get('grp_attn_n', 1))
+            grp_attn_w: float = float(kwargs.get('grp_attn_w', 512.0))
             split_mode: str | None = kwargs.get('split_mode')
             tensor_split: str | None = kwargs.get('tensor_split')
             main_gpu: int | None = kwargs.get('main_gpu')
@@ -120,6 +122,7 @@ class MLIServer:
             rope_freq_base: int | float | None = kwargs.get('rope_freq_base')
             rope_freq_scale: int | float | None = kwargs.get('rope_freq_scale')
             cont_batching: bool | None = kwargs.get('cont_batching', False)
+            flash_attn: bool | None = kwargs.get('flash_attn', False)
             prompt_to_file: bool = kwargs.get('prompt_to_file', False)
             image_to_file: bool = kwargs.get('image_to_file', False)
             
@@ -228,6 +231,11 @@ class MLIServer:
                     '--cont-batching',
                 ])
 
+            if flash_attn is not None:
+                cmd.extend([
+                    '--flash-attn',
+                ])
+
             if prompt and not prompt_to_file:
                 shell_prompt: str = shlex.quote(prompt)
 
@@ -295,6 +303,8 @@ class MLIServer:
                 '--repeat-last-n', repeat_last_n,
                 '--repeat-penalty', repeat_penalty,
                 '--keep', keep,
+                '--grp-attn-n', grp_attn_n,
+                '--grp-attn-w', grp_attn_w,
                 '--simple-io',
                 '--log-disable',
             ])

@@ -147,111 +147,6 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 poetry install
 ```
 
-Download one of popular models to try them:
-
-```bash
-# NOTE: login in case you need to accept terms and conditions for some models
-# huggingface-cli login
-
-# command-r
-huggingface-cli download mradermacher/c4ai-command-r-plus-i1-GGUF c4ai-command-r-plus.i1-IQ1_S.gguf
-huggingface-cli download nold/c4ai-command-r-v01-GGUF c4ai-command-r-v01_Q3_K_M.gguf
-huggingface-cli download nold/c4ai-command-r-v01-GGUF c4ai-command-r-v01_Q2_K.gguf
-
-# xverse
-huggingface-cli download xverse/XVERSE-7B-Chat-GGUF xverse-7b-chat-q4_k_m.gguf
-huggingface-cli download xverse/XVERSE-13B-Chat-GGUF xverse-13b-chat-q4_k_m.gguf
-
-# internlm2
-huggingface-cli download nold/internlm2-chat-20b-GGUF internlm2-chat-20b_Q3_K_M.gguf
-huggingface-cli download nold/internlm2-chat-20b-GGUF internlm2-chat-20b_Q4_K_M.gguf
-huggingface-cli download izumi04/InternLM2-Chat-7B-GGUF internlm2-chat-7b-Q3_K_M.gguf
-huggingface-cli download izumi04/InternLM2-Chat-7B-GGUF internlm2-chat-7b-Q4_K_M.gguf
-
-# yi
-huggingface-cli download LoneStriker/Yi-9B-200K-GGUF Yi-9B-200K-Q4_K_M.gguf
-huggingface-cli download LoneStriker/Yi-6B-200K-GGUF Yi-6B-200K-Q4_K_M.gguf
-
-# gemma
-huggingface-cli download pabloce/dolphin-2.8-gemma-2b-GGUF dolphin-2.8-gemma-2b.Q4_K_M.gguf
-huggingface-cli download bartowski/gemma-1.1-7b-it-GGUF gemma-1.1-7b-it-Q4_K_M.gguf
-huggingface-cli download bartowski/gemma-1.1-2b-it-GGUF gemma-1.1-2b-it-Q4_K_M.gguf
-
-# qwen
-huggingface-cli download qwp4w3hyb/Qwen1.5-14B-Chat-iMat-GGUF qwen1.5-14b-chat-imat-IQ1_S.gguf
-huggingface-cli download qwp4w3hyb/Qwen1.5-14B-Chat-iMat-GGUF qwen1.5-14b-chat-imat-IQ2_XS.gguf
-huggingface-cli download qwp4w3hyb/Qwen1.5-14B-Chat-iMat-GGUF qwen1.5-14b-chat-imat-IQ2_S.gguf
-huggingface-cli download qwp4w3hyb/Qwen1.5-14B-Chat-iMat-GGUF qwen1.5-14b-chat-imat-IQ2_M.gguf
-huggingface-cli download qwp4w3hyb/Qwen1.5-14B-Chat-iMat-GGUF qwen1.5-14b-chat-imat-IQ3_M.gguf
-huggingface-cli download Qwen/Qwen1.5-14B-Chat-GGUF qwen1_5-14b-chat-q2_k.gguf
-huggingface-cli download Qwen/Qwen1.5-14B-Chat-GGUF qwen1_5-14b-chat-q3_k_m.gguf
-huggingface-cli download Qwen/Qwen1.5-14B-Chat-GGUF qwen1_5-14b-chat-q4_k_m.gguf
-huggingface-cli download Qwen/Qwen1.5-7B-Chat-GGUF qwen1_5-7b-chat-q4_k_m.gguf
-huggingface-cli download Qwen/Qwen1.5-4B-Chat-GGUF qwen1_5-4b-chat-q4_k_m.gguf
-huggingface-cli download Qwen/Qwen1.5-1.8B-Chat-GGUF qwen1_5-1_8b-chat-q4_k_m.gguf
-huggingface-cli download Qwen/Qwen1.5-0.5B-Chat-GGUF qwen1_5-0_5b-chat-q4_k_m.gguf
-
-# mistral ai
-huggingface-cli download bartowski/Mistral-22B-v0.2-GGUF Mistral-22B-v0.2-IQ2_M.gguf
-huggingface-cli download bartowski/Mistral-22B-v0.2-GGUF Mistral-22B-v0.2-Q4_K_M.gguf
-huggingface-cli download TheBloke/dolphin-2.7-mixtral-8x7b-GGUF dolphin-2.7-mixtral-8x7b.Q3_K_M.gguf
-huggingface-cli download mradermacher/Mixtral-8x7B-Instruct-v0.1-i1-GGUF Mixtral-8x7B-Instruct-v0.1.i1-IQ1_S.gguf
-huggingface-cli download mradermacher/Mixtral-8x7B-Instruct-v0.1-i1-GGUF Mixtral-8x7B-Instruct-v0.1.i1-IQ2_XXS.gguf
-huggingface-cli download mradermacher/Mixtral-8x7B-Instruct-v0.1-i1-GGUF Mixtral-8x7B-Instruct-v0.1.i1-IQ2_M.gguf
-huggingface-cli download mradermacher/Mixtral-8x7B-Instruct-v0.1-i1-GGUF Mixtral-8x7B-Instruct-v0.1.i1-Q3_K_M.gguf
-huggingface-cli download bartowski/dolphin-2.8-mistral-7b-v02-GGUF dolphin-2.8-mistral-7b-v02-Q4_K_M.gguf
-huggingface-cli download TheBloke/dolphin-2.6-mistral-7B-GGUF dolphin-2.6-mistral-7b.Q4_K_M.gguf
-huggingface-cli download NousResearch/Hermes-2-Pro-Mistral-7B-GGUF Hermes-2-Pro-Mistral-7B.Q4_K_M.gguf
-huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.2-GGUF mistral-7b-instruct-v0.2.Q4_K_M.gguf
-
-# stability ai
-huggingface-cli download lmz/candle-stablelm
-huggingface-cli download stabilityai/stablelm-2-12b-chat-GGUF stablelm-2-12b-chat-Q4_K_M.gguf
-huggingface-cli download brittlewis12/stablelm-2-1_6b-chat-GGUF stablelm-2-1_6b-chat.Q8_0.gguf
-huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b stablelm-2-zephyr-1_6b-Q4_1.gguf
-huggingface-cli download stabilityai/stablelm-2-zephyr-1_6b stablelm-2-zephyr-1_6b-Q8_0.gguf
-huggingface-cli download TheBloke/stablelm-zephyr-3b-GGUF stablelm-zephyr-3b.Q4_K_M.gguf
-huggingface-cli download TheBloke/stable-code-3b-GGUF stable-code-3b.Q4_K_M.gguf
-
-# technology innovation institute (tii)
-huggingface-cli download mradermacher/falcon-40b-instruct-GGUF falcon-40b-instruct.IQ3_XS.gguf
-huggingface-cli download maddes8cht/tiiuae-falcon-7b-instruct-gguf tiiuae-falcon-7b-instruct-Q4_K_M.gguf
-
-# meta llama
-huggingface-cli download NousResearch/Hermes-2-Pro-Llama-3-8B-GGUF Hermes-2-Pro-Llama-3-8B-Q4_K_M.gguf
-huggingface-cli download bartowski/dolphin-2.9-llama3-8b-1m-GGUF dolphin-2.9-llama3-8b-1m-IQ1_S.gguf
-huggingface-cli download PrunaAI/dolphin-2.9-llama3-8b-1m-GGUF-smashed dolphin-2.9-llama3-8b-1m.Q4_K_M.gguf
-huggingface-cli download PrunaAI/dolphin-2.9-llama3-8b-256k-GGUF-smashed dolphin-2.9-llama3-8b-256k.IQ3_XS.gguf
-huggingface-cli download PrunaAI/dolphin-2.9-llama3-8b-256k-GGUF-smashed dolphin-2.9-llama3-8b-256k.Q4_K_M.gguf
-huggingface-cli download mradermacher/Meta-Llama-3-8B-Instruct-64k-GGUF Meta-Llama-3-8B-Instruct-64k.Q4_K_M.gguf
-huggingface-cli download cognitivecomputations/dolphin-2.9-llama3-8b-gguf dolphin-2.9-llama3-8b-q4_K_M.gguf
-huggingface-cli download cognitivecomputations/dolphin-2.9-llama3-8b-gguf dolphin-2.9-llama3-8b-q8_0.gguf
-huggingface-cli download mradermacher/Meta-Llama-3-8B-Instruct-i1-GGUF Meta-Llama-3-8B-Instruct.i1-Q4_K_M.gguf
-huggingface-cli download mradermacher/Meta-Llama-3-8B-Instruct-i1-GGUF Meta-Llama-3-8B-Instruct.i1-IQ4_XS.gguf
-huggingface-cli download TheBloke/Orca-2-7B-GGUF orca-2-7b.Q4_K_M.gguf
-huggingface-cli download afrideva/MiniChat-2-3B-GGUF minichat-2-3b.q4_k_m.gguf
-huggingface-cli download azarovalex/MobileLLaMA-1.4B-Chat-GGUF MobileLLaMA-1.4B-Chat-Q4_K.gguf
-huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
-huggingface-cli download TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF tinyllama-1.1b-chat-v1.0.Q8_0.gguf
-huggingface-cli download s3nh/TinyDolphin-2.8-1.1b-GGUF tinydolphin-2.8-1.1b.Q4_K_M.gguf
-huggingface-cli download s3nh/TinyDolphin-2.8-1.1b-GGUF tinydolphin-2.8-1.1b.Q8_0.gguf
-huggingface-cli download thephimart/tinyllama-4x1.1b-moe.Q5_K_M.gguf tinyllama-4x1.1b-moe.Q5_K_M.gguf
-
-# microsoft phi
-huggingface-cli download lmz/candle-quantized-phi
-huggingface-cli download PrunaAI/Phi-3-mini-128k-instruct-GGUF-Imatrix-smashed Phi-3-mini-128k-instruct.IQ2_XXS.gguf
-huggingface-cli download PrunaAI/Phi-3-mini-128k-instruct-GGUF-Imatrix-smashed Phi-3-mini-128k-instruct.Q4_K_M.gguf
-huggingface-cli download PrunaAI/Phi-3-mini-128k-instruct-GGUF-Imatrix-smashed Phi-3-mini-128k-instruct.Q5_K_M.gguf
-huggingface-cli download QuantFactory/Phi-3-mini-128k-instruct-GGUF Phi-3-mini-128k-instruct.Q4_K_M.gguf
-huggingface-cli download QuantFactory/Phi-3-mini-128k-instruct-GGUF Phi-3-mini-128k-instruct.Q8_0.gguf
-huggingface-cli download microsoft/Phi-3-mini-4k-instruct-gguf Phi-3-mini-4k-instruct-fp16.gguf
-huggingface-cli download microsoft/Phi-3-mini-4k-instruct-gguf Phi-3-mini-4k-instruct-q4.gguf
-huggingface-cli download TheBloke/dolphin-2_6-phi-2-GGUF dolphin-2_6-phi-2.Q4_K_M.gguf
-huggingface-cli download MaziyarPanahi/phi-2-super-GGUF phi-2-super.Q4_K_M.gguf
-huggingface-cli download TheBloke/phi-2-GGUF phi-2.Q4_K_M.gguf
-huggingface-cli download TKDKid1000/phi-1_5-GGUF phi-1_5-Q4_K_M.gguf
-```
-
 Run server:
 
 ```bash
@@ -284,7 +179,6 @@ python -B examples/langchain_async_demo.py
 ```bash
 openssl req -x509 -nodes -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
 ```
-
 
 
 ## Run
