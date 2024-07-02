@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.56
+
+Added:
+    - `llama.cpp`: support for both `main` and `llama-cli` executable.
+
 ## v0.1.55
 
 Added:
