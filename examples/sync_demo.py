@@ -304,7 +304,7 @@ def sync_demo_llama_cpp_main_echo():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         model_id='echo/echo',
         prompt=PROMPT,
     ):
@@ -314,7 +314,7 @@ def sync_demo_llama_cpp_main_echo():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         model_id='echo/echo',
         messages=MESSAGES,
     ):
@@ -328,7 +328,7 @@ def sync_demo_llama_cpp_main_orca2_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
@@ -343,7 +343,7 @@ def sync_demo_llama_cpp_main_orca2_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/Orca-2-7B-GGUF',
         model='orca-2-7b.Q4_K_M.gguf',
@@ -359,7 +359,7 @@ def sync_demo_llama_cpp_main_mistral_7b_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
@@ -370,7 +370,7 @@ def sync_demo_llama_cpp_main_mistral_7b_text():
 
     print(sync_client.text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
@@ -384,7 +384,7 @@ def sync_demo_llama_cpp_main_mistral_7b_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
@@ -398,7 +398,7 @@ def sync_demo_llama_cpp_main_mistral_7b_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/zephyr-7B-beta-GGUF',
         model='zephyr-7b-beta.Q4_K_M.gguf',
@@ -416,7 +416,7 @@ def sync_demo_llama_cpp_main_hermes_2_pro_mistral_7b_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='NousResearch/Hermes-2-Pro-Mistral-7B-GGUF',
         model='Hermes-2-Pro-Mistral-7B.Q4_K_M.gguf',
@@ -434,7 +434,7 @@ def sync_demo_llama_cpp_main_stablelm_zephyr_3b_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/stablelm-zephyr-3b-GGUF',
         model='stablelm-zephyr-3b.Q4_K_M.gguf',
@@ -451,7 +451,7 @@ def sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/stablelm-zephyr-3b-GGUF',
         model='stablelm-zephyr-3b.Q4_K_M.gguf',
@@ -469,7 +469,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -486,7 +486,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text_file():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -504,7 +504,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -522,7 +522,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_chat_file():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -541,7 +541,7 @@ def sync_demo_llama_cpp_main_yi_9b_200k_text_file():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='LoneStriker/Yi-9B-200K-GGUF',
         model='Yi-9B-200K-Q4_K_M.gguf',
@@ -561,7 +561,7 @@ def sync_demo_llama_cpp_main_yi_9b_200k_chat_file():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='LoneStriker/Yi-9B-200K-GGUF',
         model='Yi-9B-200K-Q4_K_M.gguf',
@@ -581,7 +581,7 @@ def sync_demo_llama_cpp_main_yi_6b_200k_text_file():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='LoneStriker/Yi-6B-200K-GGUF',
         model='Yi-6B-200K-Q4_K_M.gguf',
@@ -601,7 +601,7 @@ def sync_demo_llama_cpp_main_yi_6b_200k_chat_file():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='LoneStriker/Yi-6B-200K-GGUF',
         model='Yi-6B-200K-Q4_K_M.gguf',
@@ -621,7 +621,7 @@ def sync_demo_llama_cpp_main_qwen1_5_4b_text_file():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='Qwen/Qwen1.5-4B-Chat-GGUF',
         model='qwen1_5-4b-chat-q4_k_m.gguf',
@@ -640,7 +640,7 @@ def sync_demo_llama_cpp_main_qwen1_5_4b_chat_file():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='Qwen/Qwen1.5-4B-Chat-GGUF',
         model='qwen1_5-4b-chat-q4_k_m.gguf',
@@ -659,7 +659,7 @@ def sync_demo_llama_cpp_main_gemma_2b_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='bartowski/gemma-1.1-2b-it-GGUF',
         model='gemma-1.1-2b-it-Q4_K_M.gguf',
@@ -674,7 +674,7 @@ def sync_demo_llama_cpp_main_gemma_2b_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         # n_gpu_layers=NGL,
         model_id='bartowski/gemma-1.1-2b-it-GGUF',
         model='gemma-1.1-2b-it-Q4_K_M.gguf',
@@ -690,7 +690,7 @@ def sync_demo_llama_cpp_main_gemma_7b_text():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='bartowski/gemma-1.1-7b-it-GGUF',
         model='gemma-1.1-7b-it-Q4_K_M.gguf',
@@ -705,7 +705,7 @@ def sync_demo_llama_cpp_main_gemma_7b_chat():
 
     for chunk in sync_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='bartowski/gemma-1.1-7b-it-GGUF',
         model='gemma-1.1-7b-it-Q4_K_M.gguf',
@@ -724,7 +724,7 @@ def sync_demo_llama_cpp_main_mistral_7b_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
@@ -741,7 +741,7 @@ def sync_demo_llama_cpp_main_mistral_7b_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
@@ -762,7 +762,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -779,7 +779,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -796,7 +796,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -817,7 +817,7 @@ def sync_demo_llama_cpp_main_stable_code_3b_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/stable-code-3b-GGUF',
         model='stable-code-3b.Q4_K_M.gguf',
@@ -833,7 +833,7 @@ def sync_demo_llama_cpp_main_stable_code_3b_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/stable-code-3b-GGUF',
         model='stable-code-3b.Q4_K_M.gguf',
@@ -853,7 +853,7 @@ def sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='Qwen/Qwen1.5-0.5B-Chat-GGUF',
         model='qwen1_5-0_5b-chat-q4_k_m.gguf',
@@ -869,7 +869,7 @@ def sync_demo_llama_cpp_main_qwen1_5_0_5b_chat_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='Qwen/Qwen1.5-0.5B-Chat-GGUF',
         model='qwen1_5-0_5b-chat-q4_k_m.gguf',
@@ -889,7 +889,7 @@ def sync_demo_llama_cpp_main_phi_1_5_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TKDKid1000/phi-1_5-GGUF',
         model='phi-1_5-Q4_K_M.gguf',
@@ -905,7 +905,7 @@ def sync_demo_llama_cpp_main_phi_1_5_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TKDKid1000/phi-1_5-GGUF',
         model='phi-1_5-Q4_K_M.gguf',
@@ -925,7 +925,7 @@ def sync_demo_llama_cpp_main_phi_2_0_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/phi-2-GGUF',
         model='phi-2.Q4_K_M.gguf',
@@ -941,7 +941,7 @@ def sync_demo_llama_cpp_main_phi_2_0_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/phi-2-GGUF',
         model='phi-2.Q4_K_M.gguf',
@@ -961,7 +961,7 @@ def sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF',
         model='tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf',
@@ -977,7 +977,7 @@ def sync_demo_llama_cpp_main_tinyllama_1_1b_chat_v1_0_grammar():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF',
         model='tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf',
@@ -1000,7 +1000,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_react_0():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -1018,7 +1018,7 @@ def sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_react_1():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='stabilityai/stablelm-2-zephyr-1_6b',
         model='stablelm-2-zephyr-1_6b-Q4_1.gguf',
@@ -1036,7 +1036,7 @@ def sync_demo_llama_cpp_main_mistral_7b_react_1():
 
     for chunk in sync_client.iter_text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=NGL,
         model_id='TheBloke/Mistral-7B-Instruct-v0.2-GGUF',
         model='mistral-7b-instruct-v0.2.Q4_K_M.gguf',
@@ -1067,9 +1067,9 @@ if __name__ == '__main__':
     
     # sync_demo_llama_cpp_main_orca2_text()
     # sync_demo_llama_cpp_main_orca2_chat()
-    # sync_demo_llama_cpp_main_mistral_7b_text()
+    sync_demo_llama_cpp_main_mistral_7b_text()
     # sync_demo_llama_cpp_main_mistral_7b_chat()
-    sync_demo_llama_cpp_main_hermes_2_pro_mistral_7b_chat()
+    # sync_demo_llama_cpp_main_hermes_2_pro_mistral_7b_chat()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_text()
     # sync_demo_llama_cpp_main_stablelm_zephyr_3b_chat()
     # sync_demo_llama_cpp_main_stablelm_2_zephyr_1_6b_text()

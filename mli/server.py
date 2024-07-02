@@ -85,7 +85,13 @@ class MLIServer:
         executable: str = kwargs['executable']
         cmd: list[str] | str = []
         
-        if executable == 'main':
+        # check for `llama-cli`, if missing fallback to old `main`
+        if executable == 'llama-cli' and not os.path.exists(f'{self.llama_cpp_path}/{executable}'):
+            executable = 'main'
+        elif executable == 'main' and not os.path.exists(f'{self.llama_cpp_path}/{executable}'):
+            executable = 'llama-cli'
+
+        if executable in ('main', 'llama-cli'):
             prompt: str = kwargs.get('prompt')
             file: str = kwargs.get('file')
             image: str = kwargs.get('image')
@@ -558,7 +564,10 @@ class MLIServer:
                 ngram = n[:i]
                 stop_ngrams.append(ngram)
 
-        max_stop_len = max(len(n) for n in stop)
+        if stop:
+            max_stop_len = max(len(n) for n in stop)
+        else:
+            max_stop_len = 0
 
         print(f'{stop = }')
         print(f'{stop_ngrams = }')
@@ -667,7 +676,8 @@ class MLIServer:
                 pass
 
             os.system(f'pkill -9 -P {proc.pid}')
-            os.system(f'killall -9 main') # TODO
+            os.system(f'killall -9 main')
+            os.system(f'killall -9 llama-cli')
             proc = None
 
             stderr = stderr.decode()
@@ -822,7 +832,8 @@ class MLIServer:
                 pass
 
             os.system(f'pkill -9 -P {proc.pid}')
-            os.system(f'killall -9 main') # TODO
+            os.system(f'killall -9 main')
+            os.system(f'killall -9 llama-cli')
             proc = None
 
         # close ws
@@ -868,7 +879,8 @@ class MLIServer:
                 pass
             
             os.system(f'pkill -9 -P {proc.pid}')
-            os.system(f'killall -9 main') # TODO
+            os.system(f'killall -9 main')
+            os.system(f'killall -9 llama-cli')
             proc = None
 
         # close ws

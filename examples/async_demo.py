@@ -67,7 +67,7 @@ async def async_demo_llama_cpp_main_stable_lm():
 
     async for chunk in async_client.iter_text(
        engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
@@ -78,7 +78,7 @@ async def async_demo_llama_cpp_main_stable_lm():
 
     async for chunk in async_client.iter_chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
@@ -94,7 +94,7 @@ async def async_demo_llama_cpp_main_stable_lm():
 
     print(await async_client.text(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
@@ -104,7 +104,7 @@ async def async_demo_llama_cpp_main_stable_lm():
 
     print(await async_client.chat(
         engine='llama.cpp',
-        executable='main',
+        executable='llama-cli',
         n_gpu_layers=35,
         model_id='TheBloke/rocket-3B-GGUF',
         model='rocket-3b.Q4_K_M.gguf',
