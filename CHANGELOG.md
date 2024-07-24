@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.1.57
+
+Changed:
+    - Updated `langchain`, `huggingface-hub`.
+
 ## v0.1.56
 
 Added:
